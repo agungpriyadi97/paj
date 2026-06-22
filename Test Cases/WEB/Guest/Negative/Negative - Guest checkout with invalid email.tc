@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Checkout tamu menggunakan email tidak valid</description>
+   <name>Negative - Guest checkout with invalid email</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>216e3ebe-552d-48ee-8389-061ea455c59c</testCaseGuid>
+</TestCaseEntity>

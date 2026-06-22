@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting pengaturan akun ditampilkan dengan benar</description>
+   <name>Positive - Ensure Account Setting copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>1286178b-84f6-4d54-809f-a4ca87b2ad69</testCaseGuid>
+</TestCaseEntity>

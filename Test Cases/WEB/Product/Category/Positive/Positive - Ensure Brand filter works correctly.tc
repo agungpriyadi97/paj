@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan filter Brand berfungsi dengan benar</description>
+   <name>Positive - Ensure Brand filter works correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>6fcd1bdf-58dc-4c93-a0b0-20b97b320259</testCaseGuid>
+</TestCaseEntity>

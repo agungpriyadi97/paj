@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan filter Harga berfungsi dengan benar</description>
+   <name>Positive - Ensure Price filter works correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>90d3aa24-9ad8-4346-9e26-7563b3030709</testCaseGuid>
+</TestCaseEntity>

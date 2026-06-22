@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan instruksi pembayaran ditampilkan dengan benar</description>
+   <name>Positive - Ensure payment instructions are displayed correctly in Midtrans page</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>e1af4e81-2cc8-4fd1-8a10-f41949898c38</testCaseGuid>
+</TestCaseEntity>

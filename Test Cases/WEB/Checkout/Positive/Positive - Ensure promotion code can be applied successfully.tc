@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan kode promo dapat digunakan dengan sukses</description>
+   <name>Positive - Ensure promotion code can be applied successfully</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>636c1591-0e48-4e65-92b8-38a1ee2d91c9</testCaseGuid>
+</TestCaseEntity>

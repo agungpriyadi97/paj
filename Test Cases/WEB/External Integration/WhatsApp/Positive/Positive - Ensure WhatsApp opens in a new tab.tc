@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan WhatsApp terbuka pada tab baru</description>
+   <name>Positive - Ensure WhatsApp opens in a new tab</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>238b5030-e9c3-4059-812e-de8b70d166eb</testCaseGuid>
+</TestCaseEntity>

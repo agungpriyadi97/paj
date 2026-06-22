@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat menghapus produk dari keranjang belanja</description>
+   <name>Positive - Ensure user can remove product from shopping cart</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>76a915c7-43f1-4675-97d3-adfaa432c83b</testCaseGuid>
+</TestCaseEntity>

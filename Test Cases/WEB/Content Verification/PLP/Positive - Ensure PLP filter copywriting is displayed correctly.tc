@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting filter PLP ditampilkan dengan benar</description>
+   <name>Positive - Ensure PLP filter copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>d3bf695e-6a46-4247-a371-6fea7ebaa268</testCaseGuid>
+</TestCaseEntity>

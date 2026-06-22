@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan harga yang ditampilkan sesuai konfigurasi produk</description>
+   <name>Positive - Ensure displayed price matches product configuration</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>a2dc4609-c525-4786-bda5-19459592715f</testCaseGuid>
+</TestCaseEntity>

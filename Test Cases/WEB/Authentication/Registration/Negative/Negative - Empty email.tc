@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Email kosong, klik Sign Up. Muncul pesan &quot;Email is required&quot;.</description>
+   <name>Negative - Empty email</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>131cbe32-932e-4031-8eae-43290a7ff807</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan nomor pesanan berhasil dibuat</description>
+   <name>Positive - Ensure order number is generated successfully</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>9100b277-908f-43d3-b331-b9594d513f8c</testCaseGuid>
+</TestCaseEntity>

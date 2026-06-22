@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan nominal diskon dihitung dengan benar</description>
+   <name>Positive - Ensure discount amount is calculated correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>02cb233c-63bc-41b3-8431-dbaade36e97a</testCaseGuid>
+</TestCaseEntity>

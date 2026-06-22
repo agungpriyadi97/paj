@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat mengedit alamat pengiriman dengan sukses</description>
+   <name>Positive - Ensure user can edit shipping address successfully</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>9b551b8e-c08e-4d2f-98db-d601ad651376</testCaseGuid>
+</TestCaseEntity>

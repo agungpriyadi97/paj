@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting Kupon Saya ditampilkan dengan benar</description>
+   <name>Positive - Ensure My Coupon copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>18cf1863-4089-49b6-a0b6-956151e2e5d4</testCaseGuid>
+</TestCaseEntity>

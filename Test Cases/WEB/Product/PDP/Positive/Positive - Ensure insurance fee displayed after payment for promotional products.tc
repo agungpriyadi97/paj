@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan biaya asuransi ditampilkan setelah pembayaran produk promo</description>
+   <name>Positive - Ensure insurance fee displayed after payment for promotional products</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>bffb3af3-bad5-442b-9aee-29a208a6c199</testCaseGuid>
+</TestCaseEntity>

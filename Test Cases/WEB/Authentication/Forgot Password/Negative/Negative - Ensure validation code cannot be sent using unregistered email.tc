@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan validation code tidak dapat dikirim menggunakan email yang belum terdaftar</description>
+   <name>Negative - Ensure validation code cannot be sent using unregistered email</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>84125ae3-dd1d-45b2-8e27-6446931e45dd</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan filter Koleksi berfungsi dengan benar</description>
+   <name>Positive - Ensure Collection filter works correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>a7a79112-2e02-4e95-a44c-000703201e76</testCaseGuid>
+</TestCaseEntity>

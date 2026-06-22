@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebElementEntity>
+   <description></description>
+   <name>checkbox</name>
+   <tag></tag>
+   <elementGuidId>c9fa43d0-2055-4d07-ac20-ae8e0d3935c7</elementGuidId>
+   <selectorCollection>
+      <entry>
+         <key>XPATH</key>
+         <value>//div[@id='page-view']/div/div[2]/section/div[2]/section/section[2]/section/div/div/label/span/span</value>
+      </entry>
+      <entry>
+         <key>CSS</key>
+         <value>div.consent__content > label.el-checkbox.checkbox.gt-checkbox > span.el-checkbox__input > span.el-checkbox__inner</value>
+      </entry>
+   </selectorCollection>
+   <selectorMethod>XPATH</selectorMethod>
+   <smartLocatorCollection>
+      <entry>
+         <key>SMART_LOCATOR</key>
+         <value>.consent__content > .el-checkbox > .el-checkbox__input > .el-checkbox__inner >> nth=0</value>
+      </entry>
+   </smartLocatorCollection>
+   <smartLocatorEnabled>false</smartLocatorEnabled>
+   <useRalativeImagePath>true</useRalativeImagePath>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>tag</name>
+      <type>Main</type>
+      <value>span</value>
+      <webElementGuid>f6dd09a2-41b2-439d-ac1f-1d4ac637e050</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>class</name>
+      <type>Main</type>
+      <value>el-checkbox__inner</value>
+      <webElementGuid>a43dca50-8422-4af8-8867-286468abca12</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath</name>
+      <type>Main</type>
+      <value>id(&quot;page-view&quot;)/div[@class=&quot;gt-layout page-layout_pc&quot;]/div[@class=&quot;page-view__child&quot;]/section[@class=&quot;page-checkout ss-page-checkout&quot;]/div[@class=&quot;right&quot;]/section[@class=&quot;right-container&quot;]/section[@class=&quot;action&quot;]/section[@class=&quot;gt-page_checkout__accept&quot;]/div[@class=&quot;consent&quot;]/div[@class=&quot;consent__content&quot;]/label[@class=&quot;el-checkbox checkbox gt-checkbox&quot;]/span[@class=&quot;el-checkbox__input&quot;]/span[@class=&quot;el-checkbox__inner&quot;]</value>
+      <webElementGuid>b5da0f02-24a9-43f0-ac77-d9f34fc3fee8</webElementGuid>
+   </webElementProperties>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:idRelative</name>
+      <type>Main</type>
+      <value>//div[@id='page-view']/div/div[2]/section/div[2]/section/section[2]/section/div/div/label/span/span</value>
+      <webElementGuid>aabbdc55-c3b0-42a0-8869-dc9f4c93a93a</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:position</name>
+      <type>Main</type>
+      <value>//section/section[2]/section/div/div/label/span/span</value>
+      <webElementGuid>21850072-09b9-4923-adb3-220fe5d0535a</webElementGuid>
+   </webElementXpaths>
+</WebElementEntity>

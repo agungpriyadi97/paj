@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Checkout sebagai tamu</description>
+   <name>Positive - Guest Checkout</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>8b34d901-e9dc-4342-b0a9-6cab409b25c6</testCaseGuid>
+</TestCaseEntity>

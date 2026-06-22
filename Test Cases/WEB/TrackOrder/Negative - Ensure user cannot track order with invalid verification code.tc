@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna tidak dapat melacak pesanan dengan kode verifikasi yang tidak valid</description>
+   <name>Negative - Ensure user cannot track order with invalid verification code</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>b34f43ac-392a-44ac-93e0-0fa55d683517</testCaseGuid>
+</TestCaseEntity>

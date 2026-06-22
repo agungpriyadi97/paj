@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan email diterima setelah registrasi berhasil</description>
+   <name>Positive - Ensure get email when success register</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>a3e6b6a3-0b1b-4d02-a6e3-77082f2c4ffb</testCaseGuid>
+</TestCaseEntity>

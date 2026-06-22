@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan metode pengiriman dapat dipilih</description>
+   <name>Positive - Ensure shipping method can be selected</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>72baa2ed-0060-4e76-a5e7-8bce355d134f</testCaseGuid>
+</TestCaseEntity>

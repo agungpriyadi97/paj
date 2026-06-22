@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan filter Ukuran berfungsi dengan benar</description>
+   <name>Positive - Ensure Size filter works correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>1cfded19-13c4-4a75-a7fe-94880b38bbd9</testCaseGuid>
+</TestCaseEntity>

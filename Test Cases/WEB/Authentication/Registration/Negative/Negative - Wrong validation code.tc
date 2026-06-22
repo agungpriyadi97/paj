@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Mengisi kode yang tidak sesuai dengan yang dikirim ke email. Pesan &quot;Invalid validation code&quot;.</description>
+   <name>Negative - Wrong validation code</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>00a87763-b570-4683-91fd-4fa6bec4cf3a</testCaseGuid>
+</TestCaseEntity>

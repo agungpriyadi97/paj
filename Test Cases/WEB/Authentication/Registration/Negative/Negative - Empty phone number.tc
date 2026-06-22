@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Telepon kosong. Pesan &quot;Mobile phone is required&quot;.</description>
+   <name>Negative - Empty phone number</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>01e08caf-ec24-4ff8-98b1-0f3a79126c61</testCaseGuid>
+</TestCaseEntity>

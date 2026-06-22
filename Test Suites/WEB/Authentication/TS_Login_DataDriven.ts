@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestSuiteEntity>
+   <description></description>
+   <name>TS_Login_DataDriven</name>
+   <tag></tag>
+   <isRerun>false</isRerun>
+   <mailRecipient></mailRecipient>
+   <numberOfRerun>3</numberOfRerun>
+   <pageLoadTimeout>10</pageLoadTimeout>
+   <pageLoadTimeoutDefault>true</pageLoadTimeoutDefault>
+   <rerunFailedTestCasesOnly>false</rerunFailedTestCasesOnly>
+   <rerunImmediately>true</rerunImmediately>
+   <testSuiteGuid>1cd23d3a-81e7-4020-9b2a-4cd1112e8ce4</testSuiteGuid>
+   <testCaseLink>
+      <guid>b50c6825-d8cc-411e-ac15-4fa49b31a523</guid>
+      <isReuseDriver>false</isReuseDriver>
+      <isRun>true</isRun>
+      <testCaseId>Test Cases/WEB/Authentication/Login/Positive/TC_Login_DataDriven</testCaseId>
+      <testDataLink>
+         <combinationType>ONE</combinationType>
+         <id>6c6f8f31-4389-4a3b-9a07-0c336b6cb444</id>
+         <iterationEntity>
+            <iterationType>ALL</iterationType>
+            <value></value>
+         </iterationEntity>
+         <testDataId>Data Files/LoginData</testDataId>
+      </testDataLink>
+      <usingDataBindingAtTestSuiteLevel>true</usingDataBindingAtTestSuiteLevel>
+      <variableLink>
+         <testDataLinkId>6c6f8f31-4389-4a3b-9a07-0c336b6cb444</testDataLinkId>
+         <type>DATA_COLUMN</type>
+         <value>Email</value>
+         <variableId>b22ee0f9-a4a7-4b0b-af20-4a309cab049c</variableId>
+      </variableLink>
+      <variableLink>
+         <testDataLinkId>6c6f8f31-4389-4a3b-9a07-0c336b6cb444</testDataLinkId>
+         <type>DATA_COLUMN</type>
+         <value>Password</value>
+         <variableId>14748221-e9ab-4e6e-adb7-fe323534babd</variableId>
+      </variableLink>
+      <variableLink>
+         <testDataLinkId>6c6f8f31-4389-4a3b-9a07-0c336b6cb444</testDataLinkId>
+         <type>DATA_COLUMN</type>
+         <value>TC_ID</value>
+         <variableId>f3c5773c-3585-44c7-84b0-a34e57cf8a48</variableId>
+      </variableLink>
+      <variableLink>
+         <testDataLinkId>6c6f8f31-4389-4a3b-9a07-0c336b6cb444</testDataLinkId>
+         <type>DATA_COLUMN</type>
+         <value>Scenario</value>
+         <variableId>026a6ac3-d3cb-4306-97a4-95cde77fc7f6</variableId>
+      </variableLink>
+   </testCaseLink>
+</TestSuiteEntity>

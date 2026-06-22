@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Last Name kosong. Pesan &quot;Last Name is required&quot;.</description>
+   <name>Negative - Empty Last Name</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>cadfc825-0c31-4074-bf6e-0c61924e9888</testCaseGuid>
+</TestCaseEntity>

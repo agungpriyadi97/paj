@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Registrasi dengan data yang valid</description>
+   <name>Positive - Register with valid data</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>fe8fc022-bcbb-4b22-a79c-24ecb97f2192</testCaseGuid>
+</TestCaseEntity>

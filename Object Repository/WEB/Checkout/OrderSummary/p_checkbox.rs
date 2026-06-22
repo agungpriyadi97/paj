@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebElementEntity>
+   <description></description>
+   <name>p_checkbox</name>
+   <tag></tag>
+   <elementGuidId>226e50a6-7709-497c-93ee-c83e4dd67d0c</elementGuidId>
+   <selectorCollection>
+      <entry>
+         <key>XPATH</key>
+         <value>//div[@id='page-view']/div/div[2]/section/div[2]/section/section[2]/section/div/div/p</value>
+      </entry>
+      <entry>
+         <key>CSS</key>
+         <value>p.consent__desc</value>
+      </entry>
+   </selectorCollection>
+   <selectorMethod>XPATH</selectorMethod>
+   <smartLocatorCollection>
+      <entry>
+         <key>SMART_LOCATOR</key>
+         <value>internal:text=&quot;By clicking \&quot;Checkout\&quot;, I am consenting to Nataroe's data protection policy*&quot;i</value>
+      </entry>
+   </smartLocatorCollection>
+   <smartLocatorEnabled>false</smartLocatorEnabled>
+   <useRalativeImagePath>true</useRalativeImagePath>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>tag</name>
+      <type>Main</type>
+      <value>p</value>
+      <webElementGuid>58194b7e-d258-4ced-806a-41e62d9f7aa3</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>class</name>
+      <type>Main</type>
+      <value>consent__desc</value>
+      <webElementGuid>5115d8b1-42dd-4307-bb1f-b0a74e8be641</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>text</name>
+      <type>Main</type>
+      <value>By clicking &quot;Checkout&quot;, I am consenting to Nataroe's data protection policy*</value>
+      <webElementGuid>d0b24fda-c8ae-477b-8006-5f09e669c7ec</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath</name>
+      <type>Main</type>
+      <value>id(&quot;page-view&quot;)/div[@class=&quot;gt-layout page-layout_pc&quot;]/div[@class=&quot;page-view__child&quot;]/section[@class=&quot;page-checkout ss-page-checkout&quot;]/div[@class=&quot;right&quot;]/section[@class=&quot;right-container&quot;]/section[@class=&quot;action&quot;]/section[@class=&quot;gt-page_checkout__accept&quot;]/div[@class=&quot;consent&quot;]/div[@class=&quot;consent__content&quot;]/p[@class=&quot;consent__desc&quot;]</value>
+      <webElementGuid>db6717b8-c2d3-419d-aeac-59639ecd2476</webElementGuid>
+   </webElementProperties>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:idRelative</name>
+      <type>Main</type>
+      <value>//div[@id='page-view']/div/div[2]/section/div[2]/section/section[2]/section/div/div/p</value>
+      <webElementGuid>002f8685-00d7-44f0-a7b1-0e304580079b</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:neighbor</name>
+      <type>Main</type>
+      <value>(.//*[normalize-space(text()) and normalize-space(.)='Term &amp; Conditions'])[1]/following::p[1]</value>
+      <webElementGuid>dd0bedee-473c-4642-8757-16bd7fba2959</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:neighbor</name>
+      <type>Main</type>
+      <value>(.//*[normalize-space(text()) and normalize-space(.)='Privacy Policy'])[1]/following::p[1]</value>
+      <webElementGuid>3d5ec715-f089-48e8-b469-ba37f20957a6</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:neighbor</name>
+      <type>Main</type>
+      <value>(.//*[normalize-space(text()) and normalize-space(.)='Checkout'])[2]/preceding::p[1]</value>
+      <webElementGuid>ffbb0ce9-8fe9-427f-a23b-f404af720ee3</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:position</name>
+      <type>Main</type>
+      <value>//section[2]/section/div/div/p</value>
+      <webElementGuid>f0611214-574d-4984-94e8-87aad0b17408</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:customAttributes</name>
+      <type>Main</type>
+      <value>//p[(text() = concat(&quot;By clicking &quot;Checkout&quot;, I am consenting to Nataroe&quot; , &quot;'&quot; , &quot;s data protection policy*&quot;) or . = concat(&quot;By clicking &quot;Checkout&quot;, I am consenting to Nataroe&quot; , &quot;'&quot; , &quot;s data protection policy*&quot;))]</value>
+      <webElementGuid>793017e1-e2e3-4ae3-9f43-72062716c193</webElementGuid>
+   </webElementXpaths>
+</WebElementEntity>

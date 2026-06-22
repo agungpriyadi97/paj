@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan filter Warna berfungsi dengan benar</description>
+   <name>Positive - Ensure Color filter works correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>117fc9fc-3270-43f8-8a86-2fdea2fdef82</testCaseGuid>
+</TestCaseEntity>

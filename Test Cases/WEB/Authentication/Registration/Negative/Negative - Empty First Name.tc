@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>First Name kosong. Pesan &quot;First Name is required&quot;.</description>
+   <name>Negative - Empty First Name</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>88e0b20a-16e9-4c99-8a5c-4e932bff0eff</testCaseGuid>
+</TestCaseEntity>

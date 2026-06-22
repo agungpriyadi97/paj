@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan total kuantitas keranjang pada ikon header sudah benar</description>
+   <name>Positive - Ensure Total Cart Quantity on Header Icon is Correct</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>9e1f8435-d069-459b-a5e2-5a6678cce8b0</testCaseGuid>
+</TestCaseEntity>

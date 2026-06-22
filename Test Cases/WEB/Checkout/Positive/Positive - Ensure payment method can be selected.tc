@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan metode pembayaran dapat dipilih</description>
+   <name>Positive - Ensure payment method can be selected</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>4180be6b-5363-4a5a-8977-a1af383f0cd3</testCaseGuid>
+</TestCaseEntity>

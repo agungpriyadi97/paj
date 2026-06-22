@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting Lacak Pesanan ditampilkan dengan benar</description>
+   <name>Positive - Ensure Track Order copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>c2b558fc-dc88-42e8-a623-5cb8a959ea1c</testCaseGuid>
+</TestCaseEntity>

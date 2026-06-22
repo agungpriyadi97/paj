@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan syarat dan ketentuan asuransi ditampilkan</description>
+   <name>Positive - Ensure insurance terms and conditions are displayed</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>78fd4ba6-a5da-45cf-b5b7-b2a8bad7d86c</testCaseGuid>
+</TestCaseEntity>

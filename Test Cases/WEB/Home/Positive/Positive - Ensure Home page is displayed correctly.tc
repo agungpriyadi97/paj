@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan halaman Beranda ditampilkan dengan benar</description>
+   <name>Positive - Ensure Home page is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>cca191cc-66e5-45c6-b272-9eb08e85d97e</testCaseGuid>
+</TestCaseEntity>

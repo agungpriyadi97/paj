@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan ikon WhatsApp ditampilkan dengan benar</description>
+   <name>Positive - Ensure WhatsApp icon is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>acc49603-50c7-48b1-9206-9a01e146c556</testCaseGuid>
+</TestCaseEntity>

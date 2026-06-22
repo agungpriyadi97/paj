@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat checkout tanpa pembayaran</description>
+   <name>Positive - Ensure user can checkout without payment</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>cd31edd1-a0c5-427e-a204-3f33d5f0ec7e</testCaseGuid>
+</TestCaseEntity>

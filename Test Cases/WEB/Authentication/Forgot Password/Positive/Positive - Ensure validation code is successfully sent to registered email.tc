@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan validation code berhasil dikirim ke email yang terdaftar</description>
+   <name>Positive - Ensure validation code is successfully sent to registered email</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>e66263bd-d37a-457e-b5b6-d72e9496e435</testCaseGuid>
+</TestCaseEntity>

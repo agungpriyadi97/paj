@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Tidak mengisi kode, klik Sign Up. Pesan &quot;Validation code is required&quot;.</description>
+   <name>Negative - Empty validation code</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>40680c7a-5d4f-434a-a092-e1b31c8ede2e</testCaseGuid>
+</TestCaseEntity>

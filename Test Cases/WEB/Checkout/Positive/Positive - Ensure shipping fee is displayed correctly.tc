@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan biaya pengiriman ditampilkan dengan benar</description>
+   <name>Positive - Ensure shipping fee is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>89632890-27d6-4dc1-99ef-534dbe1f7f7e</testCaseGuid>
+</TestCaseEntity>

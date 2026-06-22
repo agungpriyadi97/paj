@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan informasi produk ditampilkan dengan benar</description>
+   <name>Positive - Ensure product information is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>3769d040-be08-477d-a1d7-c1f92b4685d8</testCaseGuid>
+</TestCaseEntity>

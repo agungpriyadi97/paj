@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan tombol WhatsApp ditampilkan pada tampilan mobile</description>
+   <name>Positive - Ensure WhatsApp floating button is displayed on mobile view</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>048aef9c-b330-46c8-986b-69c9e8b72759</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan hanya 1 harga yang ditampilkan tanpa harga silang ketika Harga Jual dan Harga Jual sama</description>
+   <name>Positive - Make sure only 1 price is displayed without crossed price when List Price and Sale Price are the same</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>1fd2e5b0-73c4-4a69-a5dd-4d54576183a0</testCaseGuid>
+</TestCaseEntity>

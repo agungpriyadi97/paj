@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting ukuran dan warna pada PLP ditampilkan dengan benar</description>
+   <name>Positive - Ensure PLP size and color copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>5b03c821-ccc1-42f5-bb6e-7f0579bd283a</testCaseGuid>
+</TestCaseEntity>

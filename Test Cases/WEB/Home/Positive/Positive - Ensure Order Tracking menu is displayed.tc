@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan menu Lacak Pesanan ditampilkan</description>
+   <name>Positive - Ensure Order Tracking menu is displayed</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>7eafdd58-ba50-4924-828c-432e9d7f936d</testCaseGuid>
+</TestCaseEntity>

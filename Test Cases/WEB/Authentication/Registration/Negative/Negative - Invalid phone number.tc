@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Format salah (contoh: mengandung huruf, kurang digit). Pesan &quot;Please input the correct phone number&quot;.</description>
+   <name>Negative - Invalid phone number</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>d2ee33f0-c02a-4b08-9c14-591fd26d7b77</testCaseGuid>
+</TestCaseEntity>

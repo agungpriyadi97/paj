@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting alamat tagihan ditampilkan dengan benar</description>
+   <name>Positive - Ensure Billing Address copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>8f14eb0e-461f-45f1-8392-1af4578a3a26</testCaseGuid>
+</TestCaseEntity>

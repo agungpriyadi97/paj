@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan tombol WhatsApp mengarahkan ke URL yang benar</description>
+   <name>Positive - Ensure WhatsApp floating button redirects to the correct URL</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>bdb8ecd5-90e1-4641-8eb5-f87d1e852030</testCaseGuid>
+</TestCaseEntity>

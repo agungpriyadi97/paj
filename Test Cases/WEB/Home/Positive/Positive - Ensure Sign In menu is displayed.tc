@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan menu Masuk ditampilkan</description>
+   <name>Positive - Ensure Sign In menu is displayed</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>0c372512-88f3-4b4d-83c8-a6e3e4c687cc</testCaseGuid>
+</TestCaseEntity>

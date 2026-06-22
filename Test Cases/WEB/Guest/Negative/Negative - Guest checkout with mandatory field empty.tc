@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Checkout tamu dengan field wajib kosong</description>
+   <name>Negative - Guest checkout with mandatory field empty</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>3773164b-0874-446d-bc7e-7fa033025b8c</testCaseGuid>
+</TestCaseEntity>

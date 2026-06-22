@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan menu pencarian ditampilkan dan dapat diakses</description>
+   <name>Positive - Ensure search menu is displayed and accessible</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>c2628d61-f9ff-453b-a549-86f2f09e646c</testCaseGuid>
+</TestCaseEntity>

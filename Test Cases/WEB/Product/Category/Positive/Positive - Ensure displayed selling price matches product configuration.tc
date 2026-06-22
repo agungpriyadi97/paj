@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>Positive - Ensure displayed selling price matches product configuration</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>c38bd59e-cc19-4264-b363-ee5fb8826c19</testCaseGuid>
+</TestCaseEntity>

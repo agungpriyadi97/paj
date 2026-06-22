@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan informasi tagihan ditampilkan dengan benar</description>
+   <name>Positive - Ensure billing information is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>38e475ae-4c59-4671-ac62-034b70b0e5a1</testCaseGuid>
+</TestCaseEntity>

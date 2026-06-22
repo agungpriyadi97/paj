@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan menu Lokasi Toko ditampilkan</description>
+   <name>Positive - Ensure Store Location menu is displayed</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>180049b8-e9da-4608-bca7-09646308e505</testCaseGuid>
+</TestCaseEntity>

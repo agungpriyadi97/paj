@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan biaya asuransi ditampilkan dengan benar pada versi mobile</description>
+   <name>Positive - Ensure insurance fee displayed correctly on mobile site</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>8654c514-b4e3-47bc-bc0c-b3dacc330f8d</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pelanggan menerima konfirmasi pesanan</description>
+   <name>Positive - Ensure customer receives order confirmation</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>36770923-9eb8-4b07-8efe-773d67e99a8d</testCaseGuid>
+</TestCaseEntity>

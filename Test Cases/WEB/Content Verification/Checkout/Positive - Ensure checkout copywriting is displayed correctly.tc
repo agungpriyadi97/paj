@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting checkout ditampilkan dengan benar</description>
+   <name>Positive - Ensure checkout copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>36ae9a64-874a-44c1-8e53-8813e9f9ce08</testCaseGuid>
+</TestCaseEntity>

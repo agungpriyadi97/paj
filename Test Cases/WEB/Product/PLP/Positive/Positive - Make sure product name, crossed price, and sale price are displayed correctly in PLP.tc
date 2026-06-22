@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan nama produk, harga silang, dan harga jual ditampilkan dengan benar di PLP</description>
+   <name>Positive - Make sure product name, crossed price, and sale price are displayed correctly in PLP</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>2939b986-f554-4cb2-ac1b-a65d4071e702</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan  harga silang dan harga jual ditampilkan saat Harga Jual dan Harga Jual berbeda</description>
+   <name>Positive - Make sure crossed price and sale price are displayed when List Price and Sale Price are different</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>1345c8be-3f7f-4abc-bf09-453a280ab3cd</testCaseGuid>
+</TestCaseEntity>

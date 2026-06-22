@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat mengakses halaman detail produk</description>
+   <name>Positive - Ensure user can access product detail page</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>0b7a21d7-bb33-4610-aabd-0ad75f3e0e9d</testCaseGuid>
+</TestCaseEntity>

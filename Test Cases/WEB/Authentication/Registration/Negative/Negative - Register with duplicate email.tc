@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Registrasi menggunakan email yang sudah terdaftar</description>
+   <name>Negative - Register with duplicate email</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>de6b1a5d-0681-46d9-85aa-8b20d9181de8</testCaseGuid>
+</TestCaseEntity>

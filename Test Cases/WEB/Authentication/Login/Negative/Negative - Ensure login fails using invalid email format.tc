@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan login gagal menggunakan format email yang tidak valid</description>
+   <name>Negative - Ensure login fails using invalid email format</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>aa7d844b-2cac-4301-9d19-ac48102b44c7</testCaseGuid>
+</TestCaseEntity>

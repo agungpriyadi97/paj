@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat menghapus alamat penagihan dengan sukses</description>
+   <name>Positive - Ensure user can delete billing address successfully</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>5fa52dd1-d508-49c2-860d-b28e7df0c375</testCaseGuid>
+</TestCaseEntity>

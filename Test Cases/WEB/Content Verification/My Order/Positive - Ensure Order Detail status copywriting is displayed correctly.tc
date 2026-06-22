@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting status detail pesanan ditampilkan dengan benar</description>
+   <name>Positive - Ensure Order Detail status copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>2784ba5d-2ec3-4acb-b3de-349881e84ef5</testCaseGuid>
+</TestCaseEntity>

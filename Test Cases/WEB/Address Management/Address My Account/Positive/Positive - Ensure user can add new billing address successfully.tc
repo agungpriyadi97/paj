@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat menambahkan alamat penagihan baru dengan sukses</description>
+   <name>Positive - Ensure user can add new billing address successfully</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>62f510d5-4fd2-4d75-8226-c63ee6ef004f</testCaseGuid>
+</TestCaseEntity>

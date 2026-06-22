@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan harga coret ditampilkan dengan benar</description>
+   <name>Positive - Ensure crossed price is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>e113880e-7d09-4436-a0ce-61095a45d992</testCaseGuid>
+</TestCaseEntity>

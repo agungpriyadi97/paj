@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan biaya asuransi dihitung dengan benar untuk satu produk</description>
+   <name>Positive - Ensure insurance fee calculation for single product</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>db14b913-d159-43c4-82b6-40a5a8898b4b</testCaseGuid>
+</TestCaseEntity>

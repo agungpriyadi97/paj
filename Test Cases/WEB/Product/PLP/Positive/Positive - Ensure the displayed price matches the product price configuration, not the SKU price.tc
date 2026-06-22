@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan harga yang ditampilkan sesuai dengan konfigurasi harga produk, bukan harga SKU.</description>
+   <name>Positive - Ensure the displayed price matches the product price configuration, not the SKU price</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>4a8e710d-0bba-4d89-a78b-df7aa886c0cc</testCaseGuid>
+</TestCaseEntity>

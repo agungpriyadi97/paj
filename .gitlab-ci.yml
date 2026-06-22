@@ -1,0 +1,91 @@
+image:
+  name: 'katalonstudio/katalon:11.1.3'
+  entrypoint: [""]
+
+stages:
+  - test
+
+variables:
+  # Ensures the job continues through all browser types even if one fails
+  CONTINUE_ON_FAILURE: "true"
+  # CRITICAL: Increase shared memory size for Chrome Headless in Docker
+  GS_OPTIONS: "-Xmx2048m -Xms512m -Djava.shm.size=2g"
+
+katalon_digiboxvn_test:
+  stage: test
+  tags:
+    - infra
+  timeout: 12h  
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  
+  before_script:
+    # Bersihkan folder Reports dari sisa pipeline sebelumnya
+    - rm -rf Reports/* || true
+    # Install xvfb untuk Firefox headless di Docker
+    - apt-get update || true
+    - apt-get install -y xvfb ffmpeg
+    - ffmpeg -version
+    - xvfb-run --version || echo "xvfb installed"
+
+  script:
+    - curl ifconfig.me
+    - |
+      # --- DIGIBOX VN PATH RESOLUTION ---
+      if [ -z "$TEST_PATH" ]; then
+        echo "Running default Digibox VN Regression Collection..."
+        export FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_Digiboxvn_Web"
+        export ARG_TYPE="-testSuiteCollectionPath"
+      else
+        echo "Running custom test: $TEST_PATH"
+        export FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
+        export ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
+      fi
+
+      # --- SEQUENTIAL CROSS-BROWSER EXECUTION (Chrome & Firefox) ---
+
+      echo "Starting Execution 1/2: Chrome (Headless)..."
+      katalonc.sh -noSplash -runMode=console \
+        -projectPath="$CI_PROJECT_DIR/digibox-vn.prj" \
+        -retry=0 -apiKey="$KATALON_API_KEY" \
+        "$ARG_TYPE=$FINAL_PATH" \
+        -browserType="Chrome (headless)" \
+        -reportFolder="Reports/Chrome_Reports" \
+        -reportFileName="Chrome_Report" \
+        --config -webui.autoUpdateDrivers=true || echo "Chrome tests completed (with possible errors)."
+
+      echo "=== Checking Firefox environment ==="
+      firefox --version || echo "Firefox not found"
+      geckodriver --version || echo "geckodriver not found"
+
+      echo "Starting Execution 2/2: Firefox (Headless)..."
+      mkdir -p Reports/Firefox_Reports
+      
+      xvfb-run -a --server-args="-screen 0 1920x1080x24" katalonc.sh -noSplash -runMode=console \
+        -projectPath="$CI_PROJECT_DIR/digibox-vn.prj" \
+        -retry=0 -apiKey="$KATALON_API_KEY" \
+        "$ARG_TYPE=$FINAL_PATH" \
+        -browserType="Firefox" \
+        -reportFolder="Reports/Firefox_Reports" \
+        -reportFileName="Firefox_Report" \
+        --config -webui.autoUpdateDrivers=true \
+                 -webui.firefox.args="-headless" \
+                 -webui.firefox.additionalArgs="--width=1920 --height=1080 --setpref dom.webdriver.enabled=false --setpref useAutomationExtension=false"
+      
+      if [ -d "Reports/Firefox_Reports" ] && [ "$(ls -A Reports/Firefox_Reports)" ]; then
+        echo "Firefox reports generated successfully."
+      else
+        echo "WARNING: Firefox reports folder is empty or missing."
+      fi
+
+    # Cleanup old video files
+    - echo "Cleaning up heavy video files from runner cache..."
+    - find Reports/ -type f -name "*.mp4" -mtime +30 -exec rm -f {} \; || true
+
+  artifacts:
+    when: always
+    paths:
+      - Reports/
+      - Screenshot/
+    expire_in: 2 mos

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan tombol WhatsApp dapat diklik</description>
+   <name>Positive - Ensure WhatsApp floating button is clickable</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>9f827350-a9fb-4dc7-bf37-b29954e60320</testCaseGuid>
+</TestCaseEntity>

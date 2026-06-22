@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan tombol WhatsApp floating ditampilkan</description>
+   <name>Positive - Ensure WhatsApp floating button is displayed</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>08239147-7318-41b1-9ce7-b6a3c5cf2131</testCaseGuid>
+</TestCaseEntity>

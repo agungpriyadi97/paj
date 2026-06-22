@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan detail informasi pesanan ditampilkan dengan benar</description>
+   <name>Positive - Ensure order detail information is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>0a910562-392e-4584-9194-c7e0ff7e2afb</testCaseGuid>
+</TestCaseEntity>

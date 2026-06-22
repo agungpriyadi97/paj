@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan status pesanan ditampilkan dengan benar setelah checkout</description>
+   <name>Positive - Ensure order status is displayed correctly after checkout</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>baf1adce-f7ed-4d67-a0b1-5e07831aad93</testCaseGuid>
+</TestCaseEntity>

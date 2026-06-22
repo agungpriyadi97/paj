@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat meminta kode verifikasi dengan email yang valid</description>
+   <name>Positive - Ensure user can request verification code with valid email</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>f34cc296-5ffa-42ff-88f0-4552fff3116a</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan login gagal ketika field account kosong</description>
+   <name>Negative - Ensure login fails when account field is empty</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>d6fe8f8b-cbf9-4c51-963f-f35e668f53eb</testCaseGuid>
+</TestCaseEntity>

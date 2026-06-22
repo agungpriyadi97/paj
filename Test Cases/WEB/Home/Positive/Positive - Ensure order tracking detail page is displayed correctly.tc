@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan halaman detail pelacakan pesanan ditampilkan dengan benar</description>
+   <name>Positive - Ensure order tracking detail page is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>0bd8a996-1d45-45b6-88e1-b35a76b32842</testCaseGuid>
+</TestCaseEntity>

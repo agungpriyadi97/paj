@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan copywriting Lokasi Toko ditampilkan dengan benar</description>
+   <name>Positive - Ensure Store Location copywriting is displayed correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>19f25e57-7add-4a28-95cc-6e1d34d8c331</testCaseGuid>
+</TestCaseEntity>

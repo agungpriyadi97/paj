@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Registrasi menggunakan akun yang sudah terdaftar</description>
+   <name>Negative - Register with duplicate account</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>5f4618af-9f3f-4fea-a7c9-be071e9a21ce</testCaseGuid>
+</TestCaseEntity>

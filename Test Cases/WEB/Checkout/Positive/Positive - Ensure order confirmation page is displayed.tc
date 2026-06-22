@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan halaman konfirmasi pesanan ditampilkan</description>
+   <name>Positive - Ensure order confirmation page is displayed</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>b48845c8-cdc9-427d-b572-cdcc359ce887</testCaseGuid>
+</TestCaseEntity>

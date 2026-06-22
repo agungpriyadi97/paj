@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan tombol WhatsApp tetap terlihat saat halaman di-scroll</description>
+   <name>Positive - Ensure WhatsApp floating button remains visible while scrolling</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>83d35ef1-64a6-401e-9978-9ed8ff4f9ea4</testCaseGuid>
+</TestCaseEntity>

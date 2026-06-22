@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat menambahkan alamat pengiriman baru dari halaman checkout</description>
+   <name>Positive - Ensure user can add new shipping address from checkout page</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>b9e67c5e-78bd-40af-9768-b272646f0fe2</testCaseGuid>
+</TestCaseEntity>

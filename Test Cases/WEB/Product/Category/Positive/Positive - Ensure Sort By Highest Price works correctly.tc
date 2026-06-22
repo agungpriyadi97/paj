@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>Positive - Ensure Sort By Highest Price works correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>384e947a-f182-4ab6-bb34-00a58d0a6b93</testCaseGuid>
+</TestCaseEntity>

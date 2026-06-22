@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memasitkan pengguna dapat menambahkan alamat penagihan baru dari halaman checkout</description>
+   <name>Positive - Ensure user can add new billing address from checkout page</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>e366edf9-807e-4125-9840-39c5cf3d7460</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat melacak pesanan dengan sukses dengan kode verifikasi yang valid</description>
+   <name>Positive - Ensure user can track order successfully with valid verification code</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>7de5423f-5eff-4b23-bce3-29657f5435bf</testCaseGuid>
+</TestCaseEntity>

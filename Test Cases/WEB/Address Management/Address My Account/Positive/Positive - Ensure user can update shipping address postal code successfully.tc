@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan kode pos pada alamat pengiriman sesuai dengan distrik yang dipilih saat edit alamat</description>
+   <name>Positive - Ensure user can update shipping address postal code successfully</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>f184449f-1241-4891-8b91-354c9bc8f083</testCaseGuid>
+</TestCaseEntity>

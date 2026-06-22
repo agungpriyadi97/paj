@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan template pesan WhatsApp terisi dengan benar</description>
+   <name>Positive - Ensure WhatsApp phone number is populated correctly</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>ce8b65de-f04b-4c49-8572-a31901b77f16</testCaseGuid>
+</TestCaseEntity>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan tombol Lanjutkan dinonaktifkan saat kode verifikasi kosong</description>
+   <name>Positive - Ensure Continue button is disabled when verification code is empty</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>360cd047-3022-417a-a780-b97b2276768d</testCaseGuid>
+</TestCaseEntity>

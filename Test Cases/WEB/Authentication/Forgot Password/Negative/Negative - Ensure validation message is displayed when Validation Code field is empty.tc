@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pesan validasi muncul ketika field Validation Code kosong</description>
+   <name>Negative - Ensure validation message is displayed when Validation Code field is empty</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>922e9afd-bb2a-4ce4-9f9f-d9d76a00519c</testCaseGuid>
+</TestCaseEntity>

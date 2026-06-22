@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan  status pesanan berubah setelah pembayaran berhasil</description>
+   <name>Positive - Ensure order status changes after successful payment</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>f65d62bd-4ce7-4144-a139-ce533f3651bc</testCaseGuid>
+</TestCaseEntity>
