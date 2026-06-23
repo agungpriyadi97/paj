@@ -34,7 +34,7 @@ katalon_pasti_ada_jalan_test:
     - |
       # --- PAJ PATH RESOLUTION ---
       if [ -z "$TEST_PATH" ]; then
-        echo "Running default Digibox VN Regression Collection..."
+        echo "Running default Pasti Ada Jalan Regression Collection..."
         export FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
         export ARG_TYPE="-testSuiteCollectionPath"
       else
