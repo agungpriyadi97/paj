@@ -1,4 +1,6 @@
 import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
+import com.kms.katalon.core.testobject.ConditionType
+import com.kms.katalon.core.testobject.TestObject
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
@@ -86,16 +88,68 @@ WebUI.waitForPageLoad(10)
 
 println('CHECKOUT PAGE OPENED')
 
+WebUI.delay(10)
+
+WebUI.scrollToPosition(0, 1500)
+
+WebUI.delay(5)
+
+//====================================================
+// DEBUG PAYMENT SECTION
+//====================================================
+String bodyText = WebUI.executeJavaScript(
+	"return document.body.innerText;",
+	null
+)
+
+println("HAS PAY WITH        : " + bodyText.contains("Pay With"))
+println("HAS MIDTRANS        : " + bodyText.contains("Midtrans"))
+println("HAS VIRTUAL ACCOUNT : " + bodyText.contains("Virtual Account"))
+
+TestObject midtrans = new TestObject('midtrans')
+
+midtrans.addProperty(
+    'xpath',
+    ConditionType.EQUALS,
+    "//span[contains(@class,'sp-payment-methods__item-name') and normalize-space()='Midtrans']"
+)
 //====================================================
 // PAYMENT METHOD
 //====================================================
-// Tunggu section payment muncul
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 20)
 
-WebUI.scrollToElement(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 10)
+WebUI.delay(5)
 
-// Pilih Midtrans jika belum terpilih
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'))
+WebUI.scrollToPosition(0, 1200)
+
+boolean midtransFound = false
+
+for (int i = 1; i <= 10; i++) {
+
+	println("WAIT MIDTRANS ATTEMPT : " + i)
+
+	if (
+		WebUI.verifyElementPresent(
+			midtrans,
+			10,
+			FailureHandling.OPTIONAL
+		)
+	) {
+
+		midtransFound = true
+
+		break
+	}
+
+	WebUI.delay(3)
+}
+
+println("MIDTRANS FOUND : " + midtransFound)
+
+assert midtransFound : 'Midtrans payment method not displayed'
+
+WebUI.scrollToElement(midtrans, 10)
+
+WebUI.enhancedClick(midtrans)
 
 println('MIDTRANS SELECTED')
 
