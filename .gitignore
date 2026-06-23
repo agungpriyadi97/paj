@@ -22,3 +22,9 @@ build
 /.classpath
 .svn/
 .cache/
+
+# Katalon Reports & Temporary Files
+Reports/
+Screenshot/
+.temp*
+*.mp4
