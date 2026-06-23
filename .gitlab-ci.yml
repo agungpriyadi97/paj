@@ -11,7 +11,7 @@ variables:
   # CRITICAL: Increase shared memory size for Chrome Headless in Docker
   GS_OPTIONS: "-Xmx2048m -Xms512m -Djava.shm.size=2g"
 
-katalon_digiboxvn_test:
+katalon_paj_test:
   stage: test
   tags:
     - infra
@@ -35,7 +35,7 @@ katalon_digiboxvn_test:
       # --- DIGIBOX VN PATH RESOLUTION ---
       if [ -z "$TEST_PATH" ]; then
         echo "Running default Digibox VN Regression Collection..."
-        export FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_Digiboxvn_Web"
+        export FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_paj_Web"
         export ARG_TYPE="-testSuiteCollectionPath"
       else
         echo "Running custom test: $TEST_PATH"
