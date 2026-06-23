@@ -20,51 +20,46 @@ import org.openqa.selenium.Keys as Keys
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
 
-//====================================================
-// OPEN TUMBLERS CATEGORY
-//====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
+println('LOGIN SUCCESS')
 
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.waitForPageLoad(10)
-
-println('TUMBLERS PAGE OPENED')
+WebUI.delay(5)
 
 //====================================================
-// OPEN FIRST PRODUCT
+// OPEN PDP DIRECTLY
 //====================================================
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'), 10)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
 
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'))
+WebUI.waitForPageLoad(30)
 
-WebUI.waitForPageLoad(10)
-
-println('PRODUCT DETAIL PAGE OPENED')
+println('PDP PAGE OPENED')
 
 //====================================================
 // ADD TO CART
 //====================================================
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
-WebUI.delay(2)
+WebUI.delay(10)
 
 println('PRODUCT ADDED TO CART')
+
+WebUI.delay(3)
 
 //====================================================
 // OPEN CART
 //====================================================
-WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'), 20)
 
-WebUI.waitForPageLoad(10)
+WebUI.enhancedClick(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+
+WebUI.waitForPageLoad(30)
 
 println('SHOPPING CART OPENED')
 
@@ -97,39 +92,26 @@ println('ADD NEW ADDRESS SELECTED')
 //====================================================
 // RANDOM ADDRESS & POSTAL CODE
 //====================================================
-
-def jakartaAddresses = [
-	[address: 'Jakarta Selatan', postalCode: '12190'],
-	[address: 'Jakarta Barat', postalCode: '11510'],
-	[address: 'Jakarta Timur', postalCode: '13410'],
-	[address: 'Jakarta Utara', postalCode: '14450'],
-	[address: 'Jakarta Pusat', postalCode: '10110']
-]
+def jakartaAddresses = [[('address') : 'Jakarta Selatan', ('postalCode') : '12190'], [('address') : 'Jakarta Barat', ('postalCode') : '11510']
+    , [('address') : 'Jakarta Timur', ('postalCode') : '13410'], [('address') : 'Jakarta Utara', ('postalCode') : '14450']
+    , [('address') : 'Jakarta Pusat', ('postalCode') : '10110']]
 
 def randomData = jakartaAddresses[new Random().nextInt(jakartaAddresses.size())]
 
-String address = randomData.address + ' ' + System.currentTimeMillis()
+String address = (randomData.address + ' ') + System.currentTimeMillis()
+
 String postalCode = randomData.postalCode
 
 println('ADDRESS : ' + address)
+
 println('POSTAL CODE : ' + postalCode)
 
 //====================================================
 // INPUT SHIPPING ADDRESS
 //====================================================
+WebUI.clearText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_Address'))
 
-WebUI.clearText(
-	findTestObject(
-		'WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_Address'
-	)
-)
-
-WebUI.setText(
-	findTestObject(
-		'WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_Address'
-	),
-	address
-)
+WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_Address'), address)
 
 println('SHIPPING ADDRESS FILLED')
 
@@ -138,19 +120,9 @@ WebUI.delay(1)
 //====================================================
 // INPUT POSTAL CODE
 //====================================================
+WebUI.clearText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_PostalCode'))
 
-WebUI.clearText(
-	findTestObject(
-		'WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_PostalCode'
-	)
-)
-
-WebUI.setText(
-	findTestObject(
-		'WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_PostalCode'
-	),
-	postalCode
-)
+WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Edit Shipping Address/txt_PostalCode'), postalCode)
 
 println('POSTAL CODE FILLED')
 
@@ -171,7 +143,7 @@ println('NEW SHIPPING ADDRESS SAVED')
 //====================================================
 // VERIFY UPDATED ADDRESS
 //====================================================
-
 WebUI.verifyTextPresent(address, false)
 
 println('UPDATED SHIPPING ADDRESS DISPLAYED')
+

@@ -19,10 +19,10 @@
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
    <testCaseLink>
-      <guid>e58ee7fa-c914-4888-b959-5857796d47e9</guid>
+      <guid>e199f7da-294c-4b6a-8592-07ca071c51e0</guid>
       <isReuseDriver>false</isReuseDriver>
       <isRun>true</isRun>
-      <testCaseId>Test Cases/WEB/Checkout/Positive/Positive - Ensure user can checkout order successfully</testCaseId>
+      <testCaseId>Test Cases/WEB/Checkout/Positive/Positive - Ensure user can checkout cencel order</testCaseId>
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
    <testCaseLink>
@@ -40,10 +40,10 @@
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
    <testCaseLink>
-      <guid>e199f7da-294c-4b6a-8592-07ca071c51e0</guid>
+      <guid>e58ee7fa-c914-4888-b959-5857796d47e9</guid>
       <isReuseDriver>false</isReuseDriver>
       <isRun>true</isRun>
-      <testCaseId>Test Cases/WEB/Checkout/Positive/Positive - Ensure user can checkout cencel order</testCaseId>
+      <testCaseId>Test Cases/WEB/Checkout/Positive/Positive - Ensure user can checkout order successfully</testCaseId>
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
 </TestSuiteEntity>

@@ -7,11 +7,10 @@
    <selectorCollection>
       <entry>
          <key>XPATH</key>
-         <value>//span[contains(text(),'Coupon Discount')]/following::span[1]</value>
+         <value>//ul[contains(@class,'price-detail')]//li[.//span[contains(.,'Coupon Discount')]]/span[last()]</value>
       </entry>
       <entry>
          <key>BASIC</key>
-         <value></value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>
