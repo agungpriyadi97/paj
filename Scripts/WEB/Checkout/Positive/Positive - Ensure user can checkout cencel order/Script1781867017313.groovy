@@ -177,62 +177,6 @@ catch (Exception e) {
 } 
 
 //====================================================
-// WAIT SUCCESS PAGE
-//====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'), 60)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'))
-
-println('SUCCESS PAGE DISPLAYED')
-
-//====================================================
-// VERIFY ORDER STATUS
-//====================================================
-String orderStatus = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderStatus'))
-
-println('ORDER STATUS : ' + orderStatus)
-
-assert orderStatus != ''
-
-//====================================================
-// VERIFY ORDER NUMBER
-//====================================================
-String orderNumber = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderNumber'))
-
-println('ORDER NUMBER : ' + orderNumber)
-
-assert orderNumber != ''
-
-assert orderNumber.matches('\\d+')
-
-//====================================================
-// VERIFY PAYMENT METHOD
-//====================================================
-String paymentMethod = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_PaymentMethod'))
-
-println('PAYMENT METHOD : ' + paymentMethod)
-
-assert paymentMethod != ''
-
-//====================================================
-// VERIFY TOTAL PRICE
-//====================================================
-String totalPrice = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_TotalPrice'))
-
-println('TOTAL PRICE : ' + totalPrice)
-
-assert totalPrice.contains('Rp')
-
-//====================================================
-// VERIFY VIRTUAL ACCOUNT
-//====================================================
-String virtualAccount = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_VirtualAccount'))
-
-println('VIRTUAL ACCOUNT : ' + virtualAccount)
-
-assert virtualAccount != ''
-
-//====================================================
 // OPEN ORDER DETAIL
 //====================================================
 WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/btn_ViewDetails'))

@@ -2,7 +2,8 @@ import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
 import com.kms.katalon.core.model.FailureHandling as FailureHandling
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
-
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.testobject.ConditionType
 //====================================================
 // LOGIN
 //====================================================
@@ -55,11 +56,16 @@ println('SHOPPING CART OPENED')
 //====================================================
 // CHECKOUT
 //====================================================
-WebUI.scrollToElement(findTestObject('WEB/Cart/btn_Checkout'), 10)
+WebUI.scrollToElement(
+	findTestObject('WEB/Cart/btn_Checkout'),
+	10
+)
 
-WebUI.enhancedClick(findTestObject('WEB/Cart/btn_Checkout'))
+WebUI.enhancedClick(
+	findTestObject('WEB/Cart/btn_Checkout')
+)
 
-WebUI.waitForPageLoad(20)
+WebUI.waitForPageLoad(30)
 
 println('CHECKOUT PAGE OPENED')
 
@@ -70,67 +76,93 @@ WebUI.scrollToPosition(0, 3000)
 WebUI.delay(3)
 
 //====================================================
-// GET PAGE TEXT BEFORE PROMO
+// TOTAL OBJECT
 //====================================================
-String bodyTextBefore = WebUI.executeJavaScript('return document.body.innerText;', null)
+TestObject totalObj = new TestObject('totalObj')
 
-println(bodyTextBefore)
+totalObj.addProperty(
+	'xpath',
+	ConditionType.EQUALS,
+	"//ul[contains(@class,'price-detail')]//li[contains(@class,'total')]/span[last()]"
+)
 
 //====================================================
-// GET ALL PRICE BEFORE PROMO
+// TOTAL BEFORE PROMO
 //====================================================
-def pricesBefore = bodyTextBefore =~ 'Rp\\s*([\\d\\.]+)'
+WebUI.waitForElementVisible(
+	totalObj,
+	20
+)
 
-List<Long> valuesBefore = []
+String totalBeforeText =
+	WebUI.getText(totalObj)
 
-while (pricesBefore.find()) {
-    valuesBefore.add(pricesBefore.group(1).replace('.', '').toLong())
-}
+println('TOTAL BEFORE TEXT : ' + totalBeforeText)
 
-println('VALUES BEFORE : ' + valuesBefore)
-
-assert valuesBefore.size() > 0
-
-Long totalBeforePromo = valuesBefore.max()
+Long totalBeforePromo =
+	totalBeforeText
+		.replace('Rp', '')
+		.replace('.', '')
+		.replace(',', '')
+		.trim()
+		.toLong()
 
 println('TOTAL BEFORE PROMO : ' + totalBeforePromo)
 
 //====================================================
 // APPLY PROMO
 //====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Promotion/txt_PromoCode'), 20)
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Checkout/Promotion/txt_PromoCode'),
+	20
+)
 
-WebUI.setText(findTestObject('WEB/Checkout/Promotion/txt_PromoCode'), 'agung')
+WebUI.setText(
+	findTestObject('WEB/Checkout/Promotion/txt_PromoCode'),
+	'agung'
+)
 
-WebUI.enhancedClick(findTestObject('WEB/Checkout/Promotion/btn_ApplyPromo'))
+WebUI.enhancedClick(
+	findTestObject('WEB/Checkout/Promotion/btn_ApplyPromo')
+)
 
 println('PROMO APPLIED')
 
 WebUI.delay(5)
 
 //====================================================
-// GET PAGE TEXT AFTER PROMO
+// VERIFY COUPON DISCOUNT APPEARS
 //====================================================
-String bodyTextAfter = WebUI.executeJavaScript('return document.body.innerText;', null)
+String pageText =
+	WebUI.executeJavaScript(
+		"return document.body.innerText;",
+		null
+	)
 
-println(bodyTextAfter)
+assert pageText.contains('Coupon Discount')
+
+println('COUPON DISCOUNT DISPLAYED')
 
 //====================================================
-// GET ALL PRICE AFTER PROMO
+// TOTAL AFTER PROMO
 //====================================================
-def pricesAfter = bodyTextAfter =~ 'Rp\\s*([\\d\\.]+)'
+WebUI.waitForElementVisible(
+	totalObj,
+	20
+)
 
-List<Long> valuesAfter = []
+String totalAfterText =
+	WebUI.getText(totalObj)
 
-while (pricesAfter.find()) {
-    valuesAfter.add(pricesAfter.group(1).replace('.', '').toLong())
-}
+println('TOTAL AFTER TEXT : ' + totalAfterText)
 
-println('VALUES AFTER : ' + valuesAfter)
-
-assert valuesAfter.size() > 0
-
-Long totalAfterPromo = valuesAfter.max()
+Long totalAfterPromo =
+	totalAfterText
+		.replace('Rp', '')
+		.replace('.', '')
+		.replace(',', '')
+		.trim()
+		.toLong()
 
 println('TOTAL AFTER PROMO : ' + totalAfterPromo)
 
@@ -142,7 +174,11 @@ assert totalAfterPromo < totalBeforePromo
 println('PROMOTION APPLIED SUCCESSFULLY')
 
 //====================================================
-// TEST PASSED
+// FINAL RESULT
 //====================================================
+println('======================================')
+println('TOTAL BEFORE : ' + totalBeforePromo)
+println('TOTAL AFTER  : ' + totalAfterPromo)
 println('PROMO CODE SUCCESSFULLY APPLIED')
-
+println('TEST CASE PASSED')
+println('======================================')

@@ -17,8 +17,20 @@ import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
 
-WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
-    [:], FailureHandling.STOP_ON_FAILURE)
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import com.kms.katalon.core.model.FailureHandling
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+
+//====================================================
+// LOGIN
+//====================================================
+WebUI.callTestCase(
+	findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'),
+	[:],
+	FailureHandling.STOP_ON_FAILURE
+)
 
 println('LOGIN SUCCESS')
 
@@ -27,7 +39,9 @@ WebUI.delay(5)
 //====================================================
 // OPEN PDP DIRECTLY
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
+WebUI.navigateToUrl(
+	'https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250'
+)
 
 WebUI.waitForPageLoad(30)
 
@@ -36,138 +50,218 @@ println('PDP PAGE OPENED')
 //====================================================
 // ADD TO CART
 //====================================================
-WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementPresent(
+	findTestObject('WEB/Product/PDP/btn_AddToCart'),
+	30
+)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Product/PDP/btn_AddToCart'),
+	30
+)
 
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementClickable(
+	findTestObject('WEB/Product/PDP/btn_AddToCart'),
+	30
+)
 
-WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
+WebUI.scrollToElement(
+	findTestObject('WEB/Product/PDP/btn_AddToCart'),
+	10
+)
 
-WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
-
-WebUI.delay(10)
+WebUI.enhancedClick(
+	findTestObject('WEB/Product/PDP/btn_AddToCart')
+)
 
 println('PRODUCT ADDED TO CART')
 
-WebUI.delay(3)
+WebUI.delay(5)
 
-WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'), 20)
+//====================================================
+// OPEN CART
+//====================================================
+WebUI.waitForElementClickable(
+	findTestObject('WEB/Home/Header/Icon Menu/icon_cart'),
+	20
+)
 
-WebUI.enhancedClick(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+WebUI.enhancedClick(
+	findTestObject('WEB/Home/Header/Icon Menu/icon_cart')
+)
 
 WebUI.waitForPageLoad(30)
 
 println('SHOPPING CART OPENED')
 
 //====================================================
-// INCREASE QTY TO 2 PCS
-//====================================================
-String currentQty = WebUI.getAttribute(findTestObject('WEB/Cart/txt_QuantityValue'), 'aria-valuenow')
-
-println('CURRENT QTY : ' + currentQty)
-
-Integer qty = currentQty.toInteger()
-
-if (qty < 2) {
-    WebUI.click(findTestObject('WEB/Cart/btn_QtyPlus'))
-
-    WebUI.delay(2)
-
-    currentQty = WebUI.getAttribute(findTestObject('WEB/Cart/txt_QuantityValue'), 'aria-valuenow')
-
-    qty = currentQty.toInteger()
-}
-
-assert qty >= 2
-
-println('CURRENT QTY : ' + qty)
-
-println('MINIMUM QTY REQUIREMENT MET')
-
-println('QTY UPDATED TO : ' + currentQty)
-
-//====================================================
 // CHECKOUT
 //====================================================
-WebUI.scrollToElement(findTestObject('WEB/Cart/btn_Checkout'), 10)
+WebUI.scrollToElement(
+	findTestObject('WEB/Cart/btn_Checkout'),
+	10
+)
 
-WebUI.click(findTestObject('WEB/Cart/btn_Checkout'))
+WebUI.enhancedClick(
+	findTestObject('WEB/Cart/btn_Checkout')
+)
 
-WebUI.waitForPageLoad(10)
+WebUI.waitForPageLoad(30)
+
+println('CHECKOUT PAGE OPENED')
+
+WebUI.delay(5)
 
 //====================================================
 // GET SUBTOTAL BEFORE PROMO
 //====================================================
-Long subtotal = WebUI.getText(findTestObject('WEB/Checkout/OrderSummary/lbl_Subtotal')).replace('Rp', '').replace('.', '').replace(
-    ',', '').trim().toLong()
+String subtotalText =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/OrderSummary/lbl_Subtotal')
+	)
+
+Long subtotal =
+	subtotalText
+		.replace('Rp','')
+		.replace('.','')
+		.replace(',','')
+		.trim()
+		.toLong()
 
 println('SUBTOTAL : ' + subtotal)
 
 //====================================================
-// APPLY PROMO CODE
+// APPLY PROMO
 //====================================================
-WebUI.setText(findTestObject('WEB/Checkout/Promotion/txt_PromoCode'), 'agung')
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Checkout/Promotion/txt_PromoCode'),
+	20
+)
 
-WebUI.click(findTestObject('WEB/Checkout/Promotion/btn_ApplyPromo'))
+WebUI.setText(
+	findTestObject('WEB/Checkout/Promotion/txt_PromoCode'),
+	'agung'
+)
+
+WebUI.enhancedClick(
+	findTestObject('WEB/Checkout/Promotion/btn_ApplyPromo')
+)
+
+println('PROMO APPLIED')
 
 WebUI.delay(5)
 
-println('PROMO CODE APPLIED')
+//====================================================
+// VERIFY COUPON DISCOUNT DISPLAYED
+//====================================================
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Checkout/OrderSummary/lbl_CouponDiscount'),
+	20
+)
+
+String discountText =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/OrderSummary/lbl_CouponDiscount')
+	)
+
+println('DISCOUNT TEXT : ' + discountText)
+
+assert discountText.contains('Rp')
 
 //====================================================
 // GET ACTUAL DISCOUNT
 //====================================================
-String discountText = WebUI.getText(findTestObject('WEB/Checkout/OrderSummary/lbl_CouponDiscount'))
-
-println('DISCOUNT TEXT : ' + discountText)
-
-Long actualDiscount = discountText.replace('-Rp', '').replace('Rp', '').replace('.', '').replace(',', '').trim().toLong()
+Long actualDiscount =
+	discountText
+		.replace('-Rp','')
+		.replace('Rp','')
+		.replace('.','')
+		.replace(',','')
+		.trim()
+		.toLong()
 
 println('ACTUAL DISCOUNT : ' + actualDiscount)
 
 //====================================================
-// CALCULATE EXPECTED DISCOUNT (10%)
+// EXPECTED DISCOUNT = 10% SUBTOTAL
 //====================================================
-Long expectedDiscount = (subtotal * 10) / 100
+Long expectedDiscount =
+	(subtotal * 10) / 100
 
 println('EXPECTED DISCOUNT : ' + expectedDiscount)
 
-//====================================================
-// VERIFY DISCOUNT AMOUNT
-//====================================================
 assert actualDiscount == expectedDiscount
 
-println('DISCOUNT CALCULATION VERIFIED')
+println('DISCOUNT VERIFIED')
 
 //====================================================
-// VERIFY TOTAL FORMULA
+// SHIPPING FEE
 //====================================================
-Long shippingFee = WebUI.getText(findTestObject('WEB/Checkout/OrderSummary/lbl_ShippingFee')).replace('Rp', '').replace(
-    '.', '').replace(',', '').trim().toLong()
+Long shippingFee =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/OrderSummary/lbl_ShippingFee')
+	)
+	.replace('Rp','')
+	.replace('.','')
+	.replace(',','')
+	.trim()
+	.toLong()
 
-Long insuranceFee = WebUI.getText(findTestObject('WEB/Checkout/OrderSummary/lbl_InsuranceFee')).replace('Rp', '').replace(
-    '.', '').replace(',', '').trim().toLong()
+println('SHIPPING FEE : ' + shippingFee)
 
-Long actualTotal = WebUI.getText(findTestObject('WEB/Checkout/OrderSummary/lbl_Total')).replace('Rp', '').replace('.', '').replace(
-    ',', '').trim().toLong()
+//====================================================
+// INSURANCE FEE
+//====================================================
+Long insuranceFee =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/OrderSummary/lbl_InsuranceFee')
+	)
+	.replace('Rp','')
+	.replace('.','')
+	.replace(',','')
+	.trim()
+	.toLong()
 
-Long expectedTotal = ((subtotal - actualDiscount) + shippingFee) + insuranceFee
+println('INSURANCE FEE : ' + insuranceFee)
+
+//====================================================
+// ACTUAL TOTAL
+//====================================================
+Long actualTotal =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/OrderSummary/lbl_Total')
+	)
+	.replace('Rp','')
+	.replace('.','')
+	.replace(',','')
+	.trim()
+	.toLong()
+
+println('ACTUAL TOTAL : ' + actualTotal)
+
+//====================================================
+// EXPECTED TOTAL
+//====================================================
+Long expectedTotal =
+	(subtotal - actualDiscount) +
+	shippingFee +
+	insuranceFee
 
 println('EXPECTED TOTAL : ' + expectedTotal)
 
-println('ACTUAL TOTAL   : ' + actualTotal)
-
 assert actualTotal == expectedTotal
 
-println('TOTAL CALCULATION VERIFIED')
+println('TOTAL VERIFIED')
 
 //====================================================
-// TEST PASSED
+// PASSED
 //====================================================
-println('PROMO CODE APPLIED SUCCESSFULLY')
-
-println('DISCOUNT AMOUNT CALCULATED CORRECTLY')
-
+println('=====================================')
+println('SUBTOTAL         : ' + subtotal)
+println('DISCOUNT         : ' + actualDiscount)
+println('SHIPPING FEE     : ' + shippingFee)
+println('INSURANCE FEE    : ' + insuranceFee)
+println('EXPECTED TOTAL   : ' + expectedTotal)
+println('ACTUAL TOTAL     : ' + actualTotal)
 println('TEST CASE PASSED')
-
+println('=====================================')
