@@ -33,7 +33,7 @@ WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categorie
 
 WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
 
-WebUI.waitForPageLoad(10)
+WebUI.delay(10)
 
 println('TUMBLERS PAGE OPENED')
 
@@ -78,21 +78,14 @@ println('SHOPPING CART PAGE DISPLAYED')
 //====================================================
 // GET QTY BEFORE
 //====================================================
-int qtyBefore = Integer.parseInt(
-	WebUI.getAttribute(
-		findTestObject('WEB/Cart/txt_QuantityValue'),
-		'value'
-	)
-)
+int qtyBefore = Integer.parseInt(WebUI.getAttribute(findTestObject('WEB/Cart/txt_QuantityValue'), 'value'))
 
 println('QTY BEFORE : ' + qtyBefore)
 
 //====================================================
 // GET TOTAL BEFORE
 //====================================================
-String totalBefore = WebUI.getText(
-	findTestObject('WEB/Cart/lbl_Total')
-)
+String totalBefore = WebUI.getText(findTestObject('WEB/Cart/lbl_Total'))
 
 println('TOTAL BEFORE : ' + totalBefore)
 
@@ -108,12 +101,7 @@ println('PLUS BUTTON CLICKED')
 //====================================================
 // GET QTY AFTER
 //====================================================
-int qtyAfter = Integer.parseInt(
-	WebUI.getAttribute(
-		findTestObject('WEB/Cart/txt_QuantityValue'),
-		'value'
-	)
-)
+int qtyAfter = Integer.parseInt(WebUI.getAttribute(findTestObject('WEB/Cart/txt_QuantityValue'), 'value'))
 
 println('QTY AFTER : ' + qtyAfter)
 
@@ -127,9 +115,7 @@ println('QTY UPDATED SUCCESSFULLY')
 //====================================================
 // VERIFY TOTAL UPDATED
 //====================================================
-String totalAfter = WebUI.getText(
-	findTestObject('WEB/Cart/lbl_Total')
-)
+String totalAfter = WebUI.getText(findTestObject('WEB/Cart/lbl_Total'))
 
 println('TOTAL AFTER : ' + totalAfter)
 
@@ -141,3 +127,4 @@ println('ORDER SUMMARY UPDATED')
 // TEST PASSED
 //====================================================
 println('USER CAN UPDATE PRODUCT QUANTITY SUCCESSFULLY')
+

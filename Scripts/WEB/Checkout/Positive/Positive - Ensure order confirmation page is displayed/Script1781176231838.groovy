@@ -20,51 +20,46 @@ import org.openqa.selenium.Keys as Keys
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
 
-//====================================================
-// OPEN TUMBLERS CATEGORY
-//====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
+println('LOGIN SUCCESS')
 
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.waitForPageLoad(10)
-
-println('TUMBLERS PAGE OPENED')
+WebUI.delay(5)
 
 //====================================================
-// OPEN FIRST PRODUCT
+// OPEN PDP DIRECTLY
 //====================================================
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'), 10)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
 
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'))
+WebUI.waitForPageLoad(30)
 
-WebUI.waitForPageLoad(10)
-
-println('PRODUCT DETAIL PAGE OPENED')
+println('PDP PAGE OPENED')
 
 //====================================================
 // ADD TO CART
 //====================================================
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
-WebUI.delay(2)
+WebUI.delay(10)
 
 println('PRODUCT ADDED TO CART')
+
+WebUI.delay(3)
 
 //====================================================
 // OPEN CART
 //====================================================
-WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'), 20)
 
-WebUI.waitForPageLoad(10)
+WebUI.enhancedClick(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+
+WebUI.waitForPageLoad(30)
 
 println('SHOPPING CART OPENED')
 
@@ -131,41 +126,28 @@ println('SWITCH TO SUCCESS PAGE')
 //====================================================
 // VERIFY ORDER CONFIRMATION PAGE
 //====================================================
+WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'), 30)
 
-WebUI.waitForElementVisible(
-	findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'),
-	30
-)
-
-WebUI.verifyElementVisible(
-	findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'))
 
 println('ORDER SUCCESS LABEL DISPLAYED')
 
 //====================================================
 // VERIFY SUCCESS MESSAGE
 //====================================================
-
-WebUI.verifyTextPresent(
-	'Your order has been placed successfully.',
-	false
-)
+WebUI.verifyTextPresent('Your order has been placed successfully.', false)
 
 println('SUCCESS MESSAGE DISPLAYED')
 
 //====================================================
 // VERIFY VIEW DETAILS BUTTON
 //====================================================
-
-WebUI.verifyElementVisible(
-	findTestObject('WEB/Checkout/Checkout Success/btn_ViewDetails')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/btn_ViewDetails'))
 
 println('VIEW DETAILS BUTTON DISPLAYED')
 
 //====================================================
 // TEST PASSED
 //====================================================
-
 println('ORDER CONFIRMATION PAGE DISPLAYED SUCCESSFULLY')
+

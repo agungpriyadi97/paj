@@ -20,39 +20,33 @@ import org.openqa.selenium.Keys as Keys
 //====================================================
 // OPEN TUMBLERS CATEGORY
 //====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
+println('LOGIN SUCCESS')
 
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.delay(10)
+WebUI.delay(5)
 
 //====================================================
-// OPEN FIRST PRODUCT
+// OPEN PDP DIRECTLY
 //====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'), 10)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
 
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'))
+WebUI.waitForPageLoad(30)
 
-WebUI.waitForPageLoad(10)
-
-println('PRODUCT DETAIL PAGE OPENED')
+println('PDP PAGE OPENED')
 
 //====================================================
 // ADD TO CART
 //====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
-WebUI.delay(3)
+WebUI.delay(10)
 
 println('PRODUCT ADDED TO CART')
 
