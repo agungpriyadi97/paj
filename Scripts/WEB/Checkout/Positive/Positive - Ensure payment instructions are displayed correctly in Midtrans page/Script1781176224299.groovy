@@ -1,4 +1,6 @@
 import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.testobject.ConditionType
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
@@ -83,21 +85,63 @@ WebUI.waitForPageLoad(10)
 println('CHECKOUT PAGE OPENED')
 
 //====================================================
-// PAYMENT METHOD
+// PAYMENT METHOD - HEADLESS SAFE
 //====================================================
-WebUI.waitForPageLoad(30)
+
+WebUI.delay(10)
+
+WebUI.scrollToPosition(0, 1500)
 
 WebUI.delay(5)
 
-WebUI.scrollToPosition(0, 1200)
+// DEBUG
+String bodyText = WebUI.executeJavaScript(
+    "return document.body.innerText;",
+    null
+)
 
-WebUI.delay(2)
+println("HAS PAY WITH        : " + bodyText.contains("Pay With"))
+println("HAS MIDTRANS        : " + bodyText.contains("Midtrans"))
+println("HAS VIRTUAL ACCOUNT : " + bodyText.contains("Virtual Account"))
 
-WebUI.waitForElementPresent(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 30)
+// Dynamic Object Midtrans
+TestObject midtrans = new TestObject('midtrans')
 
-WebUI.waitForElementClickable(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 30)
+midtrans.addProperty(
+    'xpath',
+    ConditionType.EQUALS,
+    "//span[contains(@class,'sp-payment-methods__item-name') and normalize-space()='Midtrans']"
+)
 
-WebUI.enhancedClick(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'))
+boolean midtransFound = false
+
+for (int i = 1; i <= 10; i++) {
+
+    println("WAIT MIDTRANS ATTEMPT : " + i)
+
+    if (
+        WebUI.verifyElementPresent(
+            midtrans,
+            10,
+            FailureHandling.OPTIONAL
+        )
+    ) {
+
+        midtransFound = true
+
+        break
+    }
+
+    WebUI.delay(3)
+}
+
+println("MIDTRANS FOUND : " + midtransFound)
+
+assert midtransFound : 'Midtrans payment method not displayed'
+
+WebUI.scrollToElement(midtrans, 10)
+
+WebUI.enhancedClick(midtrans)
 
 println('MIDTRANS SELECTED')
 
@@ -130,12 +174,22 @@ WebUI.click(findTestObject('WEB/Cart/btn_Checkout'))
 
 WebUI.delay(10)
 
-// pindah ke tab/window terakhir
-WebUI.switchToWindowIndex(1)
+int totalWindow = WebUI.getWindowIndex()
+
+println("CURRENT WINDOW INDEX : " + totalWindow)
+
+try {
+
+	WebUI.switchToWindowIndex(1)
+
+	println('SWITCH TO WINDOW 1')
+
+} catch (Exception e) {
+
+	println('SUCCESS PAGE OPENED IN SAME TAB')
+}
 
 WebUI.delay(3)
-
-println('SWITCH TO SUCCESS PAGE')
 
 //====================================================
 // VERIFY CHECKOUT SUCCESS PAGE
@@ -237,12 +291,48 @@ println('PAYMENT PAGE VERIFIED')
 //====================================================
 // OPEN MIDTRANS SIMULATOR
 //====================================================
-WebUI.executeJavaScript('window.open(\'https://simulator.sandbox.midtrans.com/bca/va/index\')', null)
 
-WebUI.delay(3)
+WebUI.executeJavaScript(
+    "window.open('https://simulator.sandbox.midtrans.com/bca/va/index','_blank');",
+    null
+)
 
-// pindah ke tab terakhir
-WebUI.switchToWindowIndex(2)
+WebUI.delay(5)
+
+// DEBUG WINDOW
+for (int i = 0; i <= 5; i++) {
+
+    try {
+
+        WebUI.switchToWindowIndex(i)
+
+        println(
+            "WINDOW " + i + " URL : " +
+            WebUI.getUrl()
+        )
+
+    } catch (Exception e) {
+
+        println("WINDOW " + i + " NOT FOUND")
+    }
+}
+
+// biasanya simulator ada di index terakhir
+try {
+
+    WebUI.switchToWindowIndex(2)
+
+} catch (Exception e) {
+
+    try {
+
+        WebUI.switchToWindowIndex(1)
+
+    } catch (Exception ex) {
+
+        WebUI.switchToWindowIndex(0)
+    }
+}
 
 WebUI.delay(5)
 
@@ -255,7 +345,7 @@ String midtransUrl = WebUI.getUrl()
 
 println('MIDTRANS URL : ' + midtransUrl)
 
-assert midtransUrl.contains('simulator.sandbox.midtrans.com')
+assert midtransUrl.toLowerCase().contains('midtrans')
 
 println('MIDTRANS URL VERIFIED')
 

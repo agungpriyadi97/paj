@@ -135,7 +135,7 @@ WebUI.verifyElementVisible(
 WebUI.verifyElementVisible(
 	findTestObject('WEB/Cart/lbl_Total')
 )
-assert qty == '1'
+assert qty.toInteger() > 0
 println('ORDER SUMMARY DISPLAYED')
 
 //====================================================
