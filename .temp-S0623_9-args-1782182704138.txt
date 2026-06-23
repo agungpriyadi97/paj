@@ -16,4 +16,4 @@ groovy.ui.GroovyMain
 --encoding
 UTF-8
 --indy
-"C:\\Users\\AgungPriyadi\\Katalon Studio\\pasti-ada-jalan\\Libs\\S0623_6.groovy"
+"C:\\Users\\AgungPriyadi\\Katalon Studio\\pasti-ada-jalan\\Libs\\S0623_9.groovy"
