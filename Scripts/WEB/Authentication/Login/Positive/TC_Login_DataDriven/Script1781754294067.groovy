@@ -18,35 +18,22 @@ import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
 
 String email = Email
+
 String password = Password
+
 String tcId = TC_ID
+
 String scenario = Scenario
 
-WebUI.comment("Running : ${tcId} - ${scenario}")
+WebUI.comment("Running : $tcId - $scenario")
 
-WebUI.waitForElementVisible(
-	findTestObject('WEB/Home/Header/Icon Menu/btn_SignIn'),
-	10
-)
+WebUI.waitForElementVisible(findTestObject('WEB/Home/Header/Icon Menu/btn_SignIn'), 10)
 
-WebUI.click(
-	findTestObject('WEB/Home/Header/Icon Menu/btn_SignIn')
-)
+WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/btn_SignIn'))
 
-WebUI.setText(
-	findTestObject('WEB/Authentication/Login/txt_Email'),
-	email ?: ''
-)
+WebUI.setText(findTestObject('WEB/Authentication/Login/txt_Email'), )
 
-WebUI.setText(
-	findTestObject('WEB/Authentication/Login/txt_Password'),
-	password ?: ''
-)
+WebUI.setText(findTestObject('WEB/Authentication/Login/txt_Password'), )
 
-WebUI.click(
-	findTestObject('WEB/Authentication/Login/btn_sign_in')
-)
+WebUI.click(findTestObject('WEB/Authentication/Login/btn_sign_in'))
 
-WebUI.delay(3)
-
-WebUI.closeBrowser()
