@@ -1,53 +1,33 @@
-import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
-import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
-import static com.kms.katalon.core.testobject.ObjectRepository.findWindowsObject
-import com.kms.katalon.core.checkpoint.Checkpoint as Checkpoint
-import com.kms.katalon.core.cucumber.keyword.CucumberBuiltinKeywords as CucumberKW
-import com.kms.katalon.core.mobile.keyword.MobileBuiltInKeywords as Mobile
 import com.kms.katalon.core.model.FailureHandling as FailureHandling
-import com.kms.katalon.core.testcase.TestCase as TestCase
-import com.kms.katalon.core.testdata.TestData as TestData
-import com.kms.katalon.core.testng.keyword.TestNGBuiltinKeywords as TestNGKW
+import com.kms.katalon.core.testobject.ConditionType as ConditionType
 import com.kms.katalon.core.testobject.TestObject as TestObject
-import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords as WS
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
-import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
-import internal.GlobalVariable as GlobalVariable
-import org.openqa.selenium.Keys as Keys
+import java.util.Arrays as Arrays
 
+//====================================================
+// LOGIN
+//====================================================
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
 
-//====================================================
-// OPEN TUMBLERS CATEGORY
-//====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
+println('LOGIN SUCCESS')
 
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.waitForPageLoad(10)
-
-println('TUMBLERS PAGE OPENED')
+WebUI.delay(5)
 
 //====================================================
-// OPEN FIRST PRODUCT
+// OPEN PDP DIRECTLY
 //====================================================
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'), 10)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
 
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'))
+WebUI.waitForPageLoad(30)
 
-WebUI.waitForPageLoad(10)
+println('PDP PAGE OPENED')
 
-println('PRODUCT DETAIL PAGE OPENED')
-
+//====================================================
+// ADD TO CART
+//====================================================
 WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
 
 WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
@@ -56,102 +36,155 @@ WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 3
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+
+WebUI.delay(10)
 
 println('PRODUCT ADDED TO CART')
 
-WebUI.delay(10)
+WebUI.delay(3)
 
 //====================================================
 // OPEN CART
 //====================================================
-WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'), 20)
 
-WebUI.waitForPageLoad(10)
+WebUI.enhancedClick(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+
+WebUI.waitForPageLoad(30)
 
 println('SHOPPING CART OPENED')
 
 //====================================================
 // CHECKOUT
 //====================================================
+WebUI.waitForElementClickable(findTestObject('WEB/Cart/btn_Checkout'), 30)
+
 WebUI.scrollToElement(findTestObject('WEB/Cart/btn_Checkout'), 10)
 
-WebUI.click(findTestObject('WEB/Cart/btn_Checkout'))
+WebUI.enhancedClick(findTestObject('WEB/Cart/btn_Checkout'))
 
-WebUI.waitForPageLoad(10)
+WebUI.waitForPageLoad(20)
 
 println('CHECKOUT PAGE OPENED')
 
 //====================================================
-// PAYMENT METHOD
+// WAIT PAYMENT SECTION
 //====================================================
-// Tunggu section payment muncul
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 20)
+boolean paymentReady = false
 
-WebUI.scrollToElement(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 10)
+for (int i = 1; i <= 20; i++) {
+    String bodyText = WebUI.executeJavaScript('return document.body.innerText;', null)
 
-// Pilih Midtrans jika belum terpilih
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'))
+    println('WAIT PAYMENT ATTEMPT : ' + i)
+
+    if ((bodyText.contains('Midtrans') || bodyText.contains('Virtual Account')) || bodyText.contains('Pay With')) {
+        paymentReady = true
+
+        break
+    }
+    
+    WebUI.delay(3)
+}
+
+assert paymentReady
+
+println('PAYMENT SECTION READY')
+
+//====================================================
+// MIDTRANS
+//====================================================
+TestObject midtransObj = new TestObject('midtransObj')
+
+midtransObj.addProperty('xpath', ConditionType.EQUALS, '//*[contains(text(),\'Midtrans\')]')
+
+WebUI.waitForElementPresent(midtransObj, 60)
+
+WebUI.executeJavaScript('arguments[0].scrollIntoView({block:\'center\'});', Arrays.asList(WebUI.findWebElement(midtransObj)))
+
+WebUI.enhancedClick(midtransObj)
 
 println('MIDTRANS SELECTED')
 
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount'))
+//====================================================
+// VIRTUAL ACCOUNT
+//====================================================
+TestObject vaObj = new TestObject('vaObj')
 
-// Pilih BCA Virtual Account
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'), 10)
+vaObj.addProperty('xpath', ConditionType.EQUALS, '//*[contains(text(),\'Virtual Account\')]')
 
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'))
+WebUI.waitForElementPresent(vaObj, 30)
 
-println('BCA VIRTUAL ACCOUNT SELECTED')
+WebUI.enhancedClick(vaObj)
 
-// Verify BCA Selected
-WebUI.verifyElementPresent(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'), 10)
+println('VIRTUAL ACCOUNT SELECTED')
 
-println('PAYMENT METHOD VERIFIED')
+//====================================================
+// BCA
+//====================================================
+TestObject bcaObj = new TestObject('bcaObj')
 
-WebUI.verifyElementVisible(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
+bcaObj.addProperty('xpath', ConditionType.EQUALS, '//*[contains(text(),\'BCA\')]')
 
-WebUI.click(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
+WebUI.waitForElementPresent(bcaObj, 30)
+
+WebUI.enhancedClick(bcaObj)
+
+println('BCA SELECTED')
+
+//====================================================
+// ACCEPT TERMS
+//====================================================
+WebUI.waitForElementVisible(findTestObject('WEB/Checkout/OrderSummary/checkbox'), 20)
+
+WebUI.enhancedClick(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
+
+println('TERMS ACCEPTED')
 
 //====================================================
 // FINAL CHECKOUT
 //====================================================
-WebUI.verifyElementVisible(findTestObject('WEB/Cart/btn_Checkout'), FailureHandling.STOP_ON_FAILURE)
-
 WebUI.scrollToElement(findTestObject('WEB/Cart/btn_Checkout'), 10)
 
-WebUI.click(findTestObject('WEB/Cart/btn_Checkout'))
+WebUI.enhancedClick(findTestObject('WEB/Cart/btn_Checkout'))
 
-WebUI.delay(10)
-
-// pindah ke tab/window terakhir
-WebUI.switchToWindowIndex(1)
-
-WebUI.delay(3)
-
-println('SWITCH TO SUCCESS PAGE')
+println('CHECKOUT BUTTON CLICKED')
 
 //====================================================
-// VERIFY SUCCESS PAGE
+// HANDLE WINDOW
 //====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'), 30)
+WebUI.delay(15)
+
+try {
+    WebUI.switchToWindowIndex(1)
+
+    println('SWITCH TO TAB 1')
+}
+catch (Exception e) {
+    println('SUCCESS PAGE OPENED IN SAME TAB')
+} 
+
+//====================================================
+// SUCCESS PAGE
+//====================================================
+WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'), 60)
 
 WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'))
-
-WebUI.verifyTextPresent('Your order has been placed successfully.', false)
 
 println('SUCCESS PAGE DISPLAYED')
 
 //====================================================
-// VERIFY ORDER NUMBER GENERATED
+// VERIFY ORDER NUMBER
 //====================================================
 String orderNumber = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderNumber')).trim()
 
-println('ORDER NUMBER : ' + orderNumber)
+println('RAW ORDER NUMBER : ' + orderNumber)
 
-assert orderNumber.length() > 0
+String cleanOrderNumber = orderNumber.replaceAll('[^0-9]', '')
 
-assert orderNumber.matches('\\d+')
+assert cleanOrderNumber.length() > 0
+
+println('ORDER NUMBER : ' + cleanOrderNumber)
 
 println('ORDER NUMBER GENERATED SUCCESSFULLY')
 

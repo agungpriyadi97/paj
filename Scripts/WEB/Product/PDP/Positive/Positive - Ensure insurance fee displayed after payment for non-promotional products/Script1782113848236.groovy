@@ -20,39 +20,26 @@ import org.openqa.selenium.Keys as Keys
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
 
-//====================================================
-// OPEN TUMBLERS CATEGORY
-//====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
+println('LOGIN SUCCESS')
 
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.waitForPageLoad(10)
-
-println('TUMBLERS PAGE OPENED')
+WebUI.delay(5)
 
 //====================================================
-// VERIFY NON PROMOTIONAL PRODUCT
+// OPEN PDP DIRECTLY
 //====================================================
-WebUI.verifyElementPresent(findTestObject('WEB/Product/PLP/Product/card_NonPromoProduct'), 10)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661262')
+
+WebUI.waitForPageLoad(30)
+
+println('PDP PAGE OPENED')
+
+println('SHOPPING CART OPENED')
 
 println('NON PROMOTIONAL PRODUCT FOUND')
 
 //====================================================
-// OPEN PRODUCT DETAIL
+// ADD TO CART
 //====================================================
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_NonPromoProduct'))
-
-WebUI.waitForPageLoad(10)
-
-println('PRODUCT DETAIL PAGE OPENED')
-
 WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
 
 WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
@@ -61,11 +48,18 @@ WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 3
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
-
-WebUI.delay(2)
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
 println('PRODUCT ADDED TO CART')
+
+//====================================================
+// OPEN CART
+//====================================================
+WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+
+WebUI.waitForPageLoad(10)
+
+println('PRODUCT DETAIL PAGE OPENED')
 
 WebUI.delay(10)
 

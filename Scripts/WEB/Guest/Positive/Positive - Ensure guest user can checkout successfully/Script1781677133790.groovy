@@ -20,39 +20,33 @@ import org.openqa.selenium.Keys as Keys
 //====================================================
 // OPEN TUMBLERS CATEGORY
 //====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
+println('LOGIN SUCCESS')
 
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.waitForPageLoad(10)
-
-println('TUMBLERS PAGE OPENED')
+WebUI.delay(5)
 
 //====================================================
-// OPEN FIRST PRODUCT
+// OPEN PDP DIRECTLY
 //====================================================
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'), 10)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
 
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'))
+WebUI.waitForPageLoad(30)
 
-WebUI.waitForPageLoad(10)
-
-println('PRODUCT DETAIL PAGE OPENED')
+println('PDP PAGE OPENED')
 
 //====================================================
 // ADD TO CART
 //====================================================
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
-WebUI.delay(2)
+WebUI.delay(10)
 
 println('PRODUCT ADDED TO CART')
 
@@ -98,13 +92,17 @@ println('CONTINUE AS GUEST SUCCESS')
 //====================================================
 WebUI.waitForPageLoad(10)
 
-WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_FirstName (1)'), 'Agung')
+WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_FirstName (1)'), 
+    'Agung')
 
-WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_LastName (1)'), 'Priyadi')
+WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_LastName (1)'), 
+    'Priyadi')
 
-WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_MobilePhone (1)'), '081234567890')
+WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_MobilePhone (1)'), 
+    '081234567890')
 
-WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_Address (1)'), 'Guest Address ' + System.currentTimeMillis())
+WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_Address (1)'), 
+    'Guest Address ' + System.currentTimeMillis())
 
 println('SHIPPING ADDRESS FILLED')
 
@@ -130,7 +128,8 @@ WebUI.click(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add N
 
 println('DISTRICT SELECTED')
 
-WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_PostalCode (1)'), '15810')
+WebUI.setText(findTestObject('WEB/Checkout/Address Checkout/Shipping Address/Add New Shipping Address/Old Object Add/txt_PostalCode (1)'), 
+    '15810')
 
 println('POSTAL CODE FILLED')
 
@@ -199,3 +198,4 @@ WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_Ord
 WebUI.verifyTextPresent('Your order has been placed successfully.', false)
 
 println('SUCCESS PAGE DISPLAYED')
+
