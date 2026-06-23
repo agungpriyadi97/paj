@@ -7,7 +7,7 @@
    <selectorCollection>
       <entry>
          <key>XPATH</key>
-         <value>//span[contains(@class,'sp-payment-methods__item-name') and normalize-space()='Midtrans']</value>
+         <value>//label[@role='radio'][.//span[normalize-space()='Midtrans']]</value>
       </entry>
       <entry>
          <key>BASIC</key>
