@@ -81,13 +81,14 @@ def beforeTestCase(TestCaseContext testCaseContext) {
 				"/START_PAGE.png"
 			)
 
-		} catch(Exception e) {
+} catch(Exception e) {
 
-				"Failed to open browser or navigate to URL : ${e.getMessage()}"
-			)
+    KeywordUtil.markFailed(
+        "Failed to open browser or navigate to URL : ${e.getMessage()}"
+    )
 
-			throw e
-		}
+    throw e
+}
 
 	} else if(isBrowserActive) {
 
