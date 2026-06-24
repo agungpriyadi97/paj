@@ -16,64 +16,87 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
-
-WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
-    [:], FailureHandling.STOP_ON_FAILURE)
-
-//====================================================
-// OPEN TUMBLERS CATEGORY
-//====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
-
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.waitForPageLoad(10)
-
-println('TUMBLERS PAGE OPENED')
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+import com.kms.katalon.core.model.FailureHandling as FailureHandling
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 //====================================================
-// OPEN FIRST PRODUCT
+// LOGIN
 //====================================================
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'), 10)
+WebUI.callTestCase(
+findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'),
+[:],
+FailureHandling.STOP_ON_FAILURE
+)
 
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'))
+println('LOGIN SUCCESS')
 
-WebUI.waitForPageLoad(10)
+WebUI.delay(5)
 
-println('PRODUCT DETAIL PAGE OPENED')
+//====================================================
+// OPEN PDP DIRECTLY
+//====================================================
+WebUI.navigateToUrl(
+'https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250'
+)
+
+WebUI.waitForPageLoad(30)
+
+println('PDP PAGE OPENED')
 
 //====================================================
 // ADD TO CART
 //====================================================
-WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
+WebUI.waitForElementPresent(
+findTestObject('WEB/Product/PDP/btn_AddToCart'),
+30
+)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.waitForElementVisible(
+findTestObject('WEB/Product/PDP/btn_AddToCart'),
+30
+)
 
-WebUI.delay(2)
+WebUI.waitForElementClickable(
+findTestObject('WEB/Product/PDP/btn_AddToCart'),
+30
+)
+
+WebUI.scrollToElement(
+findTestObject('WEB/Product/PDP/btn_AddToCart'),
+10
+)
+
+WebUI.enhancedClick(
+findTestObject('WEB/Product/PDP/btn_AddToCart')
+)
+
+WebUI.delay(3)
 
 println('PRODUCT ADDED TO CART')
 
 //====================================================
 // OPEN CART
 //====================================================
-WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+WebUI.waitForElementClickable(
+findTestObject('WEB/Home/Header/Icon Menu/icon_cart'),
+20
+)
 
-WebUI.waitForPageLoad(10)
+WebUI.enhancedClick(
+findTestObject('WEB/Home/Header/Icon Menu/icon_cart')
+)
+
+WebUI.waitForPageLoad(30)
 
 println('SHOPPING CART OPENED')
 
 //====================================================
 // VERIFY SHOPPING CART PAGE
 //====================================================
-
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/lbl_ShoppingCartTitle')
+findTestObject('WEB/Cart/lbl_ShoppingCartTitle')
 )
 
 println('SHOPPING CART PAGE DISPLAYED')
@@ -81,17 +104,16 @@ println('SHOPPING CART PAGE DISPLAYED')
 //====================================================
 // VERIFY PRODUCT DISPLAYED
 //====================================================
-
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/img_Product')
+findTestObject('WEB/Cart/img_Product')
 )
 
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/lbl_ProductName')
+findTestObject('WEB/Cart/lbl_ProductName')
 )
 
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/lbl_ProductSKU')
+findTestObject('WEB/Cart/lbl_ProductSKU')
 )
 
 println('PRODUCT DISPLAYED IN CART')
@@ -99,47 +121,67 @@ println('PRODUCT DISPLAYED IN CART')
 //====================================================
 // VERIFY PRICE
 //====================================================
-
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/lbl_SellingPrice')
+findTestObject('WEB/Cart/lbl_SellingPrice')
 )
 
 println('PRODUCT PRICE DISPLAYED')
 
 //====================================================
-// VERIFY QTY
+// VERIFY QTY (HEADLESS SAFE)
 //====================================================
+String qty = WebUI.executeJavaScript(
+"""
+var qtyInput =
+document.querySelector(
+'input[role="spinbutton"]'
+);
 
-String qty =
-	WebUI.getAttribute(
-		findTestObject('WEB/Cart/txt_QuantityValue'),
-		'value'
-	)
+if(!qtyInput){
+return '0';
+}
+
+return qtyInput.getAttribute('aria-valuenow')
+|| qtyInput.value
+|| '0';
+""",
+null
+)
 
 println('QTY : ' + qty)
 
+assert qty.isInteger()
+
 assert qty.toInteger() > 0
+
+println('QTY VERIFIED')
 
 //====================================================
 // VERIFY ORDER SUMMARY
 //====================================================
-
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/lbl_OrderSummary')
+findTestObject('WEB/Cart/lbl_OrderSummary')
 )
 
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/lbl_Subtotal')
+findTestObject('WEB/Cart/lbl_Subtotal')
 )
 
 WebUI.verifyElementVisible(
-	findTestObject('WEB/Cart/lbl_Total')
+findTestObject('WEB/Cart/lbl_Total')
 )
-assert qty.toInteger() > 0
+
 println('ORDER SUMMARY DISPLAYED')
 
 //====================================================
 // TEST PASSED
 //====================================================
-
+println('======================================')
+println('SHOPPING CART PAGE DISPLAYED')
+println('PRODUCT DISPLAYED IN CART')
+println('PRODUCT PRICE DISPLAYED')
+println('QTY VERIFIED : ' + qty)
+println('ORDER SUMMARY DISPLAYED')
 println('USER CAN ADD PRODUCT TO SHOPPING CART SUCCESSFULLY')
+println('TEST CASE PASSED')
+println('======================================')

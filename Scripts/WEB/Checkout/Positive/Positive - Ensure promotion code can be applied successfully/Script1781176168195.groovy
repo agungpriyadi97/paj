@@ -54,6 +54,53 @@ WebUI.waitForPageLoad(30)
 println('SHOPPING CART OPENED')
 
 //====================================================
+// UPDATE QTY TO 2
+//====================================================
+WebUI.delay(3)
+
+String qtyText =
+WebUI.executeJavaScript(
+"""
+var qtyInput =
+document.querySelector(
+'input[role="spinbutton"]'
+);
+
+if(qtyInput){
+	return qtyInput.getAttribute('aria-valuenow')
+		|| qtyInput.value
+		|| '1';
+}
+
+return '1';
+""",
+null
+)
+
+int qty =
+qtyText.toInteger()
+
+println(
+	'CURRENT QTY : ' +
+	qty
+)
+
+if(qty < 2){
+
+	WebUI.click(
+		findTestObject(
+			'WEB/Cart/btn_QtyPlus'
+		)
+	)
+
+	WebUI.delay(5)
+
+	println(
+		'QTY UPDATED TO 2'
+	)
+}
+
+//====================================================
 // CHECKOUT
 //====================================================
 WebUI.scrollToElement(
