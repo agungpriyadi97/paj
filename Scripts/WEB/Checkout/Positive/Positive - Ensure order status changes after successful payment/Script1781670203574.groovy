@@ -1,4 +1,6 @@
 import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
+import com.kms.katalon.core.testobject.ConditionType as ConditionType
+import com.kms.katalon.core.testobject.TestObject as TestObject
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
@@ -10,12 +12,12 @@ import com.kms.katalon.core.model.FailureHandling as FailureHandling
 import com.kms.katalon.core.testcase.TestCase as TestCase
 import com.kms.katalon.core.testdata.TestData as TestData
 import com.kms.katalon.core.testng.keyword.TestNGBuiltinKeywords as TestNGKW
-import com.kms.katalon.core.testobject.TestObject as TestObject
 import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords as WS
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
+import java.util.Arrays as Arrays
 
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
@@ -69,31 +71,74 @@ WebUI.waitForPageLoad(10)
 println('CHECKOUT PAGE OPENED')
 
 //====================================================
-// PAYMENT METHOD
+// WAIT PAYMENT SECTION READY
 //====================================================
-// Tunggu section payment muncul
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 20)
+WebUI.delay(5)
 
-WebUI.scrollToElement(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'), 10)
+boolean paymentReady = false
 
-// Pilih Midtrans jika belum terpilih
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'))
+for (int i = 1; i <= 20; i++) {
+    String bodyText = WebUI.executeJavaScript('return document.body.innerText;', null)
+
+    println('WAIT PAYMENT ATTEMPT : ' + i)
+
+    if ((bodyText.contains('Midtrans') || bodyText.contains('Virtual Account')) || bodyText.contains('Pay With')) {
+        paymentReady = true
+
+        println('PAYMENT SECTION READY')
+
+        break
+    }
+    
+    WebUI.delay(3)
+}
+
+assert paymentReady
+
+//====================================================
+// MIDTRANS
+//====================================================
+TestObject midtransObj = new TestObject('midtransObj')
+
+midtransObj.addProperty('xpath', ConditionType.EQUALS, '//*[contains(text(),\'Midtrans\')]')
+
+WebUI.waitForElementPresent(midtransObj, 60)
+
+WebUI.executeJavaScript('arguments[0].scrollIntoView({block:\'center\'});', Arrays.asList(WebUI.findWebElement(midtransObj)))
+
+WebUI.enhancedClick(midtransObj)
 
 println('MIDTRANS SELECTED')
 
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount'))
+//====================================================
+// VIRTUAL ACCOUNT
+//====================================================
+TestObject virtualAccountObj = new TestObject('virtualAccountObj')
 
-// Pilih BCA Virtual Account
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'), 10)
+virtualAccountObj.addProperty('xpath', ConditionType.EQUALS, '//*[contains(text(),\'Virtual Account\')]')
 
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'))
+WebUI.waitForElementPresent(virtualAccountObj, 30)
+
+WebUI.enhancedClick(virtualAccountObj)
+
+println('VIRTUAL ACCOUNT SELECTED')
+
+//====================================================
+// BCA VA
+//====================================================
+TestObject bcaObj = new TestObject('bcaObj')
+
+bcaObj.addProperty('xpath', ConditionType.EQUALS, '//*[contains(text(),\'BCA\')]')
+
+WebUI.waitForElementPresent(bcaObj, 30)
+
+WebUI.enhancedClick(bcaObj)
 
 println('BCA VIRTUAL ACCOUNT SELECTED')
 
-// Verify BCA Selected
-WebUI.verifyElementPresent(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'), 10)
-
-println('PAYMENT METHOD VERIFIED')
+//====================================================
+// ACCEPT TERMS
+//====================================================
 
 WebUI.verifyElementVisible(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
 
