@@ -83,7 +83,6 @@ def beforeTestCase(TestCaseContext testCaseContext) {
 
 		} catch(Exception e) {
 
-			KeywordUtil.markFailed(
 				"Failed to open browser or navigate to URL : ${e.getMessage()}"
 			)
 
