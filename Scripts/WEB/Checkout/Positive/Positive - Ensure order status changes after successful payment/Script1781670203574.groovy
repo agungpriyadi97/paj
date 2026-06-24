@@ -46,7 +46,9 @@ WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 3
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+
+WebUI.delay(10)
 
 println('PRODUCT ADDED TO CART')
 
@@ -139,7 +141,6 @@ println('BCA VIRTUAL ACCOUNT SELECTED')
 //====================================================
 // ACCEPT TERMS
 //====================================================
-
 WebUI.verifyElementVisible(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
 
 WebUI.click(findTestObject('WEB/Checkout/OrderSummary/checkbox'))

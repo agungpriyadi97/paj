@@ -29,7 +29,7 @@ WebUI.waitForPageLoad(10)
 //====================================================
 WebUI.waitForElementVisible(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Price/slider_MinPrice'), 10)
 
-WebUI.dragAndDropByOffset(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Price/slider_MinPrice'), 120, 0)
+WebUI.scrollToElement(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Price/slider_MinPrice'), 10)
 
 println('MIN PRICE FILTER APPLIED')
 
