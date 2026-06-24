@@ -70,66 +70,124 @@ WebUI.waitForPageLoad(10)
 println('CHECKOUT PAGE OPENED')
 
 //====================================================
-// PAYMENT METHOD - HEADLESS SAFE
+// PAYMENT METHOD - FIREFOX & CHROME HEADLESS SAFE
 //====================================================
+
 WebUI.delay(10)
 
 WebUI.scrollToPosition(0, 1500)
 
-WebUI.delay(5)
+WebUI.delay(3)
 
-// DEBUG
-String bodyText = WebUI.executeJavaScript('return document.body.innerText;', null)
+WebUI.waitForElementPresent(
+	findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'),
+	60
+)
 
-println('HAS PAY WITH        : ' + bodyText.contains('Pay With'))
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'),
+	60
+)
 
-println('HAS MIDTRANS        : ' + bodyText.contains('Midtrans'))
+WebUI.scrollToElement(
+	findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'),
+	10
+)
 
-println('HAS VIRTUAL ACCOUNT : ' + bodyText.contains('Virtual Account'))
+try {
 
-// Dynamic Object Midtrans
-TestObject midtrans = new TestObject('midtrans')
+	WebUI.enhancedClick(
+		findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans')
+	)
 
-midtrans.addProperty('xpath', ConditionType.EQUALS, '//span[contains(@class,\'sp-payment-methods__item-name\') and normalize-space()=\'Midtrans\']')
+} catch(Exception e) {
 
-boolean midtransFound = false
-
-for (int i = 1; i <= 10; i++) {
-    println('WAIT MIDTRANS ATTEMPT : ' + i)
-
-    if (WebUI.verifyElementPresent(midtrans, 10, FailureHandling.OPTIONAL)) {
-        midtransFound = true
-
-        break
-    }
-    
-    WebUI.delay(3)
+	WebUI.executeJavaScript(
+		"arguments[0].click();",
+		Arrays.asList(
+			WebUI.findWebElement(
+				findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans')
+			)
+		)
+	)
 }
-
-println('MIDTRANS FOUND : ' + midtransFound)
-
-assert midtransFound : 'Midtrans payment method not displayed'
-
-WebUI.scrollToElement(midtrans, 10)
-
-WebUI.enhancedClick(midtrans)
 
 println('MIDTRANS SELECTED')
 
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount'))
+//====================================================
+// VIRTUAL ACCOUNT
+//====================================================
 
-// Pilih BCA Virtual Account
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'), 10)
+WebUI.waitForElementPresent(
+	findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount'),
+	30
+)
 
-WebUI.click(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'))
+WebUI.scrollToElement(
+	findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount'),
+	10
+)
+
+try {
+
+	WebUI.click(
+		findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount')
+	)
+
+} catch(Exception e) {
+
+	WebUI.executeJavaScript(
+		"arguments[0].click();",
+		Arrays.asList(
+			WebUI.findWebElement(
+				findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount')
+			)
+		)
+	)
+}
+
+println('VIRTUAL ACCOUNT SELECTED')
+
+//====================================================
+// BCA VA
+//====================================================
+
+WebUI.waitForElementPresent(
+	findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'),
+	30
+)
+
+WebUI.scrollToElement(
+	findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'),
+	10
+)
+
+try {
+
+	WebUI.click(
+		findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA')
+	)
+
+} catch(Exception e) {
+
+	WebUI.executeJavaScript(
+		"arguments[0].click();",
+		Arrays.asList(
+			WebUI.findWebElement(
+				findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA')
+			)
+		)
+	)
+}
 
 println('BCA VIRTUAL ACCOUNT SELECTED')
 
-// Verify BCA Selected
-WebUI.verifyElementPresent(findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'), 10)
+WebUI.verifyElementPresent(
+	findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'),
+	10
+)
 
 println('PAYMENT METHOD VERIFIED')
-
 WebUI.verifyElementVisible(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
 
 WebUI.click(findTestObject('WEB/Checkout/OrderSummary/checkbox'))

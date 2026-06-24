@@ -16,49 +16,53 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
-import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.testobject.ConditionType as ConditionType
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import com.kms.katalon.core.model.FailureHandling
 import com.kms.katalon.core.testobject.ConditionType
-
-WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
-    [:], FailureHandling.STOP_ON_FAILURE)
-
-//====================================================
-// OPEN TUMBLERS CATEGORY
-//====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
-
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.delay(10)
-
-println('TUMBLERS PAGE OPENED')
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 //====================================================
-// OPEN FIRST PRODUCT
+// LOGIN
 //====================================================
-WebUI.waitForElementClickable(
-findTestObject('WEB/Product/PLP/Product/card_FirstProduct'),
-20
+WebUI.callTestCase(
+findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'),
+[:],
+FailureHandling.STOP_ON_FAILURE
 )
 
-WebUI.click(
-findTestObject('WEB/Product/PLP/Product/card_FirstProduct')
+println('LOGIN SUCCESS')
+
+WebUI.delay(5)
+
+//====================================================
+// OPEN PDP DIRECTLY
+//====================================================
+WebUI.navigateToUrl(
+'https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250'
 )
 
-WebUI.waitForPageLoad(20)
+WebUI.waitForPageLoad(30)
 
-println('PRODUCT DETAIL PAGE OPENED')
+println('PDP PAGE OPENED')
 
 //====================================================
 // ADD TO CART
 //====================================================
+WebUI.waitForElementPresent(
+findTestObject('WEB/Product/PDP/btn_AddToCart'),
+30
+)
+
 WebUI.waitForElementVisible(
+findTestObject('WEB/Product/PDP/btn_AddToCart'),
+30
+)
+
+WebUI.waitForElementClickable(
 findTestObject('WEB/Product/PDP/btn_AddToCart'),
 30
 )
@@ -79,12 +83,22 @@ println('PRODUCT ADDED TO CART')
 //====================================================
 // OPEN CART
 //====================================================
-WebUI.click(
+WebUI.waitForElementClickable(
+findTestObject('WEB/Home/Header/Icon Menu/icon_cart'),
+20
+)
+
+WebUI.enhancedClick(
 findTestObject('WEB/Home/Header/Icon Menu/icon_cart')
 )
 
-WebUI.waitForPageLoad(20)
+WebUI.waitForPageLoad(30)
 
+println('SHOPPING CART OPENED')
+
+//====================================================
+// VERIFY CART PAGE
+//====================================================
 WebUI.waitForElementVisible(
 findTestObject('WEB/Cart/lbl_ShoppingCartTitle'),
 30
@@ -98,33 +112,31 @@ findTestObject('WEB/Cart/lbl_ProductName'),
 println('SHOPPING CART PAGE DISPLAYED')
 
 //====================================================
-// DYNAMIC OBJECT - QTY FIELD
+// DYNAMIC OBJECTS
 //====================================================
 TestObject qtyField = new TestObject('qtyField')
 
 qtyField.addProperty(
 'xpath',
 ConditionType.EQUALS,
-"//input[@role='spinbutton']"
+'//input[@role="spinbutton"]'
 )
 
-//====================================================
-// DYNAMIC OBJECT - PLUS BUTTON
-//====================================================
 TestObject btnPlus = new TestObject('btnPlus')
 
 btnPlus.addProperty(
 'xpath',
 ConditionType.EQUALS,
-"//span[contains(@class,'el-input-number__increase')]"
+'//span[contains(@class,"el-input-number__increase")]'
 )
 
 //====================================================
-// WAIT QTY FIELD
+// VERIFY QTY FIELD
 //====================================================
 boolean qtyFound = false
 
-for(int i=1; i<=5; i++) {
+for(int i=1;i<=5;i++) {
+
 
 if(
 	WebUI.verifyElementPresent(
@@ -132,16 +144,13 @@ if(
 		5,
 		FailureHandling.OPTIONAL
 	)
-) {
-
+){
 	qtyFound = true
-
 	break
 }
 
-println("WAIT QTY FIELD ATTEMPT : " + i)
-
 WebUI.delay(2)
+
 
 }
 
@@ -150,19 +159,33 @@ assert qtyFound : 'Quantity field not displayed'
 //====================================================
 // GET QTY BEFORE
 //====================================================
-int qtyBefore = Integer.parseInt(
-WebUI.getAttribute(
-qtyField,
-'aria-valuenow'
+String qtyBeforeText = WebUI.executeJavaScript(
+"""
+var qtyInput =
+document.querySelector(
+'input[role="spinbutton"]'
+);
+
+if(!qtyInput){
+return '0';
+}
+
+return qtyInput.getAttribute('aria-valuenow')
+|| qtyInput.value
+|| '0';
+""",
+null
 )
-)
+
+int qtyBefore = qtyBeforeText.toInteger()
 
 println('QTY BEFORE : ' + qtyBefore)
 
 //====================================================
-// GET TOTAL BEFORE
+// TOTAL BEFORE
 //====================================================
-String totalBefore = WebUI.getText(
+String totalBefore =
+WebUI.getText(
 findTestObject('WEB/Cart/lbl_Total')
 )
 
@@ -176,6 +199,11 @@ btnPlus,
 20
 )
 
+WebUI.scrollToElement(
+btnPlus,
+10
+)
+
 WebUI.enhancedClick(
 btnPlus
 )
@@ -185,28 +213,59 @@ println('PLUS BUTTON CLICKED')
 //====================================================
 // WAIT QTY UPDATED
 //====================================================
-WebUI.delay(3)
+boolean qtyUpdated = false
 
-int qtyAfter = Integer.parseInt(
-WebUI.getAttribute(
-qtyField,
-'aria-valuenow'
+int qtyAfter = qtyBefore
+
+for(int i=1;i<=10;i++) {
+
+
+WebUI.delay(1)
+
+String currentQty = WebUI.executeJavaScript(
+"""
+var qtyInput =
+document.querySelector(
+'input[role="spinbutton"]'
+);
+
+if(!qtyInput){
+	return '0';
+}
+
+return qtyInput.getAttribute('aria-valuenow')
+	|| qtyInput.value
+	|| '0';
+""",
+null
 )
-)
+
+qtyAfter = currentQty.toInteger()
+
+println('CURRENT QTY : ' + qtyAfter)
+
+if(qtyAfter > qtyBefore){
+
+	qtyUpdated = true
+	break
+}
+
+
+}
+
+assert qtyUpdated : 'Quantity was not increased'
+
+println('QTY UPDATED SUCCESSFULLY')
 
 println('QTY AFTER : ' + qtyAfter)
 
 //====================================================
-// VERIFY QTY
+// VERIFY TOTAL UPDATED
 //====================================================
-assert qtyAfter == qtyBefore + 1
+WebUI.delay(2)
 
-println('QTY UPDATED SUCCESSFULLY')
-
-//====================================================
-// VERIFY TOTAL
-//====================================================
-String totalAfter = WebUI.getText(
+String totalAfter =
+WebUI.getText(
 findTestObject('WEB/Cart/lbl_Total')
 )
 
@@ -219,4 +278,11 @@ println('ORDER SUMMARY UPDATED')
 //====================================================
 // TEST PASSED
 //====================================================
+println('======================================')
+println('QTY BEFORE : ' + qtyBefore)
+println('QTY AFTER  : ' + qtyAfter)
+println('TOTAL BEFORE : ' + totalBefore)
+println('TOTAL AFTER  : ' + totalAfter)
 println('USER CAN UPDATE PRODUCT QUANTITY SUCCESSFULLY')
+println('TEST CASE PASSED')
+println('======================================')

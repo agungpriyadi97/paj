@@ -19,15 +19,11 @@ import org.openqa.selenium.Keys as Keys
 import java.util.Arrays as Arrays
 import com.kms.katalon.core.testobject.ConditionType as ConditionType
 
-//====================================================
-// LOGIN
-//====================================================
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
 
-//====================================================
-// OPEN MY ORDER
-//====================================================
+WebUI.mouseOver(findTestObject('WEB/Home/Header/Icon Menu/icon_account'))
+
 WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_account'))
 
 WebUI.waitForElementVisible(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'), 10)
@@ -82,20 +78,25 @@ WebUI.waitForElementClickable(findTestObject('WEB/OrderDetail/Page View Detail/b
 
 WebUI.click(findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'))
 
-println('CANCEL POPUP OPENED')
+WebUI.delay(2)
 
-//====================================================
-// VERIFY COPYWRITING
-//====================================================
 WebUI.verifyElementText(findTestObject('WEB/OrderDetail/CancelReason/lbl_Cancel'), 'Cancel')
 
+// Reason Label
 WebUI.verifyElementText(findTestObject('WEB/OrderDetail/CancelReason/lbl_Reason'), 'Reason')
 
+// Select Placeholder
 WebUI.verifyElementAttributeValue(findTestObject('WEB/OrderDetail/CancelReason/txt_Select'), 'placeholder', 'Select', 5)
 
+// Open Dropdown
 WebUI.click(findTestObject('WEB/OrderDetail/CancelReason/ddl_Reason'))
 
-WebUI.verifyElementText(findTestObject('WEB/OrderDetail/CancelReason/opt_WrongColorVariant'), 'Choose the wrong color/variant and would like to reorder the correct one.')
+// Verify Cancel Reason Option
+WebUI.click(findTestObject('WEB/OrderDetail/CancelReason/opt_WrongColorVariant'), FailureHandling.STOP_ON_FAILURE)
 
-println('CANCEL REASON COPYWRITING VERIFIED')
+WebUI.click(findTestObject('WEB/OrderDetail/CancelReason/btn_Confirm'))
+
+WebUI.click(findTestObject('WEB/OrderDetail/CancelReason/btn_OK'))
+
+WebUI.waitForElementVisible(findTestObject('WEB/OrderDetail/CancelReason/msg_success'), 2)
 

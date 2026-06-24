@@ -20,86 +20,70 @@ import org.openqa.selenium.Keys as Keys
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
 
-//====================================================
-// OPEN TUMBLERS CATEGORY
-//====================================================
-WebUI.mouseOver(findTestObject('WEB/Home/Header/Menu/menu_categories/menu_categories'))
+println('LOGIN SUCCESS')
 
-WebUI.verifyElementPresent(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'), 10)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.verifyElementClickable(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
-
-WebUI.waitForPageLoad(10)
-
-println('TUMBLERS PAGE OPENED')
+WebUI.delay(5)
 
 //====================================================
-// OPEN FIRST PRODUCT
+// OPEN PDP DIRECTLY
 //====================================================
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'), 10)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
 
-WebUI.click(findTestObject('WEB/Product/PLP/Product/card_FirstProduct'))
+WebUI.waitForPageLoad(30)
 
-WebUI.waitForPageLoad(10)
-
-println('PRODUCT DETAIL PAGE OPENED')
+println('PDP PAGE OPENED')
 
 //====================================================
 // ADD TO CART
 //====================================================
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
-WebUI.delay(2)
+WebUI.delay(10)
 
 println('PRODUCT ADDED TO CART')
+
+WebUI.delay(3)
 
 //====================================================
 // OPEN CART
 //====================================================
-WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'), 20)
 
-WebUI.waitForPageLoad(10)
+WebUI.enhancedClick(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+
+WebUI.waitForPageLoad(30)
 
 println('SHOPPING CART OPENED')
 
 //====================================================
 // GET PRODUCT NAME BEFORE DELETE
 //====================================================
-String productName = WebUI.getText(
-	findTestObject('WEB/Cart/lbl_ProductName')
-)
+String productName = WebUI.getText(findTestObject('WEB/Cart/lbl_ProductName'))
 
 println('PRODUCT TO DELETE : ' + productName)
 
 //====================================================
 // DELETE PRODUCT
 //====================================================
-WebUI.click(
-	findTestObject('WEB/Cart/btn_DeleteProduct')
-)
+WebUI.click(findTestObject('WEB/Cart/btn_DeleteProduct'))
 
 println('DELETE BUTTON CLICKED')
 
 //====================================================
 // CONFIRM DELETE (IF POPUP EXISTS)
 //====================================================
-if (WebUI.waitForElementVisible(
-	findTestObject('WEB/Cart/btn_Yes'),
-	5,
-	FailureHandling.OPTIONAL
-)) {
+if (WebUI.waitForElementVisible(findTestObject('WEB/Cart/btn_Yes'), 5, FailureHandling.OPTIONAL)) {
+    WebUI.click(findTestObject('WEB/Cart/btn_Yes'))
 
-	WebUI.click(
-		findTestObject('WEB/Cart/btn_Yes')
-	)
-
-	println('DELETE CONFIRMED')
+    println('DELETE CONFIRMED')
 }
 
 WebUI.delay(3)
@@ -107,10 +91,7 @@ WebUI.delay(3)
 //====================================================
 // VERIFY PRODUCT REMOVED
 //====================================================
-WebUI.verifyTextNotPresent(
-	productName,
-	false
-)
+WebUI.verifyTextNotPresent(productName, false)
 
 println('PRODUCT REMOVED SUCCESSFULLY')
 
@@ -118,3 +99,4 @@ println('PRODUCT REMOVED SUCCESSFULLY')
 // TEST PASSED
 //====================================================
 println('USER CAN REMOVE PRODUCT FROM SHOPPING CART SUCCESSFULLY')
+
