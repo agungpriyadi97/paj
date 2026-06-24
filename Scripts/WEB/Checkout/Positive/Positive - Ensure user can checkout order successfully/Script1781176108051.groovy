@@ -46,7 +46,7 @@ WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 3
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
+WebUI.click(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
 WebUI.delay(10)
 
@@ -59,7 +59,7 @@ WebUI.delay(3)
 //====================================================
 WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'), 20)
 
-WebUI.enhancedClick(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
+WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
 
 WebUI.waitForPageLoad(30)
 
@@ -135,4 +135,69 @@ WebUI.enhancedClick(findTestObject('WEB/Cart/btn_Checkout'))
 println('CHECKOUT BUTTON CLICKED')
 
 WebUI.delay(10)
+
+// pindah ke tab/window terakhir
+WebUI.switchToWindowIndex(1)
+
+WebUI.delay(3)
+
+println('SWITCH TO SUCCESS PAGE')
+
+//====================================================
+// VERIFY CHECKOUT SUCCESS PAGE
+//====================================================
+WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'), 30)
+
+WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'))
+
+WebUI.verifyTextPresent('Your order has been placed successfully.', false)
+
+println('SUCCESS PAGE DISPLAYED')
+
+//====================================================
+// VERIFY ORDER STATUS
+//====================================================
+String orderStatus = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderStatus'))
+
+println('ORDER STATUS : ' + orderStatus)
+
+assert orderStatus != ''
+
+//====================================================
+// VERIFY ORDER NUMBER
+//====================================================
+String orderNumber = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderNumber'))
+
+println('ORDER NUMBER : ' + orderNumber)
+
+assert orderNumber != ''
+
+assert orderNumber.matches('\\d+')
+
+//====================================================
+// VERIFY PAYMENT METHOD
+//====================================================
+String paymentMethod = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_PaymentMethod'))
+
+println('PAYMENT METHOD : ' + paymentMethod)
+
+assert paymentMethod != ''
+
+//====================================================
+// VERIFY TOTAL PRICE
+//====================================================
+String totalPrice = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_TotalPrice'))
+
+println('TOTAL PRICE : ' + totalPrice)
+
+assert totalPrice.contains('Rp')
+
+//====================================================
+// VERIFY VIRTUAL ACCOUNT
+//====================================================
+String virtualAccount = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_VirtualAccount'))
+
+println('VIRTUAL ACCOUNT : ' + virtualAccount)
+
+assert virtualAccount != ''
 

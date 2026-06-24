@@ -19,8 +19,6 @@ import org.openqa.selenium.Keys as Keys
 
 WebUI.comment('=== TC_Login_IncorrectPassword: Login gagal menggunakan account dan password yang benar ===')
 
-WebUI.maximizeWindow()
-
 // ==================== STEP 1: Navigasi ke halaman Sign In ====================
 // Browser baru terbuka di halaman Home, klik tombol Sign In di header
 WebUI.waitForElementVisible(findTestObject('WEB/Home/Header/Icon Menu/btn_SignIn'), 10)
