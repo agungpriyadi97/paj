@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<TestCaseEntity>
-   <description>Memastikan pengguna tidak dapat meminta kode verifikasi dengan email yang tidak terdaftar</description>
-   <name>Negative - Ensure user cannot request verification code with unregistered email</name>
-   <tag></tag>
-   <comment></comment>
-   <recordOption>OTHER</recordOption>
-   <testCaseGuid>2342a583-17e7-4097-a1d9-184095372bb8</testCaseGuid>
-</TestCaseEntity>
