@@ -18,6 +18,7 @@ import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
 import java.util.Arrays as Arrays
 import com.kms.katalon.core.testobject.ConditionType as ConditionType
+import myorder.MyOrderKeyword
 
 //====================================================
 // LOGIN
@@ -30,72 +31,13 @@ WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - En
 //====================================================
 WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_account'))
 
-WebUI.waitForElementVisible(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'), 10)
+WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'),20)
 
-WebUI.waitForElementPresent(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'), 5)
-
-WebUI.mouseOver(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'))
-
-WebUI.click(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'))
+WebUI.enhancedClick(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'))
 
 WebUI.waitForPageLoad(10)
 
 println('ORDER DETAIL PAGE OPENED')
 
-WebUI.waitForElementClickable(findTestObject('WEB/MyOrder/tab_Unpaid'), 10)
-
-WebUI.click(findTestObject('WEB/MyOrder/tab_Unpaid'), FailureHandling.STOP_ON_FAILURE)
-
-WebUI.delay(10)
-
-//====================================================
-// OPEN ORDER DETAIL
-//====================================================
-TestObject btnViewDetails = new TestObject('btnViewDetails')
-
-btnViewDetails.addProperty('xpath', ConditionType.EQUALS, '(//button[.//span[normalize-space()=\'View Details\']])[1]')
-
-WebUI.waitForElementPresent(btnViewDetails, 30)
-
-WebUI.waitForElementVisible(btnViewDetails, 30)
-
-def viewDetailElement = WebUI.findWebElement(btnViewDetails, 30)
-
-WebUI.executeJavaScript('arguments[0].scrollIntoView({block:\'center\'});', Arrays.asList(viewDetailElement))
-
-WebUI.delay(2)
-
-// LANGSUNG JS CLICK
-WebUI.executeJavaScript('arguments[0].click();', Arrays.asList(viewDetailElement))
-
-println('VIEW DETAILS CLICKED')
-
-WebUI.delay(3)
-
-WebUI.waitForPageLoad(20)
-
-println('ORDER DETAIL PAGE OPENED')
-
-WebUI.scrollToElement(findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'), 10)
-
-WebUI.waitForElementClickable(findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'), 10)
-
-WebUI.click(findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'))
-
-println('CANCEL POPUP OPENED')
-
-//====================================================
-// VERIFY COPYWRITING
-//====================================================
-WebUI.verifyElementText(findTestObject('WEB/OrderDetail/CancelReason/lbl_Cancel'), 'Cancel')
-
-WebUI.verifyElementText(findTestObject('WEB/OrderDetail/CancelReason/lbl_Reason'), 'Reason')
-
-WebUI.verifyElementAttributeValue(findTestObject('WEB/OrderDetail/CancelReason/txt_Select'), 'placeholder', 'Select', 5)
-
-WebUI.click(findTestObject('WEB/OrderDetail/CancelReason/ddl_Reason'))
-
-WebUI.verifyElementText(findTestObject('WEB/OrderDetail/CancelReason/opt_WrongColorVariant'), 'Choose the wrong color/variant and would like to reorder the correct one.')
-
-println('CANCEL REASON COPYWRITING VERIFIED')
+CustomKeywords.'myorder.MyOrderKeyword.openFirstUnpaidOrder'()
 

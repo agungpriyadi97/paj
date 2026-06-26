@@ -10,7 +10,7 @@
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>//button[.//span[normalize-space()='View Details']]</value>
+         <value>(//button[span[normalize-space()='View Details']])[1]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>
