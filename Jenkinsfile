@@ -1,4 +1,3 @@
-```groovy
 pipeline {
 
     agent any
@@ -48,7 +47,6 @@ Kosong = Regression Default
 Contoh:
 -testSuitePath=Test Suites/WEB/Login/Login
 -testSuiteCollectionPath=Test Suites/WEB/Regression
-'''
         )
 
     }
@@ -212,11 +210,10 @@ Contoh:
             archiveArtifacts(
 
                 artifacts: '''
-Reports/**,
-Screenshot/**,
-failure_*.html
-''',
-
+                Reports/**,
+                Screenshot/**,
+                failure_*.html
+                ''',
                 allowEmptyArchive: true
 
             )
