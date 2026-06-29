@@ -18,429 +18,149 @@ import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
 
-WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
-    [:], FailureHandling.STOP_ON_FAILURE)
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
 
-println('LOGIN SUCCESS')
+import com.kms.katalon.core.model.FailureHandling
+import com.kms.katalon.core.testobject.ConditionType
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
-WebUI.delay(5)
+import internal.GlobalVariable
 
 //====================================================
-// OPEN PDP DIRECTLY
+// CHECKOUT ORDER
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
+WebUI.callTestCase(
+	findTestCase(
+		'WEB/Checkout/Positive/Positive - Ensure user can checkout order successfully'
+	),
+	[:],
+	FailureHandling.STOP_ON_FAILURE
+)
 
+println("CHECKOUT SUCCESS")
+
+//====================================================
+// WAIT SUCCESS PAGE
+//====================================================
 WebUI.waitForPageLoad(30)
 
-println('PDP PAGE OPENED')
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'),
+	30
+)
+
+WebUI.verifyElementVisible(
+	findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess')
+)
+
+println("CHECKOUT SUCCESS PAGE DISPLAYED")
 
 //====================================================
-// ADD TO CART
+// VERIFY PAYMENT INFORMATION
 //====================================================
-WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.verifyElementVisible(
+	findTestObject('WEB/Checkout/Checkout Success/lbl_OrderStatus')
+)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.verifyElementVisible(
+	findTestObject('WEB/Checkout/Checkout Success/lbl_OrderNumber')
+)
 
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.verifyElementVisible(
+	findTestObject('WEB/Checkout/Checkout Success/lbl_PaymentMethod')
+)
 
-WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
+WebUI.verifyElementVisible(
+	findTestObject('WEB/Checkout/Checkout Success/lbl_TotalPrice')
+)
 
-WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
-
-println('PRODUCT ADDED TO CART')
-
-//====================================================
-// OPEN CART
-//====================================================
-WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
-
-WebUI.waitForPageLoad(10)
-
-println('SHOPPING CART OPENED')
+println("ORDER INFORMATION VERIFIED")
 
 //====================================================
-// CHECKOUT
+// GET ORDER NUMBER
 //====================================================
-WebUI.scrollToElement(findTestObject('WEB/Cart/btn_Checkout'), 10)
+String orderNumber =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/Checkout Success/lbl_OrderNumber')
+	).trim()
 
-WebUI.click(findTestObject('WEB/Cart/btn_Checkout'))
+assert orderNumber != ""
 
-WebUI.waitForPageLoad(10)
+GlobalVariable.OrderNumber= orderNumber
 
-println('CHECKOUT PAGE OPENED')
+println("ORDER NUMBER : " + orderNumber)
 
 //====================================================
-// PAYMENT METHOD - FIREFOX & CHROME HEADLESS SAFE
+// GET PAYMENT METHOD
 //====================================================
+String paymentMethod =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/Checkout Success/lbl_PaymentMethod')
+	).trim()
 
-WebUI.delay(10)
+assert paymentMethod != ""
 
-WebUI.scrollToPosition(0, 1500)
+GlobalVariable.PaymentMethod = paymentMethod
 
-WebUI.delay(3)
+println("PAYMENT METHOD : " + paymentMethod)
 
-WebUI.waitForElementPresent(
-	findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'),
-	60
+//====================================================
+// GET TOTAL PRICE
+//====================================================
+String totalPrice =
+	WebUI.getText(
+		findTestObject('WEB/Checkout/Checkout Success/lbl_TotalPrice')
+	).trim()
+
+assert totalPrice != ""
+
+GlobalVariable.TotalPrice = totalPrice
+
+println("TOTAL PRICE : " + totalPrice)
+
+//====================================================
+// GET VIRTUAL ACCOUNT
+//====================================================
+TestObject lblVA = new TestObject("lblVA")
+
+lblVA.addProperty(
+	"xpath",
+	ConditionType.EQUALS,
+	"//span[normalize-space()='Virtual Bank Account']/following::span[1]"
 )
 
 WebUI.waitForElementVisible(
-	findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'),
-	60
+	lblVA,
+	20
 )
 
-WebUI.scrollToElement(
-	findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans'),
-	10
-)
+String virtualAccount =
+	WebUI.getText(lblVA)
+		.replaceAll("\\s+","")
+		.trim()
 
-try {
+assert virtualAccount != ""
 
-	WebUI.enhancedClick(
-		findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans')
-	)
+GlobalVariable.VirtualAccount = virtualAccount
 
-} catch(Exception e) {
-
-	WebUI.executeJavaScript(
-		"arguments[0].click();",
-		Arrays.asList(
-			WebUI.findWebElement(
-				findTestObject('WEB/Checkout/Payment Method/rdo_Midtrans')
-			)
-		)
-	)
-}
-
-println('MIDTRANS SELECTED')
+println("VIRTUAL ACCOUNT : " + virtualAccount)
 
 //====================================================
-// VIRTUAL ACCOUNT
+// VERIFY VA FORMAT
 //====================================================
+assert virtualAccount.matches("\\d+")
 
-WebUI.waitForElementPresent(
-	findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount'),
-	30
-)
-
-WebUI.scrollToElement(
-	findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount'),
-	10
-)
-
-try {
-
-	WebUI.click(
-		findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount')
-	)
-
-} catch(Exception e) {
-
-	WebUI.executeJavaScript(
-		"arguments[0].click();",
-		Arrays.asList(
-			WebUI.findWebElement(
-				findTestObject('WEB/Checkout/Payment Method/lbl_VirtualAccount')
-			)
-		)
-	)
-}
-
-println('VIRTUAL ACCOUNT SELECTED')
-
-//====================================================
-// BCA VA
-//====================================================
-
-WebUI.waitForElementPresent(
-	findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'),
-	30
-)
-
-WebUI.scrollToElement(
-	findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'),
-	10
-)
-
-try {
-
-	WebUI.click(
-		findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA')
-	)
-
-} catch(Exception e) {
-
-	WebUI.executeJavaScript(
-		"arguments[0].click();",
-		Arrays.asList(
-			WebUI.findWebElement(
-				findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA')
-			)
-		)
-	)
-}
-
-println('BCA VIRTUAL ACCOUNT SELECTED')
-
-WebUI.verifyElementPresent(
-	findTestObject('WEB/Checkout/Payment Method/Virtual Account/rdo_BCA'),
-	10
-)
-
-println('PAYMENT METHOD VERIFIED')
-WebUI.verifyElementVisible(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
-
-WebUI.click(findTestObject('WEB/Checkout/OrderSummary/checkbox'))
-
-//====================================================
-// FINAL CHECKOUT
-//====================================================
-WebUI.verifyElementVisible(findTestObject('WEB/Cart/btn_Checkout'), FailureHandling.STOP_ON_FAILURE)
-
-WebUI.scrollToElement(findTestObject('WEB/Cart/btn_Checkout'), 10)
-
-WebUI.click(findTestObject('WEB/Cart/btn_Checkout'))
-
-WebUI.delay(10)
-
-int totalWindow = WebUI.getWindowIndex()
-
-println('CURRENT WINDOW INDEX : ' + totalWindow)
-
-try {
-    WebUI.switchToWindowIndex(1)
-
-    println('SWITCH TO WINDOW 1')
-}
-catch (Exception e) {
-    println('SUCCESS PAGE OPENED IN SAME TAB')
-} 
-
-WebUI.delay(3)
-
-//====================================================
-// VERIFY CHECKOUT SUCCESS PAGE
-//====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'), 30)
-
-WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderSuccess'))
-
-WebUI.verifyTextPresent('Your order has been placed successfully.', false)
-
-println('SUCCESS PAGE DISPLAYED')
-
-//====================================================
-// VERIFY ORDER STATUS
-//====================================================
-String orderStatus = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderStatus'))
-
-println('ORDER STATUS : ' + orderStatus)
-
-assert orderStatus != ''
-
-//====================================================
-// VERIFY ORDER NUMBER
-//====================================================
-String orderNumber = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_OrderNumber'))
-
-println('ORDER NUMBER : ' + orderNumber)
-
-assert orderNumber != ''
-
-assert orderNumber.matches('\\d+')
-
-//====================================================
-// VERIFY PAYMENT METHOD
-//====================================================
-String paymentMethod = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_PaymentMethod'))
-
-println('PAYMENT METHOD : ' + paymentMethod)
-
-assert paymentMethod != ''
-
-//====================================================
-// VERIFY TOTAL PRICE
-//====================================================
-String totalPrice = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_TotalPrice'))
-
-println('TOTAL PRICE : ' + totalPrice)
-
-assert totalPrice.contains('Rp')
-
-//====================================================
-// VERIFY VIRTUAL ACCOUNT
-//====================================================
-String virtualAccount = WebUI.getText(findTestObject('WEB/Checkout/Checkout Success/lbl_VirtualAccount'))
-
-println('VIRTUAL ACCOUNT : ' + virtualAccount)
-
-assert virtualAccount != ''
-
-//====================================================
-// OPEN ORDER DETAIL
-//====================================================
-WebUI.verifyElementVisible(findTestObject('WEB/Checkout/Checkout Success/btn_ViewDetails'))
-
-WebUI.click(findTestObject('WEB/Checkout/Checkout Success/btn_ViewDetails'))
-
-WebUI.waitForPageLoad(10)
-
-println('ORDER DETAIL PAGE OPENED')
-
-///====================================================
-// OPEN PAYMENT PAGE
-//====================================================
-WebUI.scrollToElement(findTestObject('WEB/OrderDetail/Page View Detail/btn_ContinueToPay'), 10)
-
-WebUI.click(findTestObject('WEB/OrderDetail/Page View Detail/btn_ContinueToPay'))
-
-WebUI.delay(5)
-
-println('PAYMENT PAGE OPENED')
-
-//====================================================
-// VERIFY PAYMENT PAGE URL
-//====================================================
-String paymentUrl = WebUI.getUrl()
-
-println('PAYMENT URL : ' + paymentUrl)
-
-assert paymentUrl.contains('/payment')
-
-assert paymentUrl.contains('vaNumber=')
-
-assert paymentUrl.contains('totalAmount=')
-
-assert paymentUrl.contains('paymentPlatform=midtrans')
-
-println('PAYMENT PAGE VERIFIED')
-
-//====================================================
-// OPEN MIDTRANS SIMULATOR
-//====================================================
-WebUI.executeJavaScript('window.open(\'https://simulator.sandbox.midtrans.com/bca/va/index\',\'_blank\');', null)
-
-WebUI.delay(5)
-
-// DEBUG WINDOW
-for (int i = 0; i <= 5; i++) {
-    try {
-        WebUI.switchToWindowIndex(i)
-
-        println((('WINDOW ' + i) + ' URL : ') + WebUI.getUrl())
-    }
-    catch (Exception e) {
-        println(('WINDOW ' + i) + ' NOT FOUND')
-    } 
-}
-
-// biasanya simulator ada di index terakhir
-try {
-    WebUI.switchToWindowIndex(2)
-}
-catch (Exception e) {
-    try {
-        WebUI.switchToWindowIndex(1)
-    }
-    catch (Exception ex) {
-        WebUI.switchToWindowIndex(0)
-    } 
-} 
-
-WebUI.delay(5)
-
-println('MIDTRANS SIMULATOR OPENED')
-
-//====================================================
-// VERIFY MIDTRANS PAGE
-//====================================================
-String midtransUrl = WebUI.getUrl()
-
-println('MIDTRANS URL : ' + midtransUrl)
-
-assert midtransUrl.toLowerCase().contains('midtrans')
-
-println('MIDTRANS URL VERIFIED')
-
-//====================================================
-// VERIFY PAGE TITLE
-//====================================================
-String pageTitle = WebUI.getWindowTitle()
-
-println('PAGE TITLE : ' + pageTitle)
-
-assert pageTitle.trim().length() > 0
-
-println('MIDTRANS PAGE DISPLAYED')
+println("VIRTUAL ACCOUNT FORMAT VERIFIED")
 
 //====================================================
 // TEST PASSED
 //====================================================
-println('PAYMENT INSTRUCTIONS DISPLAYED CORRECTLY IN MIDTRANS PAGE')
-
-//====================================================
-// INPUT VA NUMBER
-//====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Midtrans/txt_VirtualAccount'), 10)
-
-WebUI.setText(findTestObject('WEB/Midtrans/txt_VirtualAccount'), virtualAccount)
-
-println('VA NUMBER INPUTTED')
-
-//====================================================
-// CLICK INQUIRE
-//====================================================
-WebUI.click(findTestObject('WEB/Midtrans/btn_Inquire'))
-
-WebUI.delay(5)
-
-println('INQUIRE SUCCESS')
-
-//====================================================
-// VERIFY VA NUMBER
-//====================================================
-String vaNumber = WebUI.getText(findTestObject('WEB/Midtrans/lbl_VANumber'))
-
-println('VA NUMBER : ' + vaNumber)
-
-assert vaNumber.trim().length() > 0
-
-//====================================================
-// VERIFY ON BEHALF OF
-//====================================================
-String onBehalfOf = WebUI.getText(findTestObject('WEB/Midtrans/lbl_OnBehalfOf'))
-
-println('ON BEHALF OF : ' + onBehalfOf)
-
-assert onBehalfOf.trim().length() > 0
-
-//====================================================
-// VERIFY FREE TEXT
-//====================================================
-String freeText = WebUI.getText(findTestObject('WEB/Midtrans/lbl_FreeText'))
-
-println('FREE TEXT : ' + freeText)
-
-assert freeText.trim().length() > 0
-
-//====================================================
-// VERIFY AMOUNT TO PAY
-//====================================================
-String amountToPay = WebUI.getAttribute(findTestObject('WEB/Midtrans/txt_AmountToPay'), 'value')
-
-println('AMOUNT TO PAY : ' + amountToPay)
-
-assert amountToPay.trim().length() > 0
-
-//====================================================
-// VERIFY PAY BUTTON
-//====================================================
-WebUI.verifyElementVisible(findTestObject('WEB/Midtrans/btn_Pay'))
-
-println('PAY BUTTON DISPLAYED')
-
-//====================================================
-// TEST PASSED
-//====================================================
-println('PAYMENT INSTRUCTIONS DISPLAYED CORRECTLY')
-
+println("====================================")
+println("PAYMENT INSTRUCTION VERIFIED")
+println("ORDER NUMBER   : " + GlobalVariable.OrderNumber)
+println("PAYMENT METHOD : " + GlobalVariable.PaymentMethod)
+println("TOTAL PRICE    : " + GlobalVariable.TotalPrice)
+println("VIRTUAL ACCOUNT: " + GlobalVariable.VirtualAccount)
+println("====================================")

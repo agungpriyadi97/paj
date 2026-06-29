@@ -144,5 +144,130 @@ class MyOrderKeyword {
 
         println("ORDER DETAIL PAGE OPENED")
     }
+	
+	@Keyword
+	def cancelOrder() {
+	
+		WebUI.scrollToElement(
+			findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'),
+			10
+		)
+	
+		WebUI.waitForElementClickable(
+			findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'),
+			20
+		)
+	
+		try {
+	
+			WebUI.enhancedClick(
+				findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel')
+			)
+	
+		} catch(Exception e){
+	
+			WebUI.executeJavaScript(
+				"arguments[0].click();",
+				Arrays.asList(
+					WebUI.findWebElement(
+						findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel')
+					)
+				)
+			)
+		}
+	
+		println("CANCEL POPUP OPENED")
+	
+		WebUI.waitForElementVisible(
+			findTestObject('WEB/OrderDetail/CancelReason/ddl_Reason'),
+			20
+		)
+	
+		WebUI.enhancedClick(
+			findTestObject('WEB/OrderDetail/CancelReason/ddl_Reason')
+		)
+	
+		WebUI.enhancedClick(
+			findTestObject('WEB/OrderDetail/CancelReason/opt_WrongColorVariant')
+		)
+	
+		println("CANCEL REASON SELECTED")
+	
+		WebUI.enhancedClick(
+			findTestObject('WEB/OrderDetail/CancelReason/btn_Confirm')
+		)
+	
+		println("CONFIRM BUTTON CLICKED")
+	
+		WebUI.waitForElementClickable(
+			findTestObject('WEB/OrderDetail/CancelReason/btn_OK'),
+			20
+		)
+	
+		WebUI.enhancedClick(
+			findTestObject('WEB/OrderDetail/CancelReason/btn_OK')
+		)
+	
+		println("OK BUTTON CLICKED")
+	
+		WebUI.waitForElementVisible(
+			findTestObject('WEB/OrderDetail/CancelReason/msg_success'),
+			20
+		)
+	
+		println("ORDER CANCELLED SUCCESSFULLY")
+	}
+	
+	@Keyword
+	def verifyCancelReason() {
+	
+		WebUI.scrollToElement(
+			findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'),
+			10
+		)
+	
+		WebUI.waitForElementClickable(
+			findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel'),
+			20
+		)
+	
+		WebUI.enhancedClick(
+			findTestObject('WEB/OrderDetail/Page View Detail/btn_Cancel')
+		)
+	
+		WebUI.waitForElementVisible(
+			findTestObject('WEB/OrderDetail/CancelReason/lbl_Cancel'),
+			20
+		)
+	
+		WebUI.verifyElementText(
+			findTestObject('WEB/OrderDetail/CancelReason/lbl_Cancel'),
+			"Cancel"
+		)
+	
+		WebUI.verifyElementText(
+			findTestObject('WEB/OrderDetail/CancelReason/lbl_Reason'),
+			"Reason"
+		)
+	
+		WebUI.verifyElementAttributeValue(
+			findTestObject('WEB/OrderDetail/CancelReason/txt_Select'),
+			"placeholder",
+			"Select",
+			10
+		)
+	
+		WebUI.enhancedClick(
+			findTestObject('WEB/OrderDetail/CancelReason/ddl_Reason')
+		)
+	
+		WebUI.verifyElementText(
+			findTestObject('WEB/OrderDetail/CancelReason/opt_WrongColorVariant'),
+			"Choose the wrong color/variant and would like to reorder the correct one."
+		)
+	
+		println("CANCEL REASON COPYWRITING VERIFIED")
+	}
 
 }
+
