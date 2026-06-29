@@ -18,7 +18,7 @@ import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
 import java.util.Arrays as Arrays
 import com.kms.katalon.core.testobject.ConditionType as ConditionType
-import myorder.MyOrderKeyword
+import myorder.MyOrderKeyword as MyOrderKeyword
 
 //====================================================
 // LOGIN
@@ -31,7 +31,7 @@ WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - En
 //====================================================
 WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/icon_account'))
 
-WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'),20)
+WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'), 20)
 
 WebUI.enhancedClick(findTestObject('WEB/Home/Header/DropdownAccount/my_orders'))
 
@@ -40,4 +40,6 @@ WebUI.waitForPageLoad(10)
 println('ORDER DETAIL PAGE OPENED')
 
 CustomKeywords.'myorder.MyOrderKeyword.openFirstUnpaidOrder'()
+
+CustomKeywords.'myorder.MyOrderKeyword.verifyCancelReason'()
 
