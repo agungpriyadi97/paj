@@ -3,8 +3,8 @@ pipeline {
     agent any
 
     options {
-        timeout(time: 12, unit: 'HOURS')
         timestamps()
+        disableConcurrentBuilds()
     }
 
     parameters {
@@ -16,7 +16,7 @@ pipeline {
                 'Firefox (headless)',
                 'Both'
             ],
-            description: 'Pilih browser yang akan dijalankan'
+            description: 'Pilih Browser'
         )
 
         choice(
@@ -33,7 +33,17 @@ pipeline {
         string(
             name: 'TEST_PATH',
             defaultValue: '',
-            description: 'Kosongkan untuk menjalankan Regression default'
+            description: '''
+Kosong = Regression Default
+
+Contoh:
+
+-testSuitePath=Test Suites/WEB/Login
+
+atau
+
+-testSuiteCollectionPath=Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web
+'''
         )
     }
 
@@ -51,13 +61,19 @@ pipeline {
     stages {
 
         stage('Checkout Source') {
+
             steps {
+
                 checkout scm
+
             }
+
         }
 
         stage('Prepare') {
+
             steps {
+
                 script {
 
                     bat '''
@@ -67,10 +83,10 @@ pipeline {
 
                     if (params.TEST_PATH?.trim()) {
 
-                        def splitValue = params.TEST_PATH.split("=")
+                        def value = params.TEST_PATH.split("=")
 
-                        env.ARG_TYPE = splitValue[0]
-                        env.FINAL_PATH = splitValue[1]
+                        env.ARG_TYPE = value[0]
+                        env.FINAL_PATH = value[1]
 
                     } else {
 
@@ -79,24 +95,32 @@ pipeline {
 
                     }
 
-                    echo "======================================="
-                    echo "PROJECT  : ${env.PROJECT_FILE}"
-                    echo "PROFILE  : ${params.PROFILE}"
-                    echo "BROWSER  : ${params.BROWSER}"
-                    echo "ARG TYPE : ${env.ARG_TYPE}"
-                    echo "TEST PATH: ${env.FINAL_PATH}"
-                    echo "======================================="
+                    echo "====================================="
+                    echo "PROJECT : ${env.PROJECT_FILE}"
+                    echo "PROFILE : ${params.PROFILE}"
+                    echo "BROWSER : ${params.BROWSER}"
+                    echo "ARGTYPE : ${env.ARG_TYPE}"
+                    echo "PATH    : ${env.FINAL_PATH}"
+                    echo "====================================="
+
                 }
+
             }
+
         }
 
         stage('Run Chrome') {
 
             when {
+
                 anyOf {
+
                     expression { params.BROWSER == 'Chrome (headless)' }
+
                     expression { params.BROWSER == 'Both' }
+
                 }
+
             }
 
             steps {
@@ -104,32 +128,40 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
 
                     bat """
-"%KATALON_EXE%" ^
+"${env.KATALON_EXE}" ^
 -noSplash ^
 -runMode=console ^
--projectPath="%WORKSPACE%\\%PROJECT_FILE%" ^
+-projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
 -retry=0 ^
--apiKey="%KATALON_API_KEY%" ^
-%ARG_TYPE%="%FINAL_PATH%" ^
+-apiKey="${env.KATALON_API_KEY}" ^
+${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 -executionProfile="${params.PROFILE}" ^
 -browserType="Chrome (headless)" ^
 -reportFolder="Reports\\Chrome_Reports" ^
 -reportFileName="Chrome_Report" ^
 --config ^
 -webui.autoUpdateDrivers=true ^
--webui.chrome.args="--disable-blink-features=AutomationControlled --disable-dev-shm-usage --no-sandbox --disable-gpu --window-size=1920,1080"
+-webui.chrome.args="--disable-blink-features=AutomationControlled --disable-dev-shm-usage --disable-gpu --no-sandbox --window-size=1920,1080"
 """
+
                 }
+
             }
+
         }
 
         stage('Run Firefox') {
 
             when {
+
                 anyOf {
+
                     expression { params.BROWSER == 'Firefox (headless)' }
+
                     expression { params.BROWSER == 'Both' }
+
                 }
+
             }
 
             steps {
@@ -137,13 +169,13 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
 
                     bat """
-"%KATALON_EXE%" ^
+"${env.KATALON_EXE}" ^
 -noSplash ^
 -runMode=console ^
--projectPath="%WORKSPACE%\\%PROJECT_FILE%" ^
+-projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
 -retry=0 ^
--apiKey="%KATALON_API_KEY%" ^
-%ARG_TYPE%="%FINAL_PATH%" ^
+-apiKey="${env.KATALON_API_KEY}" ^
+${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 -executionProfile="${params.PROFILE}" ^
 -browserType="Firefox (headless)" ^
 -reportFolder="Reports\\Firefox_Reports" ^
@@ -151,8 +183,11 @@ pipeline {
 --config ^
 -webui.autoUpdateDrivers=true
 """
+
                 }
+
             }
+
         }
 
     }
@@ -171,21 +206,31 @@ pipeline {
                 testResults: 'Reports/**/*.xml'
             )
 
-            echo "======================================="
-            echo "Pipeline Finished"
-            echo "======================================="
+            echo ""
+            echo "======================================"
+            echo "Automation Finished"
+            echo "======================================"
+
         }
 
         success {
+
             echo "Automation SUCCESS"
+
         }
 
         unstable {
+
             echo "Automation UNSTABLE"
+
         }
 
         failure {
+
             echo "Automation FAILED"
+
         }
+
     }
+
 }
