@@ -6,9 +6,14 @@ stages:
   - test
 
 variables:
-  GS_OPTIONS: "-Xmx4096m -Xms1024m -Djava.shm.size=4g"
+  CONTINUE_ON_FAILURE: "true"
 
-katalon_pasti_ada_jalan_test:
+  # Memory Java
+  GS_OPTIONS: "-Xms1024m -Xmx4096m -Djava.shm.size=4g"
+
+  DISPLAY: ":99"
+
+katalon_paj:
   stage: test
 
   tags:
@@ -22,118 +27,167 @@ katalon_pasti_ada_jalan_test:
     - if: '$CI_PIPELINE_SOURCE == "pipeline"'
 
   before_script:
-    # Cleanup old reports
-    - rm -rf Reports/* || true
 
-    # Create folders if missing
-    - mkdir -p Reports
+    ###########################################
+    # Clean
+    ###########################################
+
+    - rm -rf Reports || true
+    - rm -rf Screenshot || true
+
+    - mkdir -p Reports/Chrome
+    - mkdir -p Reports/Firefox
     - mkdir -p Screenshot
 
-    # Install dependencies
-    - apt-get update || true
-    - apt-get install -y xvfb ffmpeg curl || true
+    ###########################################
+    # Install packages
+    ###########################################
 
+    - apt-get update -o Acquire::AllowInsecureRepositories=true || true
+
+    - |
+      apt-get install -y \
+      xvfb \
+      ffmpeg \
+      curl \
+      unzip \
+      fonts-liberation \
+      libatk-bridge2.0-0 \
+      libgtk-3-0 \
+      libgbm1 \
+      libnss3 \
+      libxss1 \
+      libasound2 \
+      || true
+
+    ###########################################
     # Diagnostics
-    - ffmpeg -version || true
-    - xvfb-run --version || true
+    ###########################################
 
-    # Show runner IP (optional)
-    - curl -s ifconfig.me || echo "Unable to retrieve public IP"
+    - java -version
+    - google-chrome --version || true
+    - chromedriver --version || true
+    - firefox --version || true
+    - geckodriver --version || true
 
-    # Verify project file exists
+    - curl -s ifconfig.me || true
+
     - ls -la
+
     - test -f "$CI_PROJECT_DIR/pasti-ada-jalan.prj"
 
   script:
+
     - |
-      echo "===================================="
-      echo "PAJ AUTOMATION EXECUTION STARTED"
-      echo "===================================="
+
+      ###########################################
+      # Resolve Test Suite
+      ###########################################
 
       if [ -z "$TEST_PATH" ]; then
-        echo "Running default regression suite collection"
 
-        export FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
-        export ARG_TYPE="-testSuiteCollectionPath"
+          FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
+
+          ARG_TYPE="-testSuiteCollectionPath"
+
       else
-        echo "Running custom execution: $TEST_PATH"
 
-        export FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
-        export ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
+          FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
+
+          ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
+
       fi
 
-      echo "Execution Path:"
-      echo "$ARG_TYPE=$FINAL_PATH"
+      ###########################################
+      # Chrome
+      ###########################################
 
-      echo "===================================="
-      echo "CHROME HEADLESS EXECUTION"
-      echo "===================================="
+      CHROME_EXIT=0
 
-      mkdir -p Reports/Chrome_Reports
-
-      katalonc.sh \
-        -noSplash \
-        -runMode=console \
-        -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-        -retry=0 \
-        -apiKey="$KATALON_API_KEY" \
-        "$ARG_TYPE=$FINAL_PATH" \
-        -browserType="Chrome (headless)" \
-        -reportFolder="Reports/Chrome_Reports" \
-        -reportFileName="Chrome_Report" \
-        --config \
-        -webui.autoUpdateDrivers=true \
-      || echo "Chrome execution completed with failures"
-
-      echo "===================================="
-      echo "FIREFOX HEADLESS EXECUTION"
-      echo "===================================="
-
-      firefox --version || true
-      geckodriver --version || true
-
-      mkdir -p Reports/Firefox_Reports
+      echo ""
+      echo "======================================="
+      echo "Running Chrome Headless"
+      echo "======================================="
 
       xvfb-run -a --server-args="-screen 0 1920x1080x24" \
       katalonc.sh \
-        -noSplash \
-        -runMode=console \
-        -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-        -retry=0 \
-        -apiKey="$KATALON_API_KEY" \
-        "$ARG_TYPE=$FINAL_PATH" \
-        -browserType="Firefox" \
-        -reportFolder="Reports/Firefox_Reports" \
-        -reportFileName="Firefox_Report" \
-        --config \
-        -webui.autoUpdateDrivers=true \
-        -webui.firefox.args="-headless" \
-        -webui.firefox.additionalArgs="--width=1920 --height=1080" \
-      || echo "Firefox execution completed with failures"
+      -noSplash \
+      -runMode=console \
+      -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
+      -retry=0 \
+      -apiKey="$KATALON_API_KEY" \
+      "$ARG_TYPE=$FINAL_PATH" \
+      -browserType="Chrome (headless)" \
+      -reportFolder="Reports/Chrome" \
+      -reportFileName="Chrome_Report" \
+      --config \
+      -webui.autoUpdateDrivers=false \
+      -webui.chrome.args="--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--disable-extensions,--disable-background-networking,--disable-renderer-backgrounding,--disable-background-timer-throttling,--disable-sync,--window-size=1920,1080" \
+      || CHROME_EXIT=$?
 
-      echo "===================================="
-      echo "REPORT VALIDATION"
-      echo "===================================="
+      ###########################################
+      # Firefox
+      ###########################################
 
-      find Reports -type f | head -50 || true
+      FIREFOX_EXIT=0
 
-      if [ -d "Reports/Chrome_Reports" ]; then
-        echo "Chrome reports generated"
+      echo ""
+      echo "======================================="
+      echo "Running Firefox Headless"
+      echo "======================================="
+
+      xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+      katalonc.sh \
+      -noSplash \
+      -runMode=console \
+      -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
+      -retry=0 \
+      -apiKey="$KATALON_API_KEY" \
+      "$ARG_TYPE=$FINAL_PATH" \
+      -browserType="Firefox" \
+      -reportFolder="Reports/Firefox" \
+      -reportFileName="Firefox_Report" \
+      --config \
+      -webui.autoUpdateDrivers=false \
+      -webui.firefox.args="-headless" \
+      || FIREFOX_EXIT=$?
+
+      ###########################################
+      # Summary
+      ###########################################
+
+      echo ""
+      echo "======================================="
+      echo "SUMMARY"
+      echo "======================================="
+
+      echo "Chrome Exit : $CHROME_EXIT"
+
+      echo "Firefox Exit : $FIREFOX_EXIT"
+
+      EXIT_CODE=0
+
+      if [ "$CHROME_EXIT" -ne 0 ]; then
+          EXIT_CODE=1
       fi
 
-      if [ -d "Reports/Firefox_Reports" ]; then
-        echo "Firefox reports generated"
+      if [ "$FIREFOX_EXIT" -ne 0 ]; then
+          EXIT_CODE=1
       fi
 
-      echo "===================================="
-      echo "EXECUTION FINISHED"
-      echo "===================================="
+      exit $EXIT_CODE
 
-    # Cleanup old videos
-    - find Reports/ -type f -name "*.mp4" -mtime +30 -exec rm -f {} \; || true
+  after_script:
+
+    - echo "Cleaning videos..."
+
+    - find Reports -name "*.mp4" -mtime +30 -delete || true
 
   artifacts:
+
     when: always
+
+    expire_in: 2 mos
 
     paths:
       - Reports/
@@ -142,5 +196,3 @@ katalon_pasti_ada_jalan_test:
     reports:
       junit:
         - Reports/**/*.xml
-
-    expire_in: 2 mos
