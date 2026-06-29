@@ -112,4 +112,4 @@ katalon_paj_test:
       - Reports/
       - Screenshot/
 
-    expire_in: 2 mos
+    expire_in: 2 mosd
