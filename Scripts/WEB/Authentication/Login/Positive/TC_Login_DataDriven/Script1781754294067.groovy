@@ -31,9 +31,11 @@ WebUI.waitForElementVisible(findTestObject('WEB/Home/Header/Icon Menu/btn_SignIn
 
 WebUI.click(findTestObject('WEB/Home/Header/Icon Menu/btn_SignIn'))
 
-WebUI.setText(findTestObject('WEB/Authentication/Login/txt_Email'), )
+WebUI.setText(findTestObject('WEB/Authentication/Login/txt_Email'))
 
-WebUI.setText(findTestObject('WEB/Authentication/Login/txt_Password'), )
+WebUI.setText(findTestObject('WEB/Authentication/Login/txt_Password'))
 
 WebUI.click(findTestObject('WEB/Authentication/Login/btn_sign_in'))
+
+WebUI.delay(3)
 
