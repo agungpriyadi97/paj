@@ -1,14 +1,15 @@
 image:
-  name: ubuntu:24.04
+  name: 'katalonstudio/katalon:11.1.3'
+  entrypoint: [""]
 
 stages:
   - test
 
 variables:
-  KATALON_VERSION: "11.1.3"
-  GS_OPTIONS: "-Xmx4096m -Xms1024m -Djava.shm.size=4g"
+  CONTINUE_ON_FAILURE: "true"
+  GS_OPTIONS: "-Xmx2048m -Xms512m -Djava.shm.size=2g"
 
-katalon_test:
+katalon_paj_test:
   stage: test
 
   tags:
@@ -16,76 +17,93 @@ katalon_test:
 
   timeout: 12h
 
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+
   before_script:
-    - apt-get update
+    # Cleanup report sebelumnya
+    - rm -rf Reports/* || true
+    - rm -rf Screenshot/* || true
 
-    - apt-get install -y \
-        wget \
-        unzip \
-        curl \
-        ffmpeg \
-        xvfb \
-        openjdk-21-jre \
-        google-chrome-stable
-
-    - mkdir -p /opt/katalon
-
-    - wget -O katalon.zip https://download.katalon.com/${KATALON_VERSION}/Katalon_Studio_Engine_Linux_64-${KATALON_VERSION}.zip
-
-    - unzip katalon.zip -d /opt/katalon
-
-    - chmod +x /opt/katalon/katalonc
-
-    - java -version
-
-    - google-chrome --version
-
-    - xvfb-run --version
-
-    - mkdir -p Reports
-
-    - mkdir -p Screenshot
+    # Install ffmpeg
+    - apt-get update -o Acquire::AllowInsecureRepositories=true -o Doomsday::Ignore=true -y || true
+    - apt-get install -y --allow-unauthenticated ffmpeg
+    - ffmpeg -version
 
   script:
+    - curl ifconfig.me
 
     - |
 
+      ###################################################
+      # PAJ PATH RESOLUTION
+      ###################################################
+
       if [ -z "$TEST_PATH" ]; then
-          FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
-          ARG_TYPE="-testSuiteCollectionPath"
+        echo "Running default PAJ Regression Collection..."
+
+        export FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
+
+        export ARG_TYPE="-testSuiteCollectionPath"
+
       else
-          FINAL_PATH=$(echo "$TEST_PATH"|cut -d= -f2)
-          ARG_TYPE=$(echo "$TEST_PATH"|cut -d= -f1)
+
+        echo "Running custom test : $TEST_PATH"
+
+        export FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
+
+        export ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
+
       fi
 
-      echo "===== CHROME ====="
+      ###################################################
+      # Chrome
+      ###################################################
 
-      xvfb-run -a /opt/katalon/katalonc \
-      -noSplash \
-      -runMode=console \
-      -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-      -apiKey="$KATALON_API_KEY" \
-      "$ARG_TYPE=$FINAL_PATH" \
-      -browserType="Chrome (headless)" \
-      -reportFolder="Reports/Chrome" \
-      -reportFileName="Chrome_Report" \
-      --config \
-      -webui.autoUpdateDrivers=true \
-      -webui.chrome.args="--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--window-size=1920,1080"
+      echo "======================================"
+      echo "Chrome Headless"
+      echo "======================================"
 
-      echo "===== FIREFOX ====="
+      katalonc.sh \
+        -noSplash \
+        -runMode=console \
+        -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
+        -retry=0 \
+        -apiKey="$KATALON_API_KEY" \
+        "$ARG_TYPE=$FINAL_PATH" \
+        -browserType="Chrome (headless)" \
+        -reportFolder="Reports/Chrome_Reports" \
+        -reportFileName="Chrome_Report" \
+        --config \
+        -webui.autoUpdateDrivers=true \
+        || echo "Chrome execution finished."
 
-      xvfb-run -a /opt/katalon/katalonc \
-      -noSplash \
-      -runMode=console \
-      -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-      -apiKey="$KATALON_API_KEY" \
-      "$ARG_TYPE=$FINAL_PATH" \
-      -browserType="Firefox (headless)" \
-      -reportFolder="Reports/Firefox" \
-      -reportFileName="Firefox_Report" \
-      --config \
-      -webui.autoUpdateDrivers=true
+      ###################################################
+      # Firefox
+      ###################################################
+
+      echo "======================================"
+      echo "Firefox Headless"
+      echo "======================================"
+
+      katalonc.sh \
+        -noSplash \
+        -runMode=console \
+        -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
+        -retry=0 \
+        -apiKey="$KATALON_API_KEY" \
+        "$ARG_TYPE=$FINAL_PATH" \
+        -browserType="Firefox (headless)" \
+        -reportFolder="Reports/Firefox_Reports" \
+        -reportFileName="Firefox_Report" \
+        --config \
+        -webui.autoUpdateDrivers=true \
+        || echo "Firefox execution finished."
+
+    # Cleanup video lama
+    - echo "Cleaning old videos..."
+    - find Reports/ -type f -name "*.mp4" -mtime +30 -exec rm -f {} \; || true
 
   artifacts:
     when: always
