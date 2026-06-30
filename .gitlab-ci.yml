@@ -70,6 +70,7 @@ katalon_paj_test:
         -runMode=console \
         -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
         -retry=0 \
+        -orgID=$KATALON_ORG_ID \
         -apiKey="$KATALON_API_KEY" \
         "$ARG_TYPE=$FINAL_PATH" \
         -browserType="Chrome (headless)" \
@@ -92,6 +93,7 @@ katalon_paj_test:
         -runMode=console \
         -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
         -retry=0 \
+        -orgID=$KATALON_ORG_ID \
         -apiKey="$KATALON_API_KEY" \
         "$ARG_TYPE=$FINAL_PATH" \
         -browserType="Firefox (headless)" \
