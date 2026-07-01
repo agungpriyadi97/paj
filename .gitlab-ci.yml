@@ -140,7 +140,9 @@ katalon_regression:
 artifacts:
 
   when: always
+
   expire_in: 2 months
+
   paths:
     - Reports/
     - Screenshot/
