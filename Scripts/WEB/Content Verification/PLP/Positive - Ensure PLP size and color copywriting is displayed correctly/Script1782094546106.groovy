@@ -43,21 +43,21 @@ WebUI.scrollToElement(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/chk_
 //====================================================
 // VERIFY COLOR COPYWRITING
 //====================================================
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/chk_Beige'), 'Beige')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/chk_Beige'), FailureHandling.STOP_ON_FAILURE)
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/chk_Black'), 'Black')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/chk_Black'), FailureHandling.STOP_ON_FAILURE)
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_HotPink'), 'Hot Pink')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_HotPink'), FailureHandling.STOP_ON_FAILURE)
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_LightBlue'), 'Light Blue')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_LightBlue'), FailureHandling.STOP_ON_FAILURE)
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_LightGreen'), 'Light Green')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_LightGreen'), FailureHandling.STOP_ON_FAILURE)
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_LightPink'), 'Light Pink')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_LightPink'), FailureHandling.STOP_ON_FAILURE)
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_NavyBlue'), 'Navy Blue')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_NavyBlue'), FailureHandling.STOP_ON_FAILURE)
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_StainlessSteel'), 'Stainless steel')
+WebUI.verifyElementVisible(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/lbl_StainlessSteel'), FailureHandling.STOP_ON_FAILURE)
 
 WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/chk_White'), 'White')
 
