@@ -137,25 +137,20 @@ katalon_regression:
 
       find Reports -type f -name "*.mp4" -mtime +30 -delete || true
 
-artifacts:
+  artifacts:
+    when: always
+    expire_in: 2 months
+    paths:
+      - Reports/
+      - Screenshot/
 
-  when: always
-
-  expire_in: 2 months
-
-  paths:
-    - Reports/
-    - Screenshot/
 
 cache:
-
   key: katalon-cache
-
   paths:
     - Drivers/
 
 after_script:
-
   - echo ""
   - echo "======================================="
   - echo "Automation Finished"
