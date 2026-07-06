@@ -1,6 +1,5 @@
 package utils
 
-import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
@@ -39,9 +38,7 @@ public class RegistrationHelper {
         println "Mobile: ${mobile}"
         println "Password: ${password}"
 
-        WebUI.openBrowser('')
         WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/register')
-        WebUI.maximizeWindow()
         WebUI.delay(2)
 
         WebUI.setText(findTestObject('register_txtEmail'), email)
