@@ -9,7 +9,7 @@ variables:
   GS_OPTIONS: "-Xmx4096m -Xms1024m -Djava.shm.size=4g"
   JAVA_TOOL_OPTIONS: "-XX:+UseContainerSupport"
 
-katalon_regression:
+katalon_chrome:
 
   stage: test
 
@@ -25,6 +25,7 @@ katalon_regression:
 
   before_script:
 
+    - echo "Cleaning..."
     - rm -rf Reports || true
     - rm -rf Screenshot || true
 
@@ -32,135 +33,89 @@ katalon_regression:
     - mkdir -p Screenshot
 
     - apt-get update || true
-    - apt-get install -y ffmpeg xvfb procps curl || true
+    - apt-get install -y ffmpeg procps curl || true
 
-    - echo "========== SYSTEM INFO =========="
+    - echo "=================================="
+    - echo "SYSTEM INFORMATION"
+    - echo "=================================="
+
     - java -version
     - google-chrome --version || true
-    - firefox --version || true
+
+    - echo ""
+    - echo "===== MEMORY ====="
     - free -h
-    - df -h
+
+    - echo ""
+    - echo "===== SHM ====="
     - df -h /dev/shm || true
+
+    - echo ""
+    - echo "===== DISK ====="
+    - df -h
+
+    - echo ""
+    - echo "===== CPU ====="
     - nproc
+
     - ffmpeg -version
 
   script:
 
     - |
 
-      ##############################################
+      #############################################
       # Resolve Test Path
-      ##############################################
+      #############################################
 
       if [ -z "$TEST_PATH" ]; then
 
-        ARG_TYPE="-testSuiteCollectionPath"
-
-        FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
+          ARG_TYPE="-testSuiteCollectionPath"
+          FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
 
       else
 
-        ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
+          ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
+          FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
 
-        FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
-
-      fi
-
-      ##############################################
-      # Browser
-      ##############################################
-
-      if [ -z "$BROWSER" ]; then
-          BROWSER="Both"
       fi
 
       echo "======================================="
-      echo "Project  : pasti-ada-jalan"
-      echo "Browser  : $BROWSER"
-      echo "Profile  : ${EXECUTION_PROFILE:-Development}"
-      echo "Path     : $FINAL_PATH"
+      echo "Project : pasti-ada-jalan"
+      echo "Browser : Chrome Headless"
+      echo "Profile : ${EXECUTION_PROFILE:-Development}"
+      echo "Path    : $FINAL_PATH"
       echo "======================================="
 
-      ##############################################
-      # CHROME
-      ##############################################
-
-      if [ "$BROWSER" = "Chrome" ] || [ "$BROWSER" = "Both" ]; then
-
-      echo ""
-      echo "========== CHROME =========="
-
       katalonc.sh \
-      -noSplash \
-      -runMode=console \
-      -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-      -retry=0 \
-      -orgID="$KATALON_ORG_ID" \
-      -apiKey="$KATALON_API_KEY" \
-      "$ARG_TYPE=$FINAL_PATH" \
-      -executionProfile="${EXECUTION_PROFILE:-Development}" \
-      -browserType="Chrome (headless)" \
-      -reportFolder="Reports/Chrome_Reports" \
-      -reportFileName="Chrome_Report" \
-      --config \
-      -webui.autoUpdateDrivers=false \
-      -webui.chrome.args="--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--disable-software-rasterizer,--disable-extensions,--disable-background-networking,--disable-background-timer-throttling,--disable-renderer-backgrounding,--disable-sync,--disable-features=RendererCodeIntegrity,--window-size=1920,1080" \
-      || echo "Chrome Finished"
-
-      fi
-
-      ##############################################
-      # FIREFOX
-      ##############################################
-
-      if [ "$BROWSER" = "Firefox" ] || [ "$BROWSER" = "Both" ]; then
-
-      echo ""
-      echo "========== FIREFOX =========="
-
-      katalonc.sh \
-      -noSplash \
-      -runMode=console \
-      -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-      -retry=0 \
-      -orgID="$KATALON_ORG_ID" \
-      -apiKey="$KATALON_API_KEY" \
-      "$ARG_TYPE=$FINAL_PATH" \
-      -executionProfile="${EXECUTION_PROFILE:-Development}" \
-      -browserType="Firefox (headless)" \
-      -reportFolder="Reports/Firefox_Reports" \
-      -reportFileName="Firefox_Report" \
-      --config \
-      -webui.autoUpdateDrivers=false \
-      || echo "Firefox Finished"
-
-      fi
-
-      ##############################################
-      # CLEAN VIDEO
-      ##############################################
+        -noSplash \
+        -runMode=console \
+        -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
+        -retry=0 \
+        -orgID="$KATALON_ORG_ID" \
+        -apiKey="$KATALON_API_KEY" \
+        "$ARG_TYPE=$FINAL_PATH" \
+        -executionProfile="${EXECUTION_PROFILE:-Development}" \
+        -browserType="Chrome (headless)" \
+        -reportFolder="Reports/Chrome_Reports" \
+        -reportFileName="Chrome_Report" \
+        --config \
+        -webui.autoUpdateDrivers=false \
+        -webui.chrome.args="--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--disable-software-rasterizer,--disable-extensions,--disable-background-networking,--disable-background-timer-throttling,--disable-renderer-backgrounding,--disable-sync,--window-size=1920,1080" \
+        || echo "Chrome execution finished."
 
       find Reports -type f -name "*.mp4" -mtime +30 -delete || true
 
   artifacts:
+    when: always
+    expire_in: 2 months
 
-      when: always
-      expire_in: 2 months
-      paths:
-
+    paths:
       - Reports/
       - Screenshot/
 
-cache:
-
-  key: katalon-cache
-
-  paths:
-
-    - Drivers/
-
 after_script:
-
-  - echo "================================="
+  - echo ""
+  - echo "======================================="
   - echo "Automation Finished"
-  - echo "================================="
+  - echo "======================================="
