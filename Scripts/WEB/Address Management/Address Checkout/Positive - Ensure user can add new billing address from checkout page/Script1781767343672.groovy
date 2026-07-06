@@ -36,11 +36,11 @@ println('PDP PAGE OPENED')
 //====================================================
 // ADD TO CART
 //====================================================
-WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 

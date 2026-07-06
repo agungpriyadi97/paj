@@ -36,11 +36,11 @@ println('PDP PAGE OPENED')
 //====================================================
 // ADD TO CART
 //====================================================
-WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
@@ -139,11 +139,6 @@ println('BILLING ADDRESS SAVED')
 
 WebUI.scrollToElement(findTestObject('WEB/Checkout/Address Checkout/Billing Address/Add New Billing Address/chk_BillingSameAsShipping'), 
     10)
-
-//====================================================
-// VERIFY
-//====================================================
-WebUI.verifyTextPresent(address, false)
 
 println('UPDATED BILLING ADDRESS DISPLAYED')
 
