@@ -99,7 +99,7 @@ katalon_regression:
           -reportFileName="Chrome_Report" \
           --config \
           -webui.autoUpdateDrivers=true \
-          -webui.chrome.args="--disable-dev-shm-usage --disable-gpu --disable-blink-features=AutomationControlled --window-size=1920,1080 --no-sandbox" \
+          -webui.chrome.args="--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--window-size=1920,1080,--disable-blink-features=AutomationControlled" \
           || echo "Chrome execution finished."
 
       fi
