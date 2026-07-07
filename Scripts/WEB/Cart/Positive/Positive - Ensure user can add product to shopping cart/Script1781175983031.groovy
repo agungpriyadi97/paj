@@ -16,19 +16,12 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
-import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
-import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
-import com.kms.katalon.core.model.FailureHandling as FailureHandling
-import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 //====================================================
 // LOGIN
 //====================================================
-WebUI.callTestCase(
-findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'),
-[:],
-FailureHandling.STOP_ON_FAILURE
-)
+WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
+    [:], FailureHandling.STOP_ON_FAILURE)
 
 println('LOGIN SUCCESS')
 
@@ -37,9 +30,7 @@ WebUI.delay(5)
 //====================================================
 // OPEN PDP DIRECTLY
 //====================================================
-WebUI.navigateToUrl(
-'https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250'
-)
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP260706006287')
 
 WebUI.waitForPageLoad(30)
 
@@ -48,29 +39,15 @@ println('PDP PAGE OPENED')
 //====================================================
 // ADD TO CART
 //====================================================
-WebUI.waitForElementPresent(
-findTestObject('WEB/Product/PDP/btn_AddToCart'),
-30
-)
+WebUI.waitForElementPresent(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
 
-WebUI.waitForElementVisible(
-findTestObject('WEB/Product/PDP/btn_AddToCart'),
-30
-)
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
 
-WebUI.waitForElementClickable(
-findTestObject('WEB/Product/PDP/btn_AddToCart'),
-30
-)
+WebUI.waitForElementClickable(findTestObject('WEB/Product/PDP/btn_AddToCart'), 30)
 
-WebUI.scrollToElement(
-findTestObject('WEB/Product/PDP/btn_AddToCart'),
-10
-)
+WebUI.scrollToElement(findTestObject('WEB/Product/PDP/btn_AddToCart'), 10)
 
-WebUI.enhancedClick(
-findTestObject('WEB/Product/PDP/btn_AddToCart')
-)
+WebUI.enhancedClick(findTestObject('WEB/Product/PDP/btn_AddToCart'))
 
 WebUI.delay(3)
 
@@ -79,14 +56,9 @@ println('PRODUCT ADDED TO CART')
 //====================================================
 // OPEN CART
 //====================================================
-WebUI.waitForElementClickable(
-findTestObject('WEB/Home/Header/Icon Menu/icon_cart'),
-20
-)
+WebUI.waitForElementClickable(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'), 20)
 
-WebUI.enhancedClick(
-findTestObject('WEB/Home/Header/Icon Menu/icon_cart')
-)
+WebUI.enhancedClick(findTestObject('WEB/Home/Header/Icon Menu/icon_cart'))
 
 WebUI.waitForPageLoad(30)
 
@@ -95,58 +67,33 @@ println('SHOPPING CART OPENED')
 //====================================================
 // VERIFY SHOPPING CART PAGE
 //====================================================
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/lbl_ShoppingCartTitle')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/lbl_ShoppingCartTitle'))
 
 println('SHOPPING CART PAGE DISPLAYED')
 
 //====================================================
 // VERIFY PRODUCT DISPLAYED
 //====================================================
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/img_Product')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/img_Product'))
 
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/lbl_ProductName')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/lbl_ProductName'))
 
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/lbl_ProductSKU')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/lbl_ProductSKU'))
 
 println('PRODUCT DISPLAYED IN CART')
 
 //====================================================
 // VERIFY PRICE
 //====================================================
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/lbl_SellingPrice')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/lbl_SellingPrice'))
 
 println('PRODUCT PRICE DISPLAYED')
 
 //====================================================
 // VERIFY QTY (HEADLESS SAFE)
 //====================================================
-String qty = WebUI.executeJavaScript(
-"""
-var qtyInput =
-document.querySelector(
-'input[role="spinbutton"]'
-);
-
-if(!qtyInput){
-return '0';
-}
-
-return qtyInput.getAttribute('aria-valuenow')
-|| qtyInput.value
-|| '0';
-""",
-null
-)
+String qty = WebUI.executeJavaScript('\nvar qtyInput =\ndocument.querySelector(\n\'input[role="spinbutton"]\'\n);\n\nif(!qtyInput){\nreturn \'0\';\n}\n\nreturn qtyInput.getAttribute(\'aria-valuenow\')\n|| qtyInput.value\n|| \'0\';\n', 
+    null)
 
 println('QTY : ' + qty)
 
@@ -159,17 +106,11 @@ println('QTY VERIFIED')
 //====================================================
 // VERIFY ORDER SUMMARY
 //====================================================
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/lbl_OrderSummary')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/lbl_OrderSummary'))
 
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/lbl_Subtotal')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/lbl_Subtotal'))
 
-WebUI.verifyElementVisible(
-findTestObject('WEB/Cart/lbl_Total')
-)
+WebUI.verifyElementVisible(findTestObject('WEB/Cart/lbl_Total'))
 
 println('ORDER SUMMARY DISPLAYED')
 
@@ -177,11 +118,20 @@ println('ORDER SUMMARY DISPLAYED')
 // TEST PASSED
 //====================================================
 println('======================================')
+
 println('SHOPPING CART PAGE DISPLAYED')
+
 println('PRODUCT DISPLAYED IN CART')
+
 println('PRODUCT PRICE DISPLAYED')
+
 println('QTY VERIFIED : ' + qty)
+
 println('ORDER SUMMARY DISPLAYED')
+
 println('USER CAN ADD PRODUCT TO SHOPPING CART SUCCESSFULLY')
+
 println('TEST CASE PASSED')
+
 println('======================================')
+

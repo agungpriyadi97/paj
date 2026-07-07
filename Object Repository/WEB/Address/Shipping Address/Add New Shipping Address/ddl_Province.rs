@@ -10,7 +10,7 @@
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>/html/body/div[1]/div/div/div[1]/div/div[2]/div/div[2]/div/div/section[1]/section/ul/div/div/div[2]/div[2]/div/div/section/form/div[7]/div/div/div/input</value>
+         <value>(//div[@prop='state']//div[contains(@class,'el-input')])[last()]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

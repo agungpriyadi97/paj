@@ -6,12 +6,11 @@
    <elementGuidId>9c5957c9-7c5f-4443-ab7c-d4878ea709db</elementGuidId>
    <selectorCollection>
       <entry>
-         <key>XPATH</key>
-         <value>/html/body/div[1]/div/div/div[1]/div/div[2]/div/div[2]/div/div/section[2]/section/ul/div/div/div[2]/div[1]/div/div/div[2]</value>
+         <key>BASIC</key>
       </entry>
       <entry>
-         <key>BASIC</key>
-         <value></value>
+         <key>XPATH</key>
+         <value>(//input[@value='add']/ancestor::div[contains(@class,'el-collapse-item__header')])[last()]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

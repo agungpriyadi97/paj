@@ -17,6 +17,7 @@ import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
 import java.util.Arrays as Arrays
+
 WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
     [:], FailureHandling.STOP_ON_FAILURE)
 
@@ -27,7 +28,7 @@ WebUI.delay(5)
 //====================================================
 // OPEN PDP DIRECTLY
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP260706006287')
 
 WebUI.waitForPageLoad(30)
 
@@ -71,39 +72,20 @@ WebUI.click(findTestObject('WEB/Cart/btn_Checkout'))
 //====================================================
 // OPEN INSURANCE DETAIL
 //====================================================
+WebUI.waitForElementPresent(findTestObject('WEB/Checkout/OrderSummary/lnk_MoreDetails'), 30)
 
-WebUI.waitForElementPresent(
-    findTestObject('WEB/Checkout/OrderSummary/lnk_MoreDetails'),
-    30
-)
-
-WebUI.executeJavaScript(
-    "window.scrollTo(0, document.body.scrollHeight)",
-    null
-)
+WebUI.executeJavaScript('window.scrollTo(0, document.body.scrollHeight)', null)
 
 WebUI.delay(2)
 
-WebUI.executeJavaScript(
-    "arguments[0].scrollIntoView({block:'center'});",
-    Arrays.asList(
-        WebUI.findWebElement(
-            findTestObject('WEB/Checkout/OrderSummary/lnk_MoreDetails')
-        )
-    )
-)
+WebUI.executeJavaScript('arguments[0].scrollIntoView({block:\'center\'});', Arrays.asList(WebUI.findWebElement(findTestObject(
+                'WEB/Checkout/OrderSummary/lnk_MoreDetails'))))
 
 WebUI.delay(2)
 
-WebUI.executeJavaScript(
-    "arguments[0].click();",
-    Arrays.asList(
-        WebUI.findWebElement(
-            findTestObject('WEB/Checkout/OrderSummary/lnk_MoreDetails')
-        )
-    )
-)
+WebUI.executeJavaScript('arguments[0].click();', Arrays.asList(WebUI.findWebElement(findTestObject('WEB/Checkout/OrderSummary/lnk_MoreDetails'))))
 
 println('INSURANCE DETAIL OPENED')
 
 WebUI.delay(5)
+
