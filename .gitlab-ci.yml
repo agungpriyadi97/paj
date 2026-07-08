@@ -1,4 +1,3 @@
-//NEW CI_PIPELINE_SOURCE//
 image:
   name: katalonstudio/katalon:11.1.3
   entrypoint: [""]
