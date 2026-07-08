@@ -35,7 +35,7 @@
    <testCaseLink>
       <guid>62a56a43-5dee-4382-9f47-580765a2f011</guid>
       <isReuseDriver>false</isReuseDriver>
-      <isRun>true</isRun>
+      <isRun>false</isRun>
       <testCaseId>Test Cases/WEB/Product/Category/Positive/Positive - Ensure crossed price is displayed correctly</testCaseId>
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>

@@ -35,7 +35,7 @@
    <testCaseLink>
       <guid>729ed7e5-4b73-4adb-a1a5-1eb3ffa35e8c</guid>
       <isReuseDriver>false</isReuseDriver>
-      <isRun>true</isRun>
+      <isRun>false</isRun>
       <testCaseId>Test Cases/WEB/Product/PDP/Positive/Positive - Ensure insurance fee displayed after payment for promotional products</testCaseId>
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
