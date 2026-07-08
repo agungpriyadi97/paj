@@ -35,7 +35,7 @@
             <runConfigurationId>Chrome (headless)</runConfigurationId>
          </configuration>
          <runEnabled>true</runEnabled>
-         <testSuiteEntity>Test Suites/WEB/Address Management/Address Checkout</testSuiteEntity>
+         <testSuiteEntity>Test Suites/WEB/Address Management/Address My Account</testSuiteEntity>
       </TestSuiteRunConfiguration>
       <TestSuiteRunConfiguration>
          <configuration>
@@ -45,7 +45,7 @@
             <runConfigurationId>Chrome (headless)</runConfigurationId>
          </configuration>
          <runEnabled>true</runEnabled>
-         <testSuiteEntity>Test Suites/WEB/Address Management/Address My Account</testSuiteEntity>
+         <testSuiteEntity>Test Suites/WEB/Address Management/Address Checkout</testSuiteEntity>
       </TestSuiteRunConfiguration>
       <TestSuiteRunConfiguration>
          <configuration>

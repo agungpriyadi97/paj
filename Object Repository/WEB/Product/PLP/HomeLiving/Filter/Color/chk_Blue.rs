@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WebElementEntity>
    <description></description>
-   <name>txt_FirstName</name>
+   <name>chk_Blue</name>
    <tag></tag>
-   <elementGuidId>8918b7dc-7ae9-47a4-b4b4-adaacf1ed0ed</elementGuidId>
+   <elementGuidId>55696838-47be-4f38-a2da-e25cf78b5482</elementGuidId>
    <selectorCollection>
       <entry>
          <key>BASIC</key>
+         <value></value>
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>(//input[@placeholder='Your First Name'])[last()]</value>
+         <value>//*[@id=&quot;el-collapse-content-129&quot;]/div/section/div/label[2]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

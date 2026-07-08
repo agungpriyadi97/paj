@@ -10,7 +10,7 @@
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>(//div[@prop='state']//div[contains(@class,'el-input')])[last()]</value>
+         <value>//div[contains(@class,'add-new_item')]//div[@placeholderkey='sp.address.select_province']</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

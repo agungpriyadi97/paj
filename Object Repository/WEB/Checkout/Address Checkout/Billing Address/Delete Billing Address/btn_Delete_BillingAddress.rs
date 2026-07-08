@@ -10,7 +10,7 @@
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>(//span[normalize-space()='Delete'])[2]</value>
+         <value>(//div[contains(@class,'gt-address_list-item')]//button[.//span[normalize-space()='Delete']])[last()]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>
