@@ -20,7 +20,7 @@ import org.openqa.selenium.Keys as Keys
 //====================================================
 // OPEN HOME & LIVING PAGE
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/home-and-living')
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/page/testing-plp')
 
 WebUI.waitForPageLoad(10)
 

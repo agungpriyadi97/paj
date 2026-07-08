@@ -20,16 +20,16 @@ import org.openqa.selenium.Keys as Keys
 //====================================================
 // OPEN HOME & LIVING PAGE
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/home-and-living')
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/page/testing-plp')
 
 WebUI.waitForPageLoad(10)
 
 //====================================================
 // SELECT COLOR FILTER
 //====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Color/chk_Blue'), 10)
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Color/chk_Black'), 10)
 
-WebUI.enhancedClick(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Color/chk_Blue'), FailureHandling.STOP_ON_FAILURE)
+WebUI.enhancedClick(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Color/chk_Black'), FailureHandling.STOP_ON_FAILURE)
 
 println('COLOR FILTER SELECTED : BLACK')
 
