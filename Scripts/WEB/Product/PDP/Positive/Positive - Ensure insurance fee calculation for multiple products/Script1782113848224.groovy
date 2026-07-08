@@ -30,7 +30,7 @@ WebUI.delay(5)
 //====================================================
 // OPEN PDP DIRECTLY
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP260706006287')
 
 WebUI.waitForPageLoad(30)
 

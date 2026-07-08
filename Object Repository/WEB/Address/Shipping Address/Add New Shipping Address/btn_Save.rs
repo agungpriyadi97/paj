@@ -10,7 +10,7 @@
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>/html/body/div[1]/div/div/div[1]/div/div[2]/div/div[2]/div/div/section[1]/section/ul/div/div/div[2]/div[2]/div/div/section/div/button[1]</value>
+         <value>//div[contains(@class,'add-new_item')]//button[.//span[normalize-space()='Save']]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

@@ -2,8 +2,9 @@ import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
 import com.kms.katalon.core.model.FailureHandling as FailureHandling
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
-import com.kms.katalon.core.testobject.TestObject
-import com.kms.katalon.core.testobject.ConditionType
+import com.kms.katalon.core.testobject.TestObject as TestObject
+import com.kms.katalon.core.testobject.ConditionType as ConditionType
+
 //====================================================
 // LOGIN
 //====================================================
@@ -17,7 +18,7 @@ WebUI.delay(5)
 //====================================================
 // OPEN PDP DIRECTLY
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP250526661250')
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/pdp/SP260706006287')
 
 WebUI.waitForPageLoad(30)
 
@@ -58,59 +59,27 @@ println('SHOPPING CART OPENED')
 //====================================================
 WebUI.delay(3)
 
-String qtyText =
-WebUI.executeJavaScript(
-"""
-var qtyInput =
-document.querySelector(
-'input[role="spinbutton"]'
-);
+String qtyText = WebUI.executeJavaScript('\nvar qtyInput =\ndocument.querySelector(\n\'input[role="spinbutton"]\'\n);\n\nif(qtyInput){\n\treturn qtyInput.getAttribute(\'aria-valuenow\')\n\t\t|| qtyInput.value\n\t\t|| \'1\';\n}\n\nreturn \'1\';\n', 
+    null)
 
-if(qtyInput){
-	return qtyInput.getAttribute('aria-valuenow')
-		|| qtyInput.value
-		|| '1';
-}
+int qty = qtyText.toInteger()
 
-return '1';
-""",
-null
-)
+println('CURRENT QTY : ' + qty)
 
-int qty =
-qtyText.toInteger()
+if (qty < 2) {
+    WebUI.click(findTestObject('WEB/Cart/btn_QtyPlus'))
 
-println(
-	'CURRENT QTY : ' +
-	qty
-)
+    WebUI.delay(5)
 
-if(qty < 2){
-
-	WebUI.click(
-		findTestObject(
-			'WEB/Cart/btn_QtyPlus'
-		)
-	)
-
-	WebUI.delay(5)
-
-	println(
-		'QTY UPDATED TO 2'
-	)
+    println('QTY UPDATED TO 2')
 }
 
 //====================================================
 // CHECKOUT
 //====================================================
-WebUI.scrollToElement(
-	findTestObject('WEB/Cart/btn_Checkout'),
-	10
-)
+WebUI.scrollToElement(findTestObject('WEB/Cart/btn_Checkout'), 10)
 
-WebUI.enhancedClick(
-	findTestObject('WEB/Cart/btn_Checkout')
-)
+WebUI.enhancedClick(findTestObject('WEB/Cart/btn_Checkout'))
 
 WebUI.waitForPageLoad(30)
 
@@ -127,51 +96,29 @@ WebUI.delay(3)
 //====================================================
 TestObject totalObj = new TestObject('totalObj')
 
-totalObj.addProperty(
-	'xpath',
-	ConditionType.EQUALS,
-	"//ul[contains(@class,'price-detail')]//li[contains(@class,'total')]/span[last()]"
-)
+totalObj.addProperty('xpath', ConditionType.EQUALS, '//ul[contains(@class,\'price-detail\')]//li[contains(@class,\'total\')]/span[last()]')
 
 //====================================================
 // TOTAL BEFORE PROMO
 //====================================================
-WebUI.waitForElementVisible(
-	totalObj,
-	20
-)
+WebUI.waitForElementVisible(totalObj, 20)
 
-String totalBeforeText =
-	WebUI.getText(totalObj)
+String totalBeforeText = WebUI.getText(totalObj)
 
 println('TOTAL BEFORE TEXT : ' + totalBeforeText)
 
-Long totalBeforePromo =
-	totalBeforeText
-		.replace('Rp', '')
-		.replace('.', '')
-		.replace(',', '')
-		.trim()
-		.toLong()
+Long totalBeforePromo = totalBeforeText.replace('Rp', '').replace('.', '').replace(',', '').trim().toLong()
 
 println('TOTAL BEFORE PROMO : ' + totalBeforePromo)
 
 //====================================================
 // APPLY PROMO
 //====================================================
-WebUI.waitForElementVisible(
-	findTestObject('WEB/Checkout/Promotion/txt_PromoCode'),
-	20
-)
+WebUI.waitForElementVisible(findTestObject('WEB/Checkout/Promotion/txt_PromoCode'), 20)
 
-WebUI.setText(
-	findTestObject('WEB/Checkout/Promotion/txt_PromoCode'),
-	'agung'
-)
+WebUI.setText(findTestObject('WEB/Checkout/Promotion/txt_PromoCode'), 'agung')
 
-WebUI.enhancedClick(
-	findTestObject('WEB/Checkout/Promotion/btn_ApplyPromo')
-)
+WebUI.enhancedClick(findTestObject('WEB/Checkout/Promotion/btn_ApplyPromo'))
 
 println('PROMO APPLIED')
 
@@ -180,11 +127,7 @@ WebUI.delay(5)
 //====================================================
 // VERIFY COUPON DISCOUNT APPEARS
 //====================================================
-String pageText =
-	WebUI.executeJavaScript(
-		"return document.body.innerText;",
-		null
-	)
+String pageText = WebUI.executeJavaScript('return document.body.innerText;', null)
 
 assert pageText.contains('Coupon Discount')
 
@@ -193,23 +136,13 @@ println('COUPON DISCOUNT DISPLAYED')
 //====================================================
 // TOTAL AFTER PROMO
 //====================================================
-WebUI.waitForElementVisible(
-	totalObj,
-	20
-)
+WebUI.waitForElementVisible(totalObj, 20)
 
-String totalAfterText =
-	WebUI.getText(totalObj)
+String totalAfterText = WebUI.getText(totalObj)
 
 println('TOTAL AFTER TEXT : ' + totalAfterText)
 
-Long totalAfterPromo =
-	totalAfterText
-		.replace('Rp', '')
-		.replace('.', '')
-		.replace(',', '')
-		.trim()
-		.toLong()
+Long totalAfterPromo = totalAfterText.replace('Rp', '').replace('.', '').replace(',', '').trim().toLong()
 
 println('TOTAL AFTER PROMO : ' + totalAfterPromo)
 
@@ -224,8 +157,14 @@ println('PROMOTION APPLIED SUCCESSFULLY')
 // FINAL RESULT
 //====================================================
 println('======================================')
+
 println('TOTAL BEFORE : ' + totalBeforePromo)
+
 println('TOTAL AFTER  : ' + totalAfterPromo)
+
 println('PROMO CODE SUCCESSFULLY APPLIED')
+
 println('TEST CASE PASSED')
+
 println('======================================')
+

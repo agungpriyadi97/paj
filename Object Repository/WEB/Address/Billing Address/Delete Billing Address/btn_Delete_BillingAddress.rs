@@ -6,12 +6,11 @@
    <elementGuidId>35b4ff8c-dad2-42e4-9fe8-1e728d42b512</elementGuidId>
    <selectorCollection>
       <entry>
-         <key>XPATH</key>
-         <value>(//span[normalize-space()='Delete'])[2]</value>
+         <key>BASIC</key>
       </entry>
       <entry>
-         <key>BASIC</key>
-         <value></value>
+         <key>XPATH</key>
+         <value>(//button[.//span[normalize-space()='Delete']])[last()]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WebElementEntity>
    <description></description>
-   <name>txt_FirstName</name>
+   <name>chk_HYDRO FLASK</name>
    <tag></tag>
-   <elementGuidId>8918b7dc-7ae9-47a4-b4b4-adaacf1ed0ed</elementGuidId>
+   <elementGuidId>ec81c8a8-66f2-453a-92f0-bb0d0bc24e05</elementGuidId>
    <selectorCollection>
       <entry>
          <key>BASIC</key>
+         <value></value>
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>(//input[@placeholder='Your First Name'])[last()]</value>
+         <value>//label[contains(@class,'el-checkbox')][.//span[contains(normalize-space(),'HYDRO FLASK')]]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

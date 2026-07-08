@@ -10,7 +10,7 @@
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>(//input[@placeholder='Address'])[2]</value>
+         <value>//div[contains(@class,'add-new_item')]//input[@placeholderkey='sp.address.address']</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>

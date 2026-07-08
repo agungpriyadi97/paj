@@ -16,143 +16,224 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 import com.kms.katalon.core.windows.keyword.WindowsBuiltinKeywords as Windows
 import internal.GlobalVariable as GlobalVariable
 import org.openqa.selenium.Keys as Keys
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
 
-WebUI.callTestCase(findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'), 
-    [:], FailureHandling.STOP_ON_FAILURE)
+import com.kms.katalon.core.model.FailureHandling
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
+//====================================================
+// LOGIN
+//====================================================
+WebUI.callTestCase(
+	findTestCase('WEB/Authentication/Login/Positive/Positive - Ensure user can login with valid account and password'),
+	[:],
+	FailureHandling.STOP_ON_FAILURE
+)
+
+//====================================================
+// OPEN MY ADDRESS
+//====================================================
 WebUI.mouseOver(findTestObject('WEB/Home/Header/Icon Menu/icon_account'))
 
 WebUI.delay(2)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Home/Header/DropdownAccount/my_address'), 10)
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Home/Header/DropdownAccount/my_address'),
+	10
+)
 
-WebUI.click(findTestObject('WEB/Home/Header/DropdownAccount/my_address'))
+WebUI.click(
+	findTestObject('WEB/Home/Header/DropdownAccount/my_address')
+)
 
 //====================================================
 // CHANGE BILLING ADDRESS
 //====================================================
-WebUI.scrollToElement(findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'), 10)
+WebUI.scrollToElement(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'),
+	10
+)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'), 
-    10)
+WebUI.waitForElementClickable(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'),
+	10
+)
 
-WebUI.waitForElementClickable(findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'), 
-    10)
-
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'))
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress')
+)
 
 WebUI.delay(2)
 
-println('CHANGE BILLING ADDRESS CLICKED')
+println("CHANGE BILLING ADDRESS CLICKED")
 
 //====================================================
 // ADD NEW BILLING ADDRESS
 //====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Address/Billing Address/Add New Billing Address/rdo_AddNewAddress'), 10)
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/rdo_AddNewAddress'),
+	10
+)
 
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/rdo_AddNewAddress'))
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/rdo_AddNewAddress')
+)
 
 WebUI.delay(2)
 
-println('ADD NEW ADDRESS SELECTED')
+println("ADD NEW BILLING ADDRESS SELECTED")
+
+//====================================================
+// GENERATE RANDOM DATA
+//====================================================
+Map addressData =
+CustomKeywords.'utils.DummyData.generateAddressData'()
+
+String firstName   = addressData.firstName
+String lastName    = addressData.lastName
+String mobilePhone = addressData.mobilePhone
+String address     = addressData.address
+String postalCode  = addressData.postalCode
+
+println("FIRST NAME : " + firstName)
+println("LAST NAME  : " + lastName)
+println("PHONE      : " + mobilePhone)
+println("ADDRESS    : " + address)
 
 //====================================================
 // INPUT BILLING ADDRESS
 //====================================================
-String firstName = 'QA'
+WebUI.scrollToElement(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_FirstName'),
+	10
+)
 
-String lastName = 'Automation'
+WebUI.setText(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_FirstName'),
+	firstName
+)
 
-String mobilePhone = '08' + System.currentTimeMillis().toString().substring(5, 13)
+WebUI.setText(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_LastName'),
+	lastName
+)
 
-String address = 'Billing Address ' + System.currentTimeMillis()
+WebUI.setText(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_MobilePhone'),
+	mobilePhone
+)
 
-WebUI.scrollToElement(findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_FirstName'), 10)
+WebUI.setText(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_Address'),
+	address
+)
 
-WebUI.setText(findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_FirstName'), firstName)
-
-WebUI.setText(findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_LastName'), lastName)
-
-WebUI.setText(findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_MobilePhone'), mobilePhone)
-
-WebUI.setText(findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_Address'), address)
-
-println('BILLING ADDRESS FILLED')
+println("BILLING ADDRESS FILLED")
 
 //====================================================
 // SELECT PROVINCE
 //====================================================
-WebUI.scrollToElement(findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_Province'), 10)
+WebUI.scrollToElement(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_Province'),
+	10
+)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_Province'), 10)
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_Province')
+)
 
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_Province'))
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_Province_Banten')
+)
 
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_Province_Banten'))
-
-println('PROVINCE SELECTED')
+println("PROVINCE SELECTED")
 
 WebUI.delay(2)
 
 //====================================================
 // SELECT CITY
 //====================================================
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_City'))
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_City')
+)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_City_KabTangerang'), 
-    10)
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_City_KabTangerang'),
+	10
+)
 
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_City_KabTangerang'))
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_City_KabTangerang')
+)
 
-println('CITY SELECTED')
+println("CITY SELECTED")
 
 WebUI.delay(2)
 
 //====================================================
 // SELECT DISTRICT
 //====================================================
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_District'))
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/ddl_District')
+)
 
-WebUI.waitForElementVisible(findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_District_Balaraja'), 
-    10)
+WebUI.waitForElementVisible(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_District_Balaraja'),
+	10
+)
 
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_District_Balaraja'))
+WebUI.click(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/opt_District_Balaraja')
+)
 
-println('DISTRICT SELECTED')
+println("DISTRICT SELECTED")
 
 WebUI.delay(2)
 
 //====================================================
 // POSTAL CODE
 //====================================================
-WebUI.setText(findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_PostalCode'), '15810')
+WebUI.setText(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/txt_PostalCode'),
+	postalCode
+)
 
-println('POSTAL CODE FILLED')
+println("POSTAL CODE FILLED")
 
 //====================================================
 // SAVE
 //====================================================
-WebUI.click(findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Save'))
+WebUI.scrollToElement(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Save'),
+	10
+)
+
+WebUI.enhancedClick(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Save')
+)
 
 WebUI.delay(5)
 
-WebUI.scrollToElement(findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'), 0)
+WebUI.scrollToElement(
+	findTestObject('WEB/Address/Billing Address/Add New Billing Address/btn_Change_BillingAddress'),
+	10
+)
 
-println('NEW BILLING ADDRESS SAVED')
+println("NEW BILLING ADDRESS SAVED")
 
 //====================================================
-// VERIFY NEW BILLING ADDRESS DISPLAYED
+// VERIFY
 //====================================================
 WebUI.verifyTextPresent(firstName, false)
-
 WebUI.verifyTextPresent(lastName, false)
-
 WebUI.verifyTextPresent(address, false)
 
-println('NEW BILLING ADDRESS DISPLAYED')
+println("NEW BILLING ADDRESS DISPLAYED")
 
 //====================================================
 // TEST PASSED
 //====================================================
-println('USER CAN ADD NEW BILLING ADDRESS SUCCESSFULLY')
-
+println("========================================")
+println("USER CAN ADD NEW BILLING ADDRESS SUCCESSFULLY")
+println("========================================")

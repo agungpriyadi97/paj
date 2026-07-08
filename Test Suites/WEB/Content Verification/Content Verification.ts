@@ -47,13 +47,6 @@
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
    <testCaseLink>
-      <guid>aae525e5-ad2b-4afd-8779-84cde09ec08d</guid>
-      <isReuseDriver>false</isReuseDriver>
-      <isRun>false</isRun>
-      <testCaseId>Test Cases/WEB/Content Verification/Homepage/Footer Copywriting/Positive - Ensure footer copywriting is displayed correctly</testCaseId>
-      <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
-   </testCaseLink>
-   <testCaseLink>
       <guid>cf42c988-4150-4118-9225-6fc3ce252eea</guid>
       <isReuseDriver>false</isReuseDriver>
       <isRun>false</isRun>

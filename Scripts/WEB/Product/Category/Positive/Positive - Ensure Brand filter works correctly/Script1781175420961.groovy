@@ -22,16 +22,16 @@ import com.kms.katalon.core.configuration.RunConfiguration as RunConfiguration
 //====================================================
 // OPEN HOME & LIVING PAGE
 //====================================================
-WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/home-and-living')
+WebUI.navigateToUrl('https://d-speedshop-pastiadajalan.gtechdigital.id/page/testing-plp')
 
 WebUI.waitForPageLoad(10)
 
 //====================================================
 // SELECT BRAND
 //====================================================
-WebUI.waitForElementVisible(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Brand/chk_Honeywell'), 10)
+WebUI.waitForElementVisible(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Brand/chk_HYDRO FLASK'), 10)
 
-WebUI.enhancedClick(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Brand/chk_Honeywell'), FailureHandling.STOP_ON_FAILURE)
+WebUI.enhancedClick(findTestObject('WEB/Product/PLP/HomeLiving/Filter/Brand/chk_HYDRO FLASK'), FailureHandling.STOP_ON_FAILURE)
 
 println('HONEYWELL FILTER SELECTED')
 
