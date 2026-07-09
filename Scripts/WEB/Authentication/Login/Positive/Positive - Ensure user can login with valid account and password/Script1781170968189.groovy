@@ -38,3 +38,5 @@ WebUI.setText(findTestObject('WEB/Authentication/Login/txt_Password'), GlobalVar
 // 3. Klik tombol Sign In
 WebUI.click(findTestObject('WEB/Authentication/Login/btn_sign_in'))
 
+WebUI.waitForPageLoad(20)
+
