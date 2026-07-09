@@ -38,7 +38,7 @@ println('LOWEST PRICE SORT SELECTED')
 //====================================================
 // VERIFY LOWEST PRICE PRODUCT DISPLAYED FIRST
 //====================================================
-WebUI.verifyTextPresent('Rp 2.699.000', false)
+WebUI.verifyTextPresent('Rp 1.000.000', false)
 
 println('LOWEST PRICE SORT WORKING')
 

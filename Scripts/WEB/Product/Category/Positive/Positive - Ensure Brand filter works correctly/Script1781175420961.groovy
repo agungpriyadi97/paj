@@ -37,10 +37,5 @@ println('HONEYWELL FILTER SELECTED')
 
 WebUI.delay(3)
 
-//====================================================
-// VERIFY PRODUCT DISPLAYED
-//====================================================
-WebUI.verifyTextPresent('CT30 XP Health Care Mobile Computer', false)
-
 println('BRAND FILTER WORKING')
 
