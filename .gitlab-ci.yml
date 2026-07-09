@@ -1,87 +1,146 @@
 image:
-  name: 'katalonstudio/katalon:11.1.3'
+  name: katalonstudio/katalon:11.1.3
   entrypoint: [""]
 
 stages:
   - test
 
 variables:
-  # Ensures the job continues through all browser types even if one fails
-  CONTINUE_ON_FAILURE: "true"
-  # CRITICAL: Increase shared memory size for Chrome Headless in Docker
-  # This prevents the "Out of Memory" crashes on heavy pages like PAJ
-  GS_OPTIONS: "-Xmx2048m -Xms512m -Djava.shm.size=2g"
+  GS_OPTIONS: "-Xmx4096m -Xms1024m -Djava.shm.size=4g"
 
-katalon_paj_test:
+katalon_pasti_ada_jalan_test:
   stage: test
+
   tags:
     - infra
-  # Extended timeout for sequential cross-browser execution
-  timeout: 12h  
+
+  timeout: 12h
+
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-    - if: $CI_PIPELINE_SOURCE == "web"
-  
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "pipeline"'
+
   before_script:
-    # Bersihkan folder Reports dari sisa pipeline sebelumnya agar artifact tidak menumpuk
+    # Cleanup old reports
     - rm -rf Reports/* || true
-    # Force apt to ignore the unverified Edge repository so it doesn't return exit code 1
-    - apt-get update -o Acquire::AllowInsecureRepositories=true -o Doomsday::Ignore=true -y || true
-    # Install FFmpeg cleanly from standard Ubuntu repos to enable video recording
-    - apt-get install -y --allow-unauthenticated ffmpeg
-    - ffmpeg -version
+
+    # Create folders if missing
+    - mkdir -p Reports
+    - mkdir -p Screenshot
+
+    # Install dependencies
+    - apt-get update || true
+    - apt-get install -y xvfb ffmpeg curl || true
+
+    # Diagnostics
+    - ffmpeg -version || true
+    - xvfb-run --version || true
+
+    # Show runner IP (optional)
+    - curl -s ifconfig.me || echo "Unable to retrieve public IP"
+
+    # Verify project file exists
+    - ls -la
+    - test -f "$CI_PROJECT_DIR/pasti-ada-jalan.prj"
 
   script:
-    - curl ifconfig.me
     - |
-      # --- PAJ PATH RESOLUTION ---
+      echo "===================================="
+      echo "PAJ AUTOMATION EXECUTION STARTED"
+      echo "===================================="
+
       if [ -z "$TEST_PATH" ]; then
-        echo "Running default PAJ Regression Collection..."
-        # Updated Path to the Web Test Suite Collection
+        echo "Running default regression suite collection"
+
         export FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
-        # Since this is a Collection, we use the Collection argument
         export ARG_TYPE="-testSuiteCollectionPath"
       else
-        echo "Running custom test: $TEST_PATH"
-        # Parses custom input like -testSuitePath=Test Suites/Folder/Suite
+        echo "Running custom execution: $TEST_PATH"
+
         export FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
         export ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
       fi
 
-      # --- SEQUENTIAL CROSS-BROWSER EXECUTION (Chrome & Firefox Only) ---
+      echo "Execution Path:"
+      echo "$ARG_TYPE=$FINAL_PATH"
 
-      echo "Starting Execution 1/2: Chrome (Headless)..."
-      katalonc.sh -noSplash -runMode=console \
+      echo "===================================="
+      echo "CHROME HEADLESS EXECUTION"
+      echo "===================================="
+
+      mkdir -p Reports/Chrome_Reports
+
+      katalonc.sh \
+        -noSplash \
+        -runMode=console \
         -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-        -retry=0 -apiKey="$KATALON_API_KEY" \
+        -retry=0 \
+        -apiKey="$KATALON_API_KEY" \
         "$ARG_TYPE=$FINAL_PATH" \
         -browserType="Chrome (headless)" \
         -reportFolder="Reports/Chrome_Reports" \
         -reportFileName="Chrome_Report" \
-        --config -webui.autoUpdateDrivers=true || echo "Chrome tests completed."
+        --config \
+        -webui.autoUpdateDrivers=true \
+      || echo "Chrome execution completed with failures"
 
-      echo "Starting Execution 2/2: Firefox (Headless)..."
-      katalonc.sh -noSplash -runMode=console \
+      echo "===================================="
+      echo "FIREFOX HEADLESS EXECUTION"
+      echo "===================================="
+
+      firefox --version || true
+      geckodriver --version || true
+
+      mkdir -p Reports/Firefox_Reports
+
+      xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+      katalonc.sh \
+        -noSplash \
+        -runMode=console \
         -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
-        -retry=0 -apiKey="$KATALON_API_KEY" \
+        -retry=0 \
+        -apiKey="$KATALON_API_KEY" \
         "$ARG_TYPE=$FINAL_PATH" \
-        -browserType="Firefox (headless)" \
+        -browserType="Firefox" \
         -reportFolder="Reports/Firefox_Reports" \
         -reportFileName="Firefox_Report" \
-        --config -webui.autoUpdateDrivers=true || echo "Firefox tests completed."
+        --config \
+        -webui.autoUpdateDrivers=true \
+        -webui.firefox.args="-headless" \
+        -webui.firefox.additionalArgs="--width=1920 --height=1080" \
+      || echo "Firefox execution completed with failures"
 
-    # --- ARTIFACT PURGE & RETENTION CLEANUP (SAFE VERSION) ---
-    - echo "Cleaning up heavy video files from runner cache..."
-    # Menghapus rekaman video (.mp4) lama dari workspace runner lokal jika usianya sudah di atas 30 hari
+      echo "===================================="
+      echo "REPORT VALIDATION"
+      echo "===================================="
+
+      find Reports -type f | head -50 || true
+
+      if [ -d "Reports/Chrome_Reports" ]; then
+        echo "Chrome reports generated"
+      fi
+
+      if [ -d "Reports/Firefox_Reports" ]; then
+        echo "Firefox reports generated"
+      fi
+
+      echo "===================================="
+      echo "EXECUTION FINISHED"
+      echo "===================================="
+
+    # Cleanup old videos
     - find Reports/ -type f -name "*.mp4" -mtime +30 -exec rm -f {} \; || true
-    # PERBAIKAN: Logika pembersihan file non-HTML yang salah sebelumnya telah dihapus.
-    # Seluruh manajemen retensi laporan (.html, .xml) kini diserahkan sepenuhnya ke fitur 'expire_in' milik GitLab di bawah ini.
 
   artifacts:
-    # 'always' ensures reports are uploaded even if tests fail
     when: always
+
     paths:
       - Reports/
       - Screenshot/
-    # Reports kept for a maximum of 2 months to align with your retention settings
+
+    reports:
+      junit:
+        - Reports/**/*.xml
+
     expire_in: 2 mos
