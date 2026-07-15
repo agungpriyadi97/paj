@@ -10,14 +10,14 @@
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>.consent .el-checkbox__original</value>
+         <value>//div[contains(@class,'consent__content')]//span[contains(@class,'el-checkbox__inner')]</value>
       </entry>
       <entry>
          <key>CSS</key>
-         <value>//p[contains(.,'By clicking &quot;Sign Up&quot;')]/preceding-sibling::label//span[contains(@class,'el-checkbox__inner')]</value>
+         <value>//div[contains(@class,'consent__content')]//span[contains(@class,'el-checkbox__inner')]</value>
       </entry>
    </selectorCollection>
-   <selectorMethod>CSS</selectorMethod>
+   <selectorMethod>XPATH</selectorMethod>
    <smartLocatorEnabled>false</smartLocatorEnabled>
    <useRalativeImagePath>false</useRalativeImagePath>
 </WebElementEntity>

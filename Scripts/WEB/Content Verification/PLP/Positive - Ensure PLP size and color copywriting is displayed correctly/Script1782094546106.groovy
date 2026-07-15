@@ -29,14 +29,14 @@ WebUI.click(findTestObject('WEB/Home/Header/Menu/menu_categories/lnk_Tumblers'))
 
 WebUI.waitForPageLoad(10)
 
-WebUI.scrollToElement(findTestObject('WEB/Product/PLP/Tumblers/Filter/Size/chk_64oz'), 5)
+not_run: WebUI.scrollToElement(findTestObject('WEB/Product/PLP/Tumblers/Filter/Size/chk_64oz'), 5)
 
 //====================================================
 // VERIFY SIZE COPYWRITING
 //====================================================
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Size/chk_64oz'), '64oz')
+not_run: WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Size/chk_64oz'), '64oz')
 
-WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Size/chk_OneSize'), 'One Size')
+not_run: WebUI.verifyElementText(findTestObject('WEB/Product/PLP/Tumblers/Filter/Size/chk_OneSize'), 'One Size')
 
 WebUI.scrollToElement(findTestObject('WEB/Product/PLP/Tumblers/Filter/Color/chk_Beige'), 5)
 

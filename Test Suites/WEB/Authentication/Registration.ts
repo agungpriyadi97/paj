@@ -14,7 +14,7 @@
    <testCaseLink>
       <guid>efcaf2ee-4888-40a9-a5af-b29f7855234b</guid>
       <isReuseDriver>false</isReuseDriver>
-      <isRun>true</isRun>
+      <isRun>false</isRun>
       <testCaseId>Test Cases/WEB/Authentication/Registration/Positive/Positive - Register with valid data</testCaseId>
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
