@@ -1,3 +1,5 @@
+import java.io.File
+import java.util.Arrays
 import com.kms.katalon.core.annotation.BeforeTestCase
 import com.kms.katalon.core.annotation.AfterTestCase
 import com.kms.katalon.core.context.TestCaseContext
@@ -11,205 +13,241 @@ import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
 
 import internal.GlobalVariable
 
-class AutomationListener {
+class AutomationGTechListener {
 
-private static boolean browserOpenedByListener = false
+    private static boolean browserOpenedByListener = false
 
-@BeforeTestCase
-def beforeTestCase(TestCaseContext testCaseContext) {
+    @BeforeTestCase
+    def beforeTestCase(TestCaseContext testCaseContext) {
 
-	KeywordUtil.logInfo("START TEST CASE : ${testCaseContext.getTestCaseId()}")
+        KeywordUtil.logInfo("================================================")
+        KeywordUtil.logInfo("START TEST CASE : ${testCaseContext.getTestCaseId()}")
+        KeywordUtil.logInfo("================================================")
 
-	boolean isBrowserActive = false
+        boolean isBrowserActive = false
 
-	try {
+        try {
+            isBrowserActive = (DriverFactory.getWebDriver() != null)
 
-		isBrowserActive = (DriverFactory.getWebDriver() != null)
+            if (isBrowserActive) {
+                WebUI.getUrl()
+            }
 
-		if(isBrowserActive) {
-			WebUI.getUrl()
-		}
+        } catch (Exception e) {
+            isBrowserActive = false
+            KeywordUtil.logInfo("Browser detected as inactive : ${e.getMessage()}")
+        }
 
-	} catch(Exception e) {
+        if (!isBrowserActive && !browserOpenedByListener) {
 
-		isBrowserActive = false
-		KeywordUtil.logInfo("Browser detected as inactive : ${e.getMessage()}")
-	}
+            try {
+                KeywordUtil.logInfo("Opening new browser...")
 
-	if(!isBrowserActive && !browserOpenedByListener) {
+                WebUI.openBrowser('')
+                WebUI.setViewPortSize(1920, 1080)
 
-		try {
+                if (GlobalVariable.URL == null || GlobalVariable.URL.trim().isEmpty()) {
+                    KeywordUtil.markFailedAndStop("GlobalVariable.URL is not set. Please configure it in Profiles.")
+                }
 
-			KeywordUtil.logInfo("Opening new browser...")
+                WebUI.navigateToUrl(GlobalVariable.URL)
+                
+                // Menjalankan handler Cookie Consent GTech
+                acceptCookieConsent()
+                
+                WebUI.waitForPageLoad(30)
 
-			WebUI.openBrowser('')
-			WebUI.setViewPortSize(1920, 1080)
+                browserOpenedByListener = true
 
-			if(GlobalVariable.URL == null || GlobalVariable.URL.isEmpty()) {
+                def width = WebUI.executeJavaScript("return window.innerWidth", null)
+                def height = WebUI.executeJavaScript("return window.innerHeight", null)
 
-				KeywordUtil.markFailed(
-					"GlobalVariable.URL is not set. Please configure it in Profiles."
-				)
+                KeywordUtil.logInfo("Viewport Size : ${width} x ${height}")
 
-				return
-			}
+                saveStartPageScreenshot()
 
-			WebUI.navigateToUrl(GlobalVariable.URL)
+            } catch (Exception e) {
+                KeywordUtil.markFailed("Failed to open browser or navigate to URL : ${e.getMessage()}")
+                throw e
+            }
 
-			acceptCookieConsent()
+        } else if (isBrowserActive) {
 
-			browserOpenedByListener = true
+            KeywordUtil.logInfo("Browser already opened. Reusing existing session.")
 
-			def width =
-				WebUI.executeJavaScript(
-					"return window.innerWidth",
-					null
-				)
+            try {
+                if (WebUI.getUrl() != GlobalVariable.URL) {
+                    WebUI.navigateToUrl(GlobalVariable.URL)
+                    
+                    // Menjalankan handler Cookie Consent GTech
+                    acceptCookieConsent()
+                }
 
-			def height =
-				WebUI.executeJavaScript(
-					"return window.innerHeight",
-					null
-				)
+            } catch (Exception e) {
+                KeywordUtil.logWarning("Could not verify current URL : ${e.getMessage()}")
+            }
 
-			KeywordUtil.logInfo(
-				"Viewport Size : ${width} x ${height}"
-			)
+        } else {
 
-			WebUI.takeScreenshot(
-				RunConfiguration.getReportFolder() +
-				"/START_PAGE.png"
-			)
+            KeywordUtil.logInfo("Browser closed unexpectedly. Re-opening browser...")
 
-} catch(Exception e) {
+            browserOpenedByListener = false
 
-    KeywordUtil.markFailed(
-        "Failed to open browser or navigate to URL : ${e.getMessage()}"
-    )
+            WebUI.openBrowser('')
+            WebUI.setViewPortSize(1920, 1080)
 
-    throw e
-}
+            if (GlobalVariable.URL == null || GlobalVariable.URL.trim().isEmpty()) {
+                KeywordUtil.markFailedAndStop("GlobalVariable.URL is not set. Please configure it in Profiles.")
+            }
 
-	} else if(isBrowserActive) {
+            WebUI.navigateToUrl(GlobalVariable.URL)
+            
+            // Menjalankan handler Cookie Consent GTech
+            acceptCookieConsent()
+            
+            WebUI.waitForPageLoad(30)
+
+            browserOpenedByListener = true
 
-		KeywordUtil.logInfo(
-			"Browser already opened, reusing existing session."
-		)
-
-		try {
-
-			if(WebUI.getUrl() != GlobalVariable.URL) {
-
-				WebUI.navigateToUrl(GlobalVariable.URL)
-
-				acceptCookieConsent()
-			}
-
-		} catch(Exception e) {
-
-			KeywordUtil.logWarning(
-				"Could not verify current URL : ${e.getMessage()}"
-			)
-		}
-
-	} else {
-
-		KeywordUtil.logInfo(
-			"Browser was opened by listener in a previous test case but is now closed. Reopening..."
-		)
-
-		browserOpenedByListener = false
-
-		beforeTestCase(testCaseContext)
-	}
-}
-
-private void acceptCookieConsent() {
-
-	try {
-
-		boolean cookieVisible =
-			WebUI.verifyElementPresent(
-				findTestObject(
-					'WEB/Common/Cookie Consent/btn_AcceptAllCookies'
-				),
-				5,
-				FailureHandling.OPTIONAL
-			)
-
-		if(cookieVisible) {
-
-			WebUI.click(
-				findTestObject(
-					'WEB/Common/Cookie Consent/btn_AcceptAllCookies'
-				)
-			)
-
-			KeywordUtil.logInfo(
-				"Cookie consent accepted"
-			)
-		}
-
-	} catch(Exception e) {
-
-		KeywordUtil.logInfo(
-			"Cookie popup not displayed"
-		)
-	}
-}
-
-@AfterTestCase
-def afterTestCase(TestCaseContext testCaseContext) {
-
-	try {
-
-		if(DriverFactory.getWebDriver() != null) {
-
-			String tcName =
-				testCaseContext.getTestCaseId()
-				.replaceAll("[^a-zA-Z0-9]", "_")
-
-			String screenshotPath =
-				RunConfiguration.getReportFolder() +
-				"/${tcName}_${testCaseContext.getTestCaseStatus()}.png"
-
-			WebUI.takeScreenshot(screenshotPath)
-
-			KeywordUtil.logInfo(
-				"Screenshot saved : ${screenshotPath}"
-			)
-
-			String tcId =
-				testCaseContext.getTestCaseId()
-
-			if(!tcId.contains("Forgot password verification email")) {
-
-				WebUI.closeBrowser()
-
-				browserOpenedByListener = false
-
-			} else {
-
-				KeywordUtil.logInfo(
-					"Browser kept open for this test case."
-				)
-			}
-
-		} else {
-
-			KeywordUtil.logInfo("No browser to close.")
-
-			browserOpenedByListener = false
-		}
-
-	} catch(Exception e) {
-
-		KeywordUtil.markWarning(
-			"Listener Error : ${e.getMessage()}"
-		)
-
-		browserOpenedByListener = false
-	}
-}
-
+            saveStartPageScreenshot()
+
+            try {
+                def width = WebUI.executeJavaScript("return window.innerWidth", null)
+                def height = WebUI.executeJavaScript("return window.innerHeight", null)
+
+                KeywordUtil.logInfo("Viewport Size : ${width} x ${height}")
+
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private void acceptCookieConsent() {
+        try {
+            boolean cookieVisible = WebUI.verifyElementPresent(
+                    findTestObject('WEB/Common/Cookie Consent/btn_AcceptAllCookies'),
+                    5,
+                    FailureHandling.OPTIONAL
+            )
+
+            if (cookieVisible) {
+                WebUI.click(findTestObject('WEB/Common/Cookie Consent/btn_AcceptAllCookies'))
+                KeywordUtil.logInfo("Cookie consent accepted")
+            }
+
+        } catch (Exception e) {
+            KeywordUtil.logInfo("Cookie popup not displayed")
+        }
+    }
+
+    @AfterTestCase
+    def afterTestCase(TestCaseContext testCaseContext) {
+
+        try {
+
+            if (DriverFactory.getWebDriver() != null) {
+
+                // ============================================
+                // Parsing Test Case ID untuk Subfolder Modul
+                // ============================================
+                String rawId = testCaseContext.getTestCaseId()
+                String cleanPath = rawId.replace("Test Cases/", "") 
+                String[] parts = cleanPath.split("/")
+                
+                String modulePath = "Root"
+                String tcName = cleanPath
+                
+                // Jika test case berada di dalam struktur folder
+                if (parts.length > 1) {
+                    // Menggabungkan array folder menggunakan "/" agar menjadi path direktori
+                    modulePath = String.join("/", Arrays.copyOfRange(parts, 0, parts.length - 1))
+                    // Nama test case diambil dari elemen paling belakang
+                    tcName = parts[parts.length - 1]
+                }
+
+                // Hanya membersihkan karakter nama test case-nya saja
+                tcName = tcName.replaceAll("[^a-zA-Z0-9_\\-]", "_")
+                String status = testCaseContext.getTestCaseStatus()
+
+                // ============================================
+                // Screenshot GitLab Artifact (Masuk ke Subfolder)
+                // ============================================
+
+                // Membuat path folder utama + path modul
+                String screenshotFolder = RunConfiguration.getProjectDir() + "/Screenshot/" + modulePath
+                
+                // Buat direktori subfoldernya jika belum ada
+                new File(screenshotFolder).mkdirs() 
+
+                String artifactScreenshot = screenshotFolder + "/" + tcName + "_" + status + ".png"
+
+                try {
+                    WebUI.takeScreenshot(artifactScreenshot)
+                    KeywordUtil.logInfo("Artifact Screenshot : ${artifactScreenshot}")
+                } catch (Exception ignored) {
+                }
+
+                // ============================================
+                // Screenshot Katalon Report
+                // ============================================
+
+                String reportFolder = RunConfiguration.getReportFolder()
+
+                if (reportFolder != null) {
+                    // Membuat subfolder di dalam folder Report juga agar rapi
+                    String reportSubFolder = reportFolder + "/Screenshot/" + modulePath
+                    new File(reportSubFolder).mkdirs()
+                    
+                    String reportScreenshot = reportSubFolder + "/" + tcName + "_" + status + ".png"
+
+                    try {
+                        WebUI.takeScreenshot(reportScreenshot)
+                        KeywordUtil.logInfo("Report Screenshot : ${reportScreenshot}")
+                    } catch (Exception ignored) {
+                    }
+                }
+
+                // ============================================
+                // Close Browser
+                // ============================================
+
+                String tcId = testCaseContext.getTestCaseId()
+
+                if (!tcId.contains("Forgot password verification email")) {
+                    WebUI.closeBrowser()
+                    browserOpenedByListener = false
+                } else {
+                    KeywordUtil.logInfo("Browser kept open for this test case.")
+                }
+
+            } else {
+                KeywordUtil.logInfo("No browser to close.")
+                browserOpenedByListener = false
+            }
+
+        } catch (Exception e) {
+            KeywordUtil.markWarning("Listener Error : ${e.getMessage()}")
+            browserOpenedByListener = false
+        }
+    }
+
+    private void saveStartPageScreenshot() {
+
+        String screenshotFolder = RunConfiguration.getProjectDir() + "/Screenshot"
+        new File(screenshotFolder).mkdirs()
+
+        try {
+            WebUI.takeScreenshot(screenshotFolder + "/START_PAGE.png")
+        } catch (Exception ignored) {
+        }
+
+        String reportFolder = RunConfiguration.getReportFolder()
+
+        if (reportFolder != null) {
+            try {
+                WebUI.takeScreenshot(reportFolder + "/START_PAGE.png")
+            } catch (Exception ignored) {
+            }
+        }
+    }
 }
