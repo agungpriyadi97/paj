@@ -193,9 +193,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
     }
 
     post {
-
         always {
-
             archiveArtifacts(
                 artifacts: 'Reports/**, Screenshot/**, failure_*.html',
                 allowEmptyArchive: true
@@ -206,31 +204,32 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
+            // --- KODE BARU: Kirim Webhook ke n8n ---
+            script {
+                // Mengambil status asli dari eksekusi Jenkins (SUCCESS / FAILURE)
+                def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
+                
+                // Menjalankan cURL di CMD Windows untuk mengirim data ke n8n
+                bat 'curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"status\\":\\"' + currentStatus + '\\",\\"phase\\":\\"COMPLETED\\"}"'
+            }
+            // ---------------------------------------
+
             echo ""
             echo "======================================"
             echo "Automation Finished"
             echo "======================================"
-
         }
 
         success {
-
             echo "Automation SUCCESS"
-
         }
 
         unstable {
-
             echo "Automation UNSTABLE"
-
         }
 
         failure {
-
             echo "Automation FAILED"
-
         }
-
     }
-
 }
