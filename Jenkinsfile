@@ -12,7 +12,9 @@ pipeline {
         choice(
             name: 'BROWSER',
             choices: [
-                'Chrome (headless)'
+                'Chrome (headless)',
+                'Firefox (headless)',
+                'Both'
             ],
             description: 'Pilih Browser'
         )
@@ -54,7 +56,7 @@ Contoh override:
 
     stages {
 
-        // --- STAGE BARU: NOTIFIKASI MULAI ---
+        // --- NOTIFIKASI MULAI ---
         stage('Notify Start') {
             steps {
                 script {
@@ -114,6 +116,13 @@ Contoh override:
 
         stage('Run Chrome') {
 
+            when {
+                anyOf {
+                    expression { params.BROWSER == 'Chrome (headless)' }
+                    expression { params.BROWSER == 'Both' }
+                }
+            }
+
             steps {
 
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
@@ -133,6 +142,41 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 --config ^
 -webui.autoUpdateDrivers=true ^
 -webui.chrome.args="--disable-blink-features=AutomationControlled --disable-dev-shm-usage --disable-gpu --no-sandbox --window-size=1920,1080"
+"""
+
+                }
+
+            }
+
+        }
+
+        stage('Run Firefox') {
+
+            when {
+                anyOf {
+                    expression { params.BROWSER == 'Firefox (headless)' }
+                    expression { params.BROWSER == 'Both' }
+                }
+            }
+
+            steps {
+
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+
+                    bat """
+"${env.KATALON_EXE}" ^
+-noSplash ^
+-runMode=console ^
+-projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
+-retry=0 ^
+-apiKey="${env.KATALON_API_KEY}" ^
+${env.ARG_TYPE}="${env.FINAL_PATH}" ^
+-executionProfile="${params.PROFILE}" ^
+-browserType="Firefox (headless)" ^
+-reportFolder="Reports\\Firefox_Reports" ^
+-reportFileName="Firefox_Report" ^
+--config ^
+-webui.autoUpdateDrivers=true
 """
 
                 }
