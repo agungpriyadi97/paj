@@ -12,9 +12,7 @@ pipeline {
         choice(
             name: 'BROWSER',
             choices: [
-                'Chrome (headless)',
-                'Firefox (headless)',
-                'Both'
+                'Chrome (headless)'
             ],
             description: 'Pilih Browser'
         )
@@ -34,15 +32,10 @@ pipeline {
             name: 'TEST_PATH',
             defaultValue: '',
             description: '''
-Kosong = Regression Default
+Kosong = Default Test Suite (Registration)
 
-Contoh:
-
--testSuitePath=Test Suites/WEB/Login
-
-atau
-
--testSuiteCollectionPath=Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web
+Contoh override:
+-testSuitePath=Test Suites/WEB/Authentication/Registration
 '''
         )
     }
@@ -51,7 +44,8 @@ atau
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        DEFAULT_TEST = 'Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web'
+        // Set default ke Test Suite Registration
+        DEFAULT_TEST = 'Test Suites/WEB/Authentication/Registration'
 
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
 
@@ -90,7 +84,8 @@ atau
 
                     } else {
 
-                        env.ARG_TYPE = "-testSuiteCollectionPath"
+                        // Gunakan -testSuitePath untuk Test Suite tunggal
+                        env.ARG_TYPE = "-testSuitePath"
                         env.FINAL_PATH = env.DEFAULT_TEST
 
                     }
@@ -110,18 +105,6 @@ atau
         }
 
         stage('Run Chrome') {
-
-            when {
-
-                anyOf {
-
-                    expression { params.BROWSER == 'Chrome (headless)' }
-
-                    expression { params.BROWSER == 'Both' }
-
-                }
-
-            }
 
             steps {
 
@@ -150,50 +133,12 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 
         }
 
-        stage('Run Firefox') {
-
-            when {
-
-                anyOf {
-
-                    expression { params.BROWSER == 'Firefox (headless)' }
-
-                    expression { params.BROWSER == 'Both' }
-
-                }
-
-            }
-
-            steps {
-
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-
-                    bat """
-"${env.KATALON_EXE}" ^
--noSplash ^
--runMode=console ^
--projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
--retry=0 ^
--apiKey="${env.KATALON_API_KEY}" ^
-${env.ARG_TYPE}="${env.FINAL_PATH}" ^
--executionProfile="${params.PROFILE}" ^
--browserType="Firefox (headless)" ^
--reportFolder="Reports\\Firefox_Reports" ^
--reportFileName="Firefox_Report" ^
---config ^
--webui.autoUpdateDrivers=true
-"""
-
-                }
-
-            }
-
-        }
-
     }
 
     post {
+
         always {
+
             archiveArtifacts(
                 artifacts: 'Reports/**, Screenshot/**, failure_*.html',
                 allowEmptyArchive: true
@@ -204,32 +149,37 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // --- KODE BARU: Kirim Webhook ke n8n ---
+            // --- Kirim Webhook ke n8n ---
             script {
-                // Mengambil status asli dari eksekusi Jenkins (SUCCESS / FAILURE)
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
-                
-                // Menjalankan cURL di CMD Windows untuk mengirim data ke n8n
                 bat 'curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"status\\":\\"' + currentStatus + '\\",\\"phase\\":\\"COMPLETED\\"}"'
             }
-            // ---------------------------------------
 
             echo ""
             echo "======================================"
             echo "Automation Finished"
             echo "======================================"
+
         }
 
         success {
+
             echo "Automation SUCCESS"
+
         }
 
         unstable {
+
             echo "Automation UNSTABLE"
+
         }
 
         failure {
+
             echo "Automation FAILED"
+
         }
+
     }
+
 }
