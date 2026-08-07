@@ -58,7 +58,7 @@ Contoh override:
         stage('Notify Start') {
             steps {
                 script {
-                    bat 'curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"status\\":\\"RUNNING\\",\\"phase\\":\\"STARTED\\"}"'
+                    bat 'curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"browser\\":\\"' + params.BROWSER + '\\",\\"profile\\":\\"' + params.PROFILE + '\\",\\"status\\":\\"RUNNING\\",\\"phase\\":\\"STARTED\\"}"'
                 }
             }
         }
