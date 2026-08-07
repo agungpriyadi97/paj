@@ -54,6 +54,15 @@ Contoh override:
 
     stages {
 
+        // --- STAGE BARU: NOTIFIKASI MULAI ---
+        stage('Notify Start') {
+            steps {
+                script {
+                    bat 'curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"status\\":\\"RUNNING\\",\\"phase\\":\\"STARTED\\"}"'
+                }
+            }
+        }
+
         stage('Checkout Source') {
 
             steps {
@@ -84,7 +93,6 @@ Contoh override:
 
                     } else {
 
-                        // Gunakan -testSuitePath untuk Test Suite tunggal
                         env.ARG_TYPE = "-testSuitePath"
                         env.FINAL_PATH = env.DEFAULT_TEST
 
@@ -149,7 +157,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // --- Kirim Webhook ke n8n ---
+            // --- NOTIFIKASI SELESAI ---
             script {
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
                 bat 'curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"status\\":\\"' + currentStatus + '\\",\\"phase\\":\\"COMPLETED\\"}"'
