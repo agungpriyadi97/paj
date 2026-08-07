@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Memastikan pengguna dapat login menggunakan account dan password yang valid</description>
+   <name>TC Salah</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>dcc2d052-c483-4aef-a2bb-6c60c9622b82</testCaseGuid>
+</TestCaseEntity>

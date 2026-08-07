@@ -7,11 +7,10 @@
    <selectorCollection>
       <entry>
          <key>BASIC</key>
-         <value></value>
       </entry>
       <entry>
          <key>XPATH</key>
-         <value>//input[@placeholder='Password']</value>
+         <value>//input[@placeholder='slah']</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>
