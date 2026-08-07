@@ -49,7 +49,7 @@ pipeline {
 Kosong = Gunakan parameter SUITE / Default Test Suite
 
 Contoh override manual:
--testSuitePath=Test Suites/WEB/Authentication/Forgot Password
+-testSuitePath=Test Suites/WEB/Checkout/Post Payment Validation
 '''
         )
     }
@@ -58,8 +58,8 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // Default Test Suite Path diganti ke Forgot Password
-        DEFAULT_TEST = 'Test Suites/WEB/Authentication/Forgot Password'
+        // Default Test Suite Path diganti ke Post Payment Validation
+        DEFAULT_TEST = 'Test Suites/WEB/Checkout/Post Payment Validation'
 
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
 
