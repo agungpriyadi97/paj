@@ -31,12 +31,24 @@ pipeline {
         )
 
         string(
+            name: 'ENV',
+            defaultValue: 'staging',
+            description: 'Target Environment dari Telegram (staging, uat, prod)'
+        )
+
+        string(
+            name: 'SUITE',
+            defaultValue: 'regression',
+            description: 'Nama Test Suite dari Telegram (regression, smoke, atau path lengkap)'
+        )
+
+        string(
             name: 'TEST_PATH',
             defaultValue: '',
             description: '''
-Kosong = Default Test Suite (Registration)
+Kosong = Gunakan parameter SUITE / Default Test Suite
 
-Contoh override:
+Contoh override manual:
 -testSuitePath=Test Suites/WEB/Authentication/Registration
 '''
         )
@@ -46,7 +58,7 @@ Contoh override:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // Set default ke Test Suite Registration
+        // Default Test Suite Path jika memilih regression
         DEFAULT_TEST = 'Test Suites/WEB/Authentication/Registration'
 
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
@@ -86,12 +98,41 @@ Contoh override:
                     if exist Screenshot rmdir /s /q Screenshot
                     '''
 
+                    // 1. Penanganan Mapping ENV Telegram ke Execution Profile Katalon
+                    if (params.ENV?.trim()) {
+                        def envInput = params.ENV.toLowerCase()
+                        if (envInput == 'prod' || envInput == 'production') {
+                            env.TARGET_PROFILE = 'Production'
+                        } else if (envInput == 'uat') {
+                            env.TARGET_PROFILE = 'UAT'
+                        } else if (envInput == 'qa') {
+                            env.TARGET_PROFILE = 'QA'
+                        } else {
+                            env.TARGET_PROFILE = 'Development' // Default untuk staging/dev
+                        }
+                    } else {
+                        env.TARGET_PROFILE = params.PROFILE ?: 'Development'
+                    }
+
+                    // 2. Penanganan Mapping SUITE / TEST_PATH
                     if (params.TEST_PATH?.trim()) {
 
                         def value = params.TEST_PATH.split("=")
-
                         env.ARG_TYPE = value[0]
                         env.FINAL_PATH = value[1]
+
+                    } else if (params.SUITE?.trim()) {
+
+                        env.ARG_TYPE = "-testSuitePath"
+                        def suiteInput = params.SUITE.trim()
+
+                        if (suiteInput.startsWith("Test Suites/")) {
+                            env.FINAL_PATH = suiteInput
+                        } else if (suiteInput.toLowerCase() == 'regression') {
+                            env.FINAL_PATH = env.DEFAULT_TEST
+                        } else {
+                            env.FINAL_PATH = "Test Suites/${suiteInput}"
+                        }
 
                     } else {
 
@@ -102,7 +143,7 @@ Contoh override:
 
                     echo "====================================="
                     echo "PROJECT : ${env.PROJECT_FILE}"
-                    echo "PROFILE : ${params.PROFILE}"
+                    echo "PROFILE : ${env.TARGET_PROFILE}"
                     echo "BROWSER : ${params.BROWSER}"
                     echo "ARGTYPE : ${env.ARG_TYPE}"
                     echo "PATH    : ${env.FINAL_PATH}"
@@ -135,7 +176,7 @@ Contoh override:
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
 ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
--executionProfile="${params.PROFILE}" ^
+-executionProfile="${env.TARGET_PROFILE}" ^
 -browserType="Chrome (headless)" ^
 -reportFolder="Reports\\Chrome_Reports" ^
 -reportFileName="Chrome_Report" ^
@@ -171,7 +212,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
 ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
--executionProfile="${params.PROFILE}" ^
+-executionProfile="${env.TARGET_PROFILE}" ^
 -browserType="Firefox (headless)" ^
 -reportFolder="Reports\\Firefox_Reports" ^
 -reportFileName="Firefox_Report" ^
