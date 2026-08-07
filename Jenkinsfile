@@ -263,13 +263,25 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 
         unstable {
 
-            echo "Automation UNSTABLE"
+            echo "Automation UNSTABLE - Preparing Report Zip..."
+            script {
+                bat '''
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }"
+                curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip"
+                '''
+            }
 
         }
 
         failure {
 
-            echo "Automation FAILED"
+            echo "Automation FAILED - Preparing Report Zip..."
+            script {
+                bat '''
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }"
+                curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip"
+                '''
+            }
 
         }
 
