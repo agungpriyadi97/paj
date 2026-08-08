@@ -96,6 +96,7 @@ Contoh override manual:
                     bat '''
                     if exist Reports rmdir /s /q Reports
                     if exist Screenshot rmdir /s /q Screenshot
+                    if exist summary.json del /f /q summary.json
                     '''
 
                     // 1. Penanganan Mapping ENV Telegram ke Execution Profile Katalon
@@ -108,7 +109,7 @@ Contoh override manual:
                         } else if (envInput == 'qa') {
                             env.TARGET_PROFILE = 'QA'
                         } else {
-                            env.TARGET_PROFILE = 'Development' // Default untuk staging/dev
+                            env.TARGET_PROFILE = 'Development'
                         }
                     } else {
                         env.TARGET_PROFILE = params.PROFILE ?: 'Development'
@@ -242,10 +243,14 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // --- NOTIFIKASI SELESAI ---
+            // --- NOTIFIKASI SELESAI + RINGKASAN TEST CASE ---
             script {
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
-                bat 'curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"status\\":\\"' + currentStatus + '\\",\\"phase\\":\\"COMPLETED\\"}"'
+                
+                bat """
+                powershell -Command "\$p=0;\$f=0;\$s=0; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$ts in \$x.SelectNodes('//testsuite')){ \$t=[int]\$ts.tests; \$fail=[int]\$ts.failures + [int]\$ts.errors; \$skip=[int]\$ts.skipped; \$pass=\$t - (\$fail + \$skip); if(\$pass -gt 0){\$p+=\$pass}; \$f+=\$fail; \$s+=\$skip } }; \$json = '{\\"job\\":\\"${env.JOB_NAME}\\",\\"buildNumber\\":${env.BUILD_NUMBER},\\"status\\":\\"${currentStatus}\\",\\"phase\\":\\"COMPLETED\\",\\"passed\\":' + \$p + ',\\"failed\\":' + \$f + ',\\"skipped\\":' + \$s + '}'; Set-Content -Path 'summary.json' -Value \$json"
+                curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins" -H "Content-Type: application/json" -d @summary.json
+                """
             }
 
             echo ""
