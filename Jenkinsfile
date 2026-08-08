@@ -97,6 +97,7 @@ Contoh override manual:
                     if exist Reports rmdir /s /q Reports
                     if exist Screenshot rmdir /s /q Screenshot
                     if exist summary.json del /f /q summary.json
+                    if exist error_log.txt del /f /q error_log.txt
                     '''
 
                     // 1. Penanganan Mapping ENV Telegram ke Execution Profile Katalon
@@ -268,11 +269,11 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 
         unstable {
 
-            echo "Automation UNSTABLE - Preparing Report Zip..."
+            echo "Automation UNSTABLE - Preparing Report Zip & AI Error Log..."
             script {
                 bat '''
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }"
-                curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip"
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $msg = if($tc.failure){$tc.failure.innerText}else{$tc.error.innerText}; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
+                curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=<error_log.txt"
                 '''
             }
 
@@ -280,11 +281,11 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 
         failure {
 
-            echo "Automation FAILED - Preparing Report Zip..."
+            echo "Automation FAILED - Preparing Report Zip & AI Error Log..."
             script {
                 bat '''
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }"
-                curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip"
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $msg = if($tc.failure){$tc.failure.innerText}else{$tc.error.innerText}; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
+                curl -X POST "https://agungpriyadi97.app.n8n.cloud/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=<error_log.txt"
                 '''
             }
 
