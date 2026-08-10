@@ -49,7 +49,7 @@ pipeline {
 Kosong = Gunakan parameter SUITE / Default Test Suite
 
 Contoh override manual:
--testSuitePath=Test Suites/WEB/Checkout/Post Payment Validation
+-testSuiteCollectionPath=Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web
 '''
         )
     }
@@ -58,8 +58,8 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // Default Test Suite Path diganti ke Post Payment Validation
-        DEFAULT_TEST = 'Test Suites/WEB/Checkout/Post Payment Validation'
+        // Default Test Target diubah ke Test Suite Collection
+        DEFAULT_TEST = 'Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web'
 
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
 
@@ -116,7 +116,7 @@ Contoh override manual:
                         env.TARGET_PROFILE = params.PROFILE ?: 'Development'
                     }
 
-                    // 2. Penanganan Mapping SUITE / TEST_PATH
+                    // 2. Penanganan Mapping SUITE / TEST_PATH & Deteksi Otomatis Collection vs Suite
                     if (params.TEST_PATH?.trim()) {
 
                         def value = params.TEST_PATH.split("=")
@@ -125,7 +125,6 @@ Contoh override manual:
 
                     } else if (params.SUITE?.trim()) {
 
-                        env.ARG_TYPE = "-testSuitePath"
                         def suiteInput = params.SUITE.trim()
 
                         if (suiteInput.startsWith("Test Suites/")) {
@@ -138,9 +137,17 @@ Contoh override manual:
 
                     } else {
 
-                        env.ARG_TYPE = "-testSuitePath"
                         env.FINAL_PATH = env.DEFAULT_TEST
 
+                    }
+
+                    // Deteksi otomatis apakah target merupakan Test Suite Collection
+                    if (!params.TEST_PATH?.trim()) {
+                        if (env.FINAL_PATH.contains("Collection") || env.FINAL_PATH.contains("Web_Test_Suite_Collection")) {
+                            env.ARG_TYPE = "-testSuiteCollectionPath"
+                        } else {
+                            env.ARG_TYPE = "-testSuitePath"
+                        }
                     }
 
                     echo "====================================="
@@ -217,7 +224,6 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 -executionProfile="${env.TARGET_PROFILE}" ^
 -browserType="Firefox (headless)" ^
 -reportFolder="Reports\\Firefox_Reports" ^
--reportFileName="Firefox_Report" ^
 --config ^
 -webui.autoUpdateDrivers=true
 """
