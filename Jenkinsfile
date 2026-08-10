@@ -65,9 +65,8 @@ Contoh override manual:
 
         KATALON_API_KEY = credentials('katalon-api-key')
 
-        // 🔹 TAMBAHKAN ORGANIZATION ID DARI KATALON TESTOPS DI SINI
-        // Contoh: KATALON_ORG_ID = '123456'
-        KATALON_ORG_ID = 'GANTI_DENGAN_ORG_ID_KAMU'
+        // 🔹 Organization ID Katalon TestOps
+        KATALON_ORG_ID = '2078893'
     }
 
     stages {
