@@ -16,7 +16,7 @@ pipeline {
                 'Firefox (headless)',
                 'Both'
             ],
-            description: 'Pilih Browser'
+            description: 'Pilih Browser (Abaikan jika memanggil Test Suite Collection)'
         )
 
         choice(
@@ -58,12 +58,16 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // Default Test Target diubah ke Test Suite Collection
+        // Default Target Path (Test Suite Collection)
         DEFAULT_TEST = 'Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web'
 
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
 
         KATALON_API_KEY = credentials('katalon-api-key')
+
+        // 🔹 TAMBAHKAN ORGANIZATION ID DARI KATALON TESTOPS DI SINI
+        // Contoh: KATALON_ORG_ID = '123456'
+        KATALON_ORG_ID = 'GANTI_DENGAN_ORG_ID_KAMU'
     }
 
     stages {
@@ -141,7 +145,7 @@ Contoh override manual:
 
                     }
 
-                    // Deteksi otomatis apakah target merupakan Test Suite Collection
+                    // Deteksi otomatis tipe argumen Katalon CLI
                     if (!params.TEST_PATH?.trim()) {
                         if (env.FINAL_PATH.contains("Collection") || env.FINAL_PATH.contains("Web_Test_Suite_Collection")) {
                             env.ARG_TYPE = "-testSuiteCollectionPath"
@@ -150,12 +154,20 @@ Contoh override manual:
                         }
                     }
 
+                    // Menyusun argumen ekstra (Profile & Browser hanya dipasang jika BUKAN Test Suite Collection)
+                    if (env.ARG_TYPE == "-testSuiteCollectionPath") {
+                        env.EXTRA_ARGS = ""
+                    } else {
+                        env.EXTRA_ARGS = "-executionProfile=\"${env.TARGET_PROFILE}\" -browserType=\"Chrome (headless)\""
+                    }
+
                     echo "====================================="
                     echo "PROJECT : ${env.PROJECT_FILE}"
                     echo "PROFILE : ${env.TARGET_PROFILE}"
                     echo "BROWSER : ${params.BROWSER}"
                     echo "ARGTYPE : ${env.ARG_TYPE}"
                     echo "PATH    : ${env.FINAL_PATH}"
+                    echo "ORG ID  : ${env.KATALON_ORG_ID}"
                     echo "====================================="
 
                 }
@@ -170,6 +182,7 @@ Contoh override manual:
                 anyOf {
                     expression { params.BROWSER == 'Chrome (headless)' }
                     expression { params.BROWSER == 'Both' }
+                    expression { env.ARG_TYPE == '-testSuiteCollectionPath' }
                 }
             }
 
@@ -184,11 +197,9 @@ Contoh override manual:
 -projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
+-orgID="${env.KATALON_ORG_ID}" ^
 ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
--executionProfile="${env.TARGET_PROFILE}" ^
--browserType="Chrome (headless)" ^
--reportFolder="Reports\\Chrome_Reports" ^
--reportFileName="Chrome_Report" ^
+${env.EXTRA_ARGS} ^
 --config ^
 -webui.autoUpdateDrivers=true ^
 -webui.chrome.args="--disable-blink-features=AutomationControlled --disable-dev-shm-usage --disable-gpu --no-sandbox --window-size=1920,1080"
@@ -203,9 +214,12 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
         stage('Run Firefox') {
 
             when {
-                anyOf {
-                    expression { params.BROWSER == 'Firefox (headless)' }
-                    expression { params.BROWSER == 'Both' }
+                allOf {
+                    expression { env.ARG_TYPE == '-testSuitePath' }
+                    anyOf {
+                        expression { params.BROWSER == 'Firefox (headless)' }
+                        expression { params.BROWSER == 'Both' }
+                    }
                 }
             }
 
@@ -220,10 +234,10 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 -projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
+-orgID="${env.KATALON_ORG_ID}" ^
 ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 -executionProfile="${env.TARGET_PROFILE}" ^
 -browserType="Firefox (headless)" ^
--reportFolder="Reports\\Firefox_Reports" ^
 --config ^
 -webui.autoUpdateDrivers=true
 """
