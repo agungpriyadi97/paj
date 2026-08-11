@@ -97,6 +97,7 @@ Contoh override manual:
                 script {
 
                     bat '''
+                    taskkill /F /IM katalonc.exe /T 2>nul || exit 0
                     if exist Reports rmdir /s /q Reports
                     if exist Screenshot rmdir /s /q Screenshot
                     if exist summary.json del /f /q summary.json
