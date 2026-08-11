@@ -38,8 +38,8 @@ pipeline {
 
         string(
             name: 'SUITE',
-            defaultValue: 'regression',
-            description: 'Nama Test Suite dari Telegram (regression, smoke, atau path lengkap)'
+            defaultValue: 'Test Suites/WEB/Checkout/Post Payment Validation',
+            description: 'Nama Test Suite dari Telegram'
         )
 
         string(
@@ -49,7 +49,7 @@ pipeline {
 Kosong = Gunakan parameter SUITE / Default Test Suite
 
 Contoh override manual:
--testSuiteCollectionPath=Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web
+-testSuitePath=Test Suites/WEB/Checkout/Post Payment Validation
 '''
         )
     }
@@ -58,8 +58,8 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // Default Target Path (Test Suite Collection)
-        DEFAULT_TEST = 'Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web'
+        // Default Target Path (Diubah ke Test Suite Post Payment Validation)
+        DEFAULT_TEST = 'Test Suites/WEB/Checkout/Post Payment Validation'
 
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
 
