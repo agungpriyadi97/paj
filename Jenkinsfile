@@ -58,6 +58,9 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
+        // 🌟 Memaksa Katalon CLI membaca folder profil user AgungPriyadi (Mencegah Silent Crash di Local System Account)
+        USERPROFILE = 'C:\\Users\\AgungPriyadi'
+
         // Default Target Path (Test Suite Post Payment Validation)
         DEFAULT_TEST = 'Test Suites/WEB/Checkout/Post Payment Validation'
 
