@@ -58,7 +58,7 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // 🌟 Memaksa Katalon CLI membaca folder profil user AgungPriyadi
+        // 🌟 Memaksa Katalon CLI membaca folder profil user
         USERPROFILE = 'C:\\Users\\AgungPriyadi'
 
         // Default Target Path (Test Suite Post Payment Validation)
@@ -197,9 +197,11 @@ Contoh override manual:
 
                     bat """
 "${env.KATALON_EXE}" ^
+-clean ^
 -noSplash ^
 -runMode=console ^
 -projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
+-data="%WORKSPACE%\\.katalon_workspace" ^
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
 -orgID="${env.KATALON_ORG_ID}" ^
@@ -234,9 +236,11 @@ ${env.EXTRA_ARGS} ^
 
                     bat """
 "${env.KATALON_EXE}" ^
+-clean ^
 -noSplash ^
 -runMode=console ^
 -projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
+-data="%WORKSPACE%\\.katalon_workspace" ^
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
 -orgID="${env.KATALON_ORG_ID}" ^
