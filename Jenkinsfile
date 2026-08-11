@@ -58,7 +58,7 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // 🌟 Memaksa Katalon CLI membaca folder profil user
+        // 🌟 Memaksa Katalon CLI membaca folder profil user AgungPriyadi
         USERPROFILE = 'C:\\Users\\AgungPriyadi'
 
         // Default Target Path (Test Suite Post Payment Validation)
@@ -197,11 +197,9 @@ Contoh override manual:
 
                     bat """
 "${env.KATALON_EXE}" ^
--clean ^
 -noSplash ^
 -runMode=console ^
 -projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
--data="%WORKSPACE%\\.katalon_workspace" ^
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
 -orgID="${env.KATALON_ORG_ID}" ^
@@ -236,11 +234,9 @@ ${env.EXTRA_ARGS} ^
 
                     bat """
 "${env.KATALON_EXE}" ^
--clean ^
 -noSplash ^
 -runMode=console ^
 -projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
--data="%WORKSPACE%\\.katalon_workspace" ^
 -retry=0 ^
 -apiKey="${env.KATALON_API_KEY}" ^
 -orgID="${env.KATALON_ORG_ID}" ^
@@ -301,7 +297,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
             echo "Automation UNSTABLE - Preparing Report Zip & AI Error Log..."
             script {
                 bat '''
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $msg = if($tc.failure){$tc.failure.innerText}else{$tc.error.innerText}; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $node = if($tc.failure){$tc.failure}else{$tc.error}; $msg = $node.message; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $node.innerText }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $tc.'system-err' }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = 'No detailed error message found in XML.' }; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
                 curl -X POST "http://localhost:5678/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=@error_log.txt"
                 '''
             }
@@ -313,7 +309,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
             echo "Automation FAILED - Preparing Report Zip & AI Error Log..."
             script {
                 bat '''
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $msg = if($tc.failure){$tc.failure.innerText}else{$tc.error.innerText}; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $node = if($tc.failure){$tc.failure}else{$tc.error}; $msg = $node.message; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $node.innerText }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $tc.'system-err' }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = 'No detailed error message found in XML.' }; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
                 curl -X POST "http://localhost:5678/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=@error_log.txt"
                 '''
             }
