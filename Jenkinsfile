@@ -58,7 +58,7 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // 🌟 Memaksa Katalon CLI membaca folder profil user AgungPriyadi (Mencegah Silent Crash di Local System Account)
+        // 🌟 Memaksa Katalon CLI membaca folder profil user AgungPriyadi
         USERPROFILE = 'C:\\Users\\AgungPriyadi'
 
         // Default Target Path (Test Suite Post Payment Validation)
@@ -101,6 +101,8 @@ Contoh override manual:
 
                     bat '''
                     taskkill /F /IM katalonc.exe /T 2>nul || exit 0
+                    taskkill /F /IM java.exe /T 2>nul || exit 0
+                    if exist "C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\config\\.metadata\\.lock" del /f /q "C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\config\\.metadata\\.lock" 2>nul || exit 0
                     if exist Reports rmdir /s /q Reports
                     if exist Screenshot rmdir /s /q Screenshot
                     if exist summary.json del /f /q summary.json
