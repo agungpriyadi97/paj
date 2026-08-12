@@ -58,18 +58,18 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
-        // 🌟 Memaksa Katalon CLI membaca folder profil user AgungPriyadi
         USERPROFILE = 'C:\\Users\\AgungPriyadi'
 
-        // Default Target Path (Test Suite Post Payment Validation)
         DEFAULT_TEST = 'Test Suites/WEB/Checkout/Post Payment Validation'
 
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
 
         KATALON_API_KEY = credentials('katalon-api-key')
 
-        // 🔹 Organization ID Katalon TestOps
         KATALON_ORG_ID = '2078893'
+
+        // 🌟 URL Webhook n8n untuk pencatatan otomatis ke Google Sheets
+        N8N_SHEETS_WEBHOOK = 'http://localhost:5678/webhook/79204498-fdea-41d3-a8a2-21b002f8b724'
     }
 
     stages {
@@ -84,21 +84,14 @@ Contoh override manual:
         }
 
         stage('Checkout Source') {
-
             steps {
-
                 checkout scm
-
             }
-
         }
 
         stage('Prepare') {
-
             steps {
-
                 script {
-
                     bat '''
                     taskkill /F /IM katalonc.exe /T 2>nul || exit 0
                     taskkill /F /IM java.exe /T 2>nul || exit 0
@@ -107,6 +100,7 @@ Contoh override manual:
                     if exist Screenshot rmdir /s /q Screenshot
                     if exist summary.json del /f /q summary.json
                     if exist error_log.txt del /f /q error_log.txt
+                    if exist failed_tests.json del /f /q failed_tests.json
                     '''
 
                     // 1. Penanganan Mapping ENV Telegram ke Execution Profile Katalon
@@ -127,15 +121,11 @@ Contoh override manual:
 
                     // 2. Penanganan Mapping SUITE / TEST_PATH & Deteksi Otomatis Collection vs Suite
                     if (params.TEST_PATH?.trim()) {
-
                         def value = params.TEST_PATH.split("=")
                         env.ARG_TYPE = value[0]
                         env.FINAL_PATH = value[1]
-
                     } else if (params.SUITE?.trim()) {
-
                         def suiteInput = params.SUITE.trim()
-
                         if (suiteInput.startsWith("Test Suites/")) {
                             env.FINAL_PATH = suiteInput
                         } else if (suiteInput.toLowerCase() == 'regression') {
@@ -143,11 +133,8 @@ Contoh override manual:
                         } else {
                             env.FINAL_PATH = "Test Suites/${suiteInput}"
                         }
-
                     } else {
-
                         env.FINAL_PATH = env.DEFAULT_TEST
-
                     }
 
                     // Deteksi otomatis tipe argumen Katalon CLI
@@ -159,7 +146,7 @@ Contoh override manual:
                         }
                     }
 
-                    // Menyusun argumen ekstra (Profile & Browser hanya dipasang jika BUKAN Test Suite Collection)
+                    // Menyusun argumen ekstra
                     if (env.ARG_TYPE == "-testSuiteCollectionPath") {
                         env.EXTRA_ARGS = ""
                     } else {
@@ -174,15 +161,11 @@ Contoh override manual:
                     echo "PATH    : ${env.FINAL_PATH}"
                     echo "ORG ID  : ${env.KATALON_ORG_ID}"
                     echo "====================================="
-
                 }
-
             }
-
         }
 
         stage('Run Chrome') {
-
             when {
                 anyOf {
                     expression { params.BROWSER == 'Chrome (headless)' }
@@ -190,11 +173,8 @@ Contoh override manual:
                     expression { env.ARG_TYPE == '-testSuiteCollectionPath' }
                 }
             }
-
             steps {
-
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-
                     bat """
 "${env.KATALON_EXE}" ^
 -noSplash ^
@@ -209,15 +189,11 @@ ${env.EXTRA_ARGS} ^
 -webui.autoUpdateDrivers=true ^
 -webui.chrome.args="--disable-blink-features=AutomationControlled --disable-dev-shm-usage --disable-gpu --no-sandbox --window-size=1920,1080"
 """
-
                 }
-
             }
-
         }
 
         stage('Run Firefox') {
-
             when {
                 allOf {
                     expression { env.ARG_TYPE == '-testSuitePath' }
@@ -227,11 +203,8 @@ ${env.EXTRA_ARGS} ^
                     }
                 }
             }
-
             steps {
-
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-
                     bat """
 "${env.KATALON_EXE}" ^
 -noSplash ^
@@ -246,19 +219,14 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 --config ^
 -webui.autoUpdateDrivers=true
 """
-
                 }
-
             }
-
         }
-
     }
 
     post {
 
         always {
-
             archiveArtifacts(
                 artifacts: 'Reports/**, Screenshot/**, failure_*.html',
                 allowEmptyArchive: true
@@ -283,37 +251,36 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
             echo "======================================"
             echo "Automation Finished"
             echo "======================================"
-
         }
 
         success {
-
             echo "Automation SUCCESS"
-
         }
 
         unstable {
-
-            echo "Automation UNSTABLE - Preparing Report Zip & AI Error Log..."
+            echo "Automation UNSTABLE - Preparing Zip, AI Error Log & Sending to Google Sheets..."
             script {
-                bat '''
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $node = if($tc.failure){$tc.failure}else{$tc.error}; $msg = $node.message; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $node.innerText }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $tc.'system-err' }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = 'No detailed error message found in XML.' }; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
+                bat """
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; \$f = @(); if (Test-Path 'Reports') { \$f += 'Reports' }; if (Test-Path 'Screenshot') { \$f += 'Screenshot' }; if (\$f.Count -gt 0) { Compress-Archive -Path \$f -DestinationPath 'Failure_Report.zip' -Force }; \$errs = @(); \$tcList = @(); \$i = 1; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$tc in \$x.SelectNodes('//testcase[failure or error]')){ \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \$msg = \$node.message; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \$tcList += @{ number = [string]\$i; testSuiteName = '${env.FINAL_PATH}'.Replace('Test Suites/', ''); testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \$i++ } }; if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \$jsonPayload = @{ testCases = \$tcList } | ConvertTo-Json -Depth 5; Set-Content -Path 'failed_tests.json' -Value \$jsonPayload"
+                
                 powershell -Command "curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
-                '''
+                
+                powershell -Command "curl.exe -X POST '${env.N8N_SHEETS_WEBHOOK}' -H 'Content-Type: application/json' -d @failed_tests.json"
+                """
             }
-
         }
 
         failure {
-
-            echo "Automation FAILED - Preparing Report Zip & AI Error Log..."
+            echo "Automation FAILED - Preparing Zip, AI Error Log & Sending to Google Sheets..."
             script {
-                bat '''
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $node = if($tc.failure){$tc.failure}else{$tc.error}; $msg = $node.message; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $node.innerText }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $tc.'system-err' }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = 'No detailed error message found in XML.' }; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
+                bat """
+                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; \$f = @(); if (Test-Path 'Reports') { \$f += 'Reports' }; if (Test-Path 'Screenshot') { \$f += 'Screenshot' }; if (\$f.Count -gt 0) { Compress-Archive -Path \$f -DestinationPath 'Failure_Report.zip' -Force }; \$errs = @(); \$tcList = @(); \$i = 1; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$tc in \$x.SelectNodes('//testcase[failure or error]')){ \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \$msg = \$node.message; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \$tcList += @{ number = [string]\$i; testSuiteName = '${env.FINAL_PATH}'.Replace('Test Suites/', ''); testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \$i++ } }; if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \$jsonPayload = @{ testCases = \$tcList } | ConvertTo-Json -Depth 5; Set-Content -Path 'failed_tests.json' -Value \$jsonPayload"
+                
                 powershell -Command "curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
-                '''
+                
+                powershell -Command "curl.exe -X POST '${env.N8N_SHEETS_WEBHOOK}' -H 'Content-Type: application/json' -d @failed_tests.json"
+                """
             }
-
         }
 
     }
