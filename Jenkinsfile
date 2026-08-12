@@ -68,8 +68,8 @@ Contoh override manual:
 
         KATALON_ORG_ID = '2078893'
 
-        // 🌟 URL Webhook n8n untuk pencatatan otomatis ke Google Sheets
-        N8N_SHEETS_WEBHOOK = 'http://localhost:5678/webhook/79204498-fdea-41d3-a8a2-21b002f8b724'
+        // 🌟 URL Webhook n8n Google Sheets (Sudah disesuaikan dengan Cloudflare & Sub-path /n8n/)
+        N8N_SHEETS_WEBHOOK = 'https://stated-monthly-leeds-ringtone.trycloudflare.com/n8n/webhook/79204498-fdea-41d3-a8a2-21b002f8b724'
     }
 
     stages {
@@ -78,7 +78,7 @@ Contoh override manual:
         stage('Notify Start') {
             steps {
                 script {
-                    bat 'curl -X POST "http://localhost:5678/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"browser\\":\\"' + params.BROWSER + '\\",\\"profile\\":\\"' + params.PROFILE + '\\",\\"status\\":\\"RUNNING\\",\\"phase\\":\\"STARTED\\"}"'
+                    bat 'curl -X POST "http://localhost:5678/n8n/webhook/jenkins" -H "Content-Type: application/json" -d "{\\"job\\":\\"' + env.JOB_NAME + '\\",\\"buildNumber\\":' + env.BUILD_NUMBER + ',\\"browser\\":\\"' + params.BROWSER + '\\",\\"profile\\":\\"' + params.PROFILE + '\\",\\"status\\":\\"RUNNING\\",\\"phase\\":\\"STARTED\\"}"'
                 }
             }
         }
@@ -103,7 +103,6 @@ Contoh override manual:
                     if exist failed_tests.json del /f /q failed_tests.json
                     '''
 
-                    // 1. Penanganan Mapping ENV Telegram ke Execution Profile Katalon
                     if (params.ENV?.trim()) {
                         def envInput = params.ENV.toLowerCase()
                         if (envInput == 'prod' || envInput == 'production') {
@@ -119,7 +118,6 @@ Contoh override manual:
                         env.TARGET_PROFILE = params.PROFILE ?: 'Development'
                     }
 
-                    // 2. Penanganan Mapping SUITE / TEST_PATH & Deteksi Otomatis Collection vs Suite
                     if (params.TEST_PATH?.trim()) {
                         def value = params.TEST_PATH.split("=")
                         env.ARG_TYPE = value[0]
@@ -137,7 +135,6 @@ Contoh override manual:
                         env.FINAL_PATH = env.DEFAULT_TEST
                     }
 
-                    // Deteksi otomatis tipe argumen Katalon CLI
                     if (!params.TEST_PATH?.trim()) {
                         if (env.FINAL_PATH.contains("Collection") || env.FINAL_PATH.contains("Web_Test_Suite_Collection")) {
                             env.ARG_TYPE = "-testSuiteCollectionPath"
@@ -146,7 +143,6 @@ Contoh override manual:
                         }
                     }
 
-                    // Menyusun argumen ekstra
                     if (env.ARG_TYPE == "-testSuiteCollectionPath") {
                         env.EXTRA_ARGS = ""
                     } else {
@@ -237,13 +233,12 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // --- NOTIFIKASI SELESAI + RINGKASAN TEST CASE ---
             script {
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
                 
                 bat """
                 powershell -Command "\$p=0;\$f=0;\$s=0; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$ts in \$x.SelectNodes('//testsuite')){ \$t=[int]\$ts.tests; \$fail=[int]\$ts.failures + [int]\$ts.errors; \$skip=[int]\$ts.skipped; \$pass=\$t - (\$fail + \$skip); if(\$pass -gt 0){\$p+=\$pass}; \$f+=\$fail; \$s+=\$skip } }; \$json = '{\\"job\\":\\"${env.JOB_NAME}\\",\\"buildNumber\\":${env.BUILD_NUMBER},\\"status\\":\\"${currentStatus}\\",\\"phase\\":\\"COMPLETED\\",\\"passed\\":' + \$p + ',\\"failed\\":' + \$f + ',\\"skipped\\":' + \$s + '}'; Set-Content -Path 'summary.json' -Value \$json"
-                curl -X POST "http://localhost:5678/webhook/jenkins" -H "Content-Type: application/json" -d @summary.json
+                curl -X POST "http://localhost:5678/n8n/webhook/jenkins" -H "Content-Type: application/json" -d @summary.json
                 """
             }
 
@@ -263,9 +258,9 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 bat """
                 powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; \$f = @(); if (Test-Path 'Reports') { \$f += 'Reports' }; if (Test-Path 'Screenshot') { \$f += 'Screenshot' }; if (\$f.Count -gt 0) { Compress-Archive -Path \$f -DestinationPath 'Failure_Report.zip' -Force }; \$errs = @(); \$tcList = @(); \$i = 1; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$tc in \$x.SelectNodes('//testcase[failure or error]')){ \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \$msg = \$node.message; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \$tcList += @{ number = [string]\$i; testSuiteName = '${env.FINAL_PATH}'.Replace('Test Suites/', ''); testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \$i++ } }; if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \$jsonPayload = @{ testCases = \$tcList } | ConvertTo-Json -Depth 5; Set-Content -Path 'failed_tests.json' -Value \$jsonPayload"
                 
-                powershell -Command "curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
+                powershell -Command "curl.exe -X POST 'http://localhost:5678/n8n/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
                 
-                powershell -Command "curl.exe -X POST '${env.N8N_SHEETS_WEBHOOK}' -H 'Content-Type: application/json' -d @failed_tests.json"
+                powershell -Command "Invoke-RestMethod -Uri '${env.N8N_SHEETS_WEBHOOK}' -Method Post -ContentType 'application/json' -InFile 'failed_tests.json'"
                 """
             }
         }
@@ -276,9 +271,9 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 bat """
                 powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; \$f = @(); if (Test-Path 'Reports') { \$f += 'Reports' }; if (Test-Path 'Screenshot') { \$f += 'Screenshot' }; if (\$f.Count -gt 0) { Compress-Archive -Path \$f -DestinationPath 'Failure_Report.zip' -Force }; \$errs = @(); \$tcList = @(); \$i = 1; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$tc in \$x.SelectNodes('//testcase[failure or error]')){ \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \$msg = \$node.message; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \$tcList += @{ number = [string]\$i; testSuiteName = '${env.FINAL_PATH}'.Replace('Test Suites/', ''); testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \$i++ } }; if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \$jsonPayload = @{ testCases = \$tcList } | ConvertTo-Json -Depth 5; Set-Content -Path 'failed_tests.json' -Value \$jsonPayload"
                 
-                powershell -Command "curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
+                powershell -Command "curl.exe -X POST 'http://localhost:5678/n8n/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
                 
-                powershell -Command "curl.exe -X POST '${env.N8N_SHEETS_WEBHOOK}' -H 'Content-Type: application/json' -d @failed_tests.json"
+                powershell -Command "Invoke-RestMethod -Uri '${env.N8N_SHEETS_WEBHOOK}' -Method Post -ContentType 'application/json' -InFile 'failed_tests.json'"
                 """
             }
         }
