@@ -298,7 +298,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
             script {
                 bat '''
                 powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $node = if($tc.failure){$tc.failure}else{$tc.error}; $msg = $node.message; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $node.innerText }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $tc.'system-err' }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = 'No detailed error message found in XML.' }; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
-                curl -X POST "http://localhost:5678/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=<error_log.txt"
+                powershell -Command "$errText = Get-Content 'error_log.txt' -Raw; curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F (\"error_log=\" + $errText)"
                 '''
             }
 
@@ -310,7 +310,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
             script {
                 bat '''
                 powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; $f = @(); if (Test-Path 'Reports') { $f += 'Reports' }; if (Test-Path 'Screenshot') { $f += 'Screenshot' }; if ($f.Count -gt 0) { Compress-Archive -Path $f -DestinationPath 'Failure_Report.zip' -Force }; $errs = @(); Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]$x = Get-Content $_.FullName; foreach($tc in $x.SelectNodes('//testcase[failure or error]')){ $node = if($tc.failure){$tc.failure}else{$tc.error}; $msg = $node.message; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $node.innerText }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = $tc.'system-err' }; if([string]::IsNullOrWhiteSpace($msg)){ $msg = 'No detailed error message found in XML.' }; $errs += ('[Test Case]: ' + $tc.name + [Environment]::NewLine + '[Error]: ' + $msg) } }; if ($errs.Count -eq 0) { $errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value ($errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine))"
-                curl -X POST "http://localhost:5678/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=<error_log.txt"
+                powershell -Command "$errText = Get-Content 'error_log.txt' -Raw; curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F (\"error_log=\" + $errText)"
                 '''
             }
 
