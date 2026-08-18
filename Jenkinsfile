@@ -63,7 +63,7 @@ Contoh override manual:
         // 🌟 Folder tujuan di OneDrive / SharePoint
         PROJECT_FOLDER = 'Pasti-ada-jalan'
 
-        ONEDRIVE_ATTACHMENTS = 'C:\\Users\\AgungPriyadi\\OneDrive - agung - (G)Tech Digital\\Attachments'
+        ONEDRIVE_ATTACHMENTS = 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments'
 
         USERPROFILE = 'C:\\Users\\AgungPriyadi'
 
@@ -240,10 +240,10 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE / SHAREPOINT (Dengan Auto-Detect Path & Join-Path)
+            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE / SHAREPOINT
             script {
                 bat """
-                powershell -Command "\$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \$browserName = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \$attachmentsPath = '${env.ONEDRIVE_ATTACHMENTS}'; if (-not (Test-Path \$attachmentsPath)) { \$found = Get-ChildItem -Path \$env:USERPROFILE -Filter 'Attachments' -Recurse -Directory -ErrorAction SilentlyContinue | Select-Object -First 1; if (\$found) { \$attachmentsPath = \$found.FullName } }; \$destDir = Join-Path (Join-Path (Join-Path \$attachmentsPath '${env.PROJECT_FOLDER}') \$dateStr) \$browserName; Write-Host ('Target Folder: ' + \$destDir); if (-not (Test-Path \$destDir)) { New-Item -ItemType Directory -Path \$destDir -Force | Out-Null }; \$files = Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue; if (\$files.Count -gt 0) { \$files | ForEach-Object { Copy-Item -Path \$_.FullName -Destination \$destDir -Force; Write-Host ('Copied HTML: ' + \$_.Name) } } else { Write-Host 'No HTML reports found in Reports/' }"
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "\$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \$browser = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \$targetBase = 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments\\Pasti-ada-jalan'; if (-not (Test-Path \$targetBase)) { \$found = Get-ChildItem -Path 'C:\\Users\\AgungPriyadi' -Filter 'Pasti-ada-jalan' -Recurse -Directory -ErrorAction SilentlyContinue | Select-Object -First 1; if (\$found) { \$targetBase = \$found.FullName } }; \$dest = Join-Path (Join-Path \$targetBase \$dateStr) \$browser; Write-Host ('Target Folder: ' + \$dest); if (-not (Test-Path \$dest)) { New-Item -ItemType Directory -Path \$dest -Force | Out-Null }; \$reports = Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue; if (\$reports) { \$reports | ForEach-Object { Copy-Item -Path \$_.FullName -Destination \$dest -Force; Write-Host ('Copied HTML: ' + \$_.Name) } } else { Write-Host 'No HTML files found in Reports/' }"
                 """
             }
 
