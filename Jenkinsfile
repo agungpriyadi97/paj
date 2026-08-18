@@ -229,7 +229,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
 
     post {
 
-        always {
+always {
             archiveArtifacts(
                 artifacts: 'Reports/**, Screenshot/**, failure_*.html',
                 allowEmptyArchive: true
@@ -240,7 +240,7 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE DENGAN NAMA MODUL & NOTIFIKASI FINISHED
+            // 🌟 COPY HTML REPORT SESUAI NAMA MODUL & TRIGGER WEBHOOK FINISHED
             script {
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
                 
@@ -283,9 +283,18 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                             \$s+=\$skip \
                         } \
                     }; \
-                    \$json = '{\\"job\\":\\"${env.JOB_NAME}\\",\\"projectName\\":\\"${env.PROJECT_NAME}\\",\\"buildNumber\\":${env.BUILD_NUMBER},\\"status\\":\\"${currentStatus}\\",\\"phase\\":\\"COMPLETED\\",\\"passed\\":' + \$p + ',\\"failed\\":' + \$f + ',\\"skipped\\":' + \$s + '}'; \
-                    Set-Content -Path 'summary.json' -Value \$json; \
-                    curl.exe -X POST 'http://localhost:5678/webhook/jenkins' -H 'Content-Type: application/json' -d @summary.json \
+                    \$body = @{ \
+                        job = '${env.JOB_NAME}'; \
+                        projectName = '${env.PROJECT_NAME}'; \
+                        buildNumber = [int]${env.BUILD_NUMBER}; \
+                        status = '${currentStatus}'; \
+                        phase = 'COMPLETED'; \
+                        passed = \$p; \
+                        failed = \$f; \
+                        skipped = \$s \
+                    } | ConvertTo-Json; \
+                    Invoke-RestMethod -Uri 'http://localhost:5678/webhook/jenkins' -Method Post -ContentType 'application/json' -Body \$body; \
+                    Write-Host 'SUCCESS: Finished Webhook sent to n8n' \
                 "
                 """
             }
