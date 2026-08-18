@@ -37,7 +37,7 @@ pipeline {
 
         string(
             name: 'SUITE',
-            defaultValue: 'Test Suites/WEB/Checkout/Post Payment Validation',
+            defaultValue: 'Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web',
             description: 'Nama Test Suite dari Telegram'
         )
 
@@ -48,7 +48,7 @@ pipeline {
 Kosong = Gunakan parameter SUITE / Default Test Suite
 
 Contoh override manual:
--testSuitePath=Test Suites/WEB/Checkout/Post Payment Validation
+-testSuiteCollectionPath=Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web
 '''
         )
     }
@@ -59,7 +59,7 @@ Contoh override manual:
         PROJECT_FOLDER = 'Pasti-ada-jalan'
         ONEDRIVE_ATTACHMENTS = 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments'
         USERPROFILE = 'C:\\Users\\AgungPriyadi'
-        DEFAULT_TEST = 'Test Suites/WEB/Checkout/Post Payment Validation'
+        DEFAULT_TEST = 'Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web'
         KATALON_EXE = 'C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\katalonc.exe'
         KATALON_API_KEY = credentials('katalon-api-key')
         KATALON_ORG_ID = '2078893'
