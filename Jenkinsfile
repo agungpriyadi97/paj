@@ -309,15 +309,49 @@ always {
             echo "Automation SUCCESS"
         }
 
-        unstable {
+unstable {
             echo "Automation UNSTABLE - Preparing Zip, AI Error Log & Sending to Google Sheets..."
             script {
                 bat """
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; \$f = @(); if (Test-Path 'Reports') { \$f += 'Reports' }; if (Test-Path 'Screenshot') { \$f += 'Screenshot' }; if (\$f.Count -gt 0) { Compress-Archive -Path \$f -DestinationPath 'Failure_Report.zip' -Force }; \$errs = @(); \$tcList = @(); \$i = 1; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$ts in \$x.SelectNodes('//testsuite')){ \$tsName = \$ts.name; foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \$msg = \$node.message; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \$i++ } } }; if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \$jsonPayload = @{ projectName = '${env.PROJECT_NAME}'; jobName = '${env.JOB_NAME}'; buildUrl = '${env.BUILD_URL}'; buildNumber = ${env.BUILD_NUMBER}; testCases = \$tcList } | ConvertTo-Json -Depth 5; Set-Content -Path 'failed_tests.json' -Value \$jsonPayload"
-                
-                powershell -Command "curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
-                
-                powershell -Command "Invoke-RestMethod -Uri '${env.N8N_SHEETS_WEBHOOK}' -Method Post -ContentType 'application/json' -InFile 'failed_tests.json'"
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "\
+                    try { \
+                        \$tempZip = Join-Path \$env:TEMP 'DigiboxVN_Failures'; \
+                        if (Test-Path \$tempZip) { Remove-Item \$tempZip -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        New-Item -ItemType Directory -Path \$tempZip -Force | Out-Null; \
+                        if (Test-Path 'Reports') { Copy-Item -Path 'Reports' -Destination \$tempZip -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'Screenshot') { Copy-Item -Path 'Screenshot' -Destination \$tempZip -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' -Force -ErrorAction SilentlyContinue }; \
+                        Compress-Archive -Path (Join-Path \$tempZip '*') -DestinationPath 'Failure_Report.zip' -Force -ErrorAction SilentlyContinue; \
+                        Remove-Item \$tempZip -Recurse -Force -ErrorAction SilentlyContinue; \
+                    } catch { Write-Host ('Error creating zip: ' + \$_.Exception.Message) }; \
+                    \$errs = @(); \
+                    \$tcList = @(); \
+                    \$i = 1; \
+                    Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
+                        [xml]\$x = Get-Content \$_.FullName; \
+                        foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
+                            \$tsName = \$ts.name; \
+                            foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \
+                                \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \
+                                \$msg = \$node.message; \
+                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; \
+                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; \
+                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \
+                                \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \
+                                \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \
+                                \$i++ \
+                            } \
+                        } \
+                    }; \
+                    if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; \
+                    Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \
+                    \$jsonPayload = @{ projectName = '${env.PROJECT_NAME}'; jobName = '${env.JOB_NAME}'; buildUrl = '${env.BUILD_URL}'; buildNumber = ${env.BUILD_NUMBER}; testCases = \$tcList } | ConvertTo-Json -Depth 5; \
+                    Set-Content -Path 'failed_tests.json' -Value \$jsonPayload; \
+                "
+
+                curl.exe -X POST "http://localhost:5678/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=@error_log.txt"
+
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-RestMethod -Uri '${env.N8N_SHEETS_WEBHOOK}' -Method Post -ContentType 'application/json' -InFile 'failed_tests.json'"
                 """
             }
         }
@@ -326,11 +360,45 @@ always {
             echo "Automation FAILED - Preparing Zip, AI Error Log & Sending to Google Sheets..."
             script {
                 bat """
-                powershell -Command "if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' }; \$f = @(); if (Test-Path 'Reports') { \$f += 'Reports' }; if (Test-Path 'Screenshot') { \$f += 'Screenshot' }; if (\$f.Count -gt 0) { Compress-Archive -Path \$f -DestinationPath 'Failure_Report.zip' -Force }; \$errs = @(); \$tcList = @(); \$i = 1; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$ts in \$x.SelectNodes('//testsuite')){ \$tsName = \$ts.name; foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \$msg = \$node.message; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \$i++ } } }; if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \$jsonPayload = @{ projectName = '${env.PROJECT_NAME}'; jobName = '${env.JOB_NAME}'; buildUrl = '${env.BUILD_URL}'; buildNumber = ${env.BUILD_NUMBER}; testCases = \$tcList } | ConvertTo-Json -Depth 5; Set-Content -Path 'failed_tests.json' -Value \$jsonPayload"
-                
-                powershell -Command "curl.exe -X POST 'http://localhost:5678/webhook/jenkins-report' -F 'chat_id=8122375919' -F 'file=@Failure_Report.zip' -F 'error_log=@error_log.txt'"
-                
-                powershell -Command "Invoke-RestMethod -Uri '${env.N8N_SHEETS_WEBHOOK}' -Method Post -ContentType 'application/json' -InFile 'failed_tests.json'"
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "\
+                    try { \
+                        \$tempZip = Join-Path \$env:TEMP 'DigiboxVN_Failures'; \
+                        if (Test-Path \$tempZip) { Remove-Item \$tempZip -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        New-Item -ItemType Directory -Path \$tempZip -Force | Out-Null; \
+                        if (Test-Path 'Reports') { Copy-Item -Path 'Reports' -Destination \$tempZip -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'Screenshot') { Copy-Item -Path 'Screenshot' -Destination \$tempZip -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' -Force -ErrorAction SilentlyContinue }; \
+                        Compress-Archive -Path (Join-Path \$tempZip '*') -DestinationPath 'Failure_Report.zip' -Force -ErrorAction SilentlyContinue; \
+                        Remove-Item \$tempZip -Recurse -Force -ErrorAction SilentlyContinue; \
+                    } catch { Write-Host ('Error creating zip: ' + \$_.Exception.Message) }; \
+                    \$errs = @(); \
+                    \$tcList = @(); \
+                    \$i = 1; \
+                    Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
+                        [xml]\$x = Get-Content \$_.FullName; \
+                        foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
+                            \$tsName = \$ts.name; \
+                            foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \
+                                \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \
+                                \$msg = \$node.message; \
+                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; \
+                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; \
+                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \
+                                \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \
+                                \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \
+                                \$i++ \
+                            } \
+                        } \
+                    }; \
+                    if (\$errs.Count -eq 0) { \$errs += 'No detailed XML stacktrace found.' }; \
+                    Set-Content -Path 'error_log.txt' -Value (\$errs -join ([Environment]::NewLine + '---' + [Environment]::NewLine)); \
+                    \$jsonPayload = @{ projectName = '${env.PROJECT_NAME}'; jobName = '${env.JOB_NAME}'; buildUrl = '${env.BUILD_URL}'; buildNumber = ${env.BUILD_NUMBER}; testCases = \$tcList } | ConvertTo-Json -Depth 5; \
+                    Set-Content -Path 'failed_tests.json' -Value \$jsonPayload; \
+                "
+
+                curl.exe -X POST "http://localhost:5678/webhook/jenkins-report" -F "chat_id=8122375919" -F "file=@Failure_Report.zip" -F "error_log=@error_log.txt"
+
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-RestMethod -Uri '${env.N8N_SHEETS_WEBHOOK}' -Method Post -ContentType 'application/json' -InFile 'failed_tests.json'"
                 """
             }
         }
