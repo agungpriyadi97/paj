@@ -240,20 +240,53 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE (DENGAN NAMA MODUL)
-            script {
-                bat """
-                powershell -NoProfile -ExecutionPolicy Bypass -Command "\$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \$browser = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \$targetBase = 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments\\Pasti-ada-jalan'; if (-not (Test-Path \$targetBase)) { \$found = Get-ChildItem -Path 'C:\\Users\\AgungPriyadi' -Filter 'Pasti-ada-jalan' -Recurse -Directory -ErrorAction SilentlyContinue | Select-Object -First 1; if (\$found) { \$targetBase = \$found.FullName } }; \$dest = Join-Path (Join-Path \$targetBase \$dateStr) \$browser; Write-Host ('Target Folder: ' + \$dest); if (-not (Test-Path \$dest)) { New-Item -ItemType Directory -Path \$dest -Force | Out-Null }; \$reports = Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue; if (\$reports) { \$reports | ForEach-Object { \$curr = \$_.Directory; \$modName = ''; while (\$curr -and \$curr.Name -ne 'Reports' -and \$curr.FullName -ne \$env:WORKSPACE) { if (\$curr.Name -notmatch '^\\d{8}_\\d{6}\$' -and \$curr.Name -ne 'Test Suites') { \$modName = \$curr.Name; break }; \$curr = \$curr.Parent }; if (-not \$modName) { \$modName = if ('${params.SUITE}') { (Split-Path '${params.SUITE}' -Leaf) } else { 'Test_Report' } }; \$safeName = (\$modName -replace '[\\\\/:*?\"<>|]', '_').Trim(); \$destFile = Join-Path \$dest (\$safeName + '.html'); Copy-Item -Path \$_.FullName -Destination \$destFile -Force; Write-Host ('Copied HTML: ' + \$safeName + '.html') } } else { Write-Host 'No HTML files found in Reports/' }"
-                """
-            }
-
-            // --- NOTIFIKASI SELESAI + RINGKASAN TEST CASE ---
+            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE DENGAN NAMA MODUL & NOTIFIKASI FINISHED
             script {
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
                 
                 bat """
-                powershell -Command "\$p=0;\$f=0;\$s=0; Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { [xml]\$x = Get-Content \$_.FullName; foreach(\$ts in \$x.SelectNodes('//testsuite')){ \$t=[int]\$ts.tests; \$fail=[int]\$ts.failures + [int]\$ts.errors; \$skip=[int]\$ts.skipped; \$pass=\$t - (\$fail + \$skip); if(\$pass -gt 0){\$p+=\$pass}; \$f+=\$fail; \$s+=\$skip } }; \$json = '{\\"job\\":\\"${env.JOB_NAME}\\",\\"projectName\\":\\"${env.PROJECT_NAME}\\",\\"buildNumber\\":${env.BUILD_NUMBER},\\"status\\":\\"${currentStatus}\\",\\"phase\\":\\"COMPLETED\\",\\"passed\\":' + \$p + ',\\"failed\\":' + \$f + ',\\"skipped\\":' + \$s + '}'; Set-Content -Path 'summary.json' -Value \$json"
-                curl -X POST "http://localhost:5678/webhook/jenkins" -H "Content-Type: application/json" -d @summary.json
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "\
+                    try { \
+                        \$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \
+                        \$browser = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \
+                        \$targetBase = 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments\\Pasti-ada-jalan'; \
+                        if (-not (Test-Path \$targetBase)) { \$found = Get-ChildItem -Path 'C:\\Users\\AgungPriyadi' -Filter 'Pasti-ada-jalan' -Recurse -Directory -ErrorAction SilentlyContinue | Select-Object -First 1; if (\$found) { \$targetBase = \$found.FullName } }; \
+                        \$dest = Join-Path (Join-Path \$targetBase \$dateStr) \$browser; \
+                        if (-not (Test-Path \$dest)) { New-Item -ItemType Directory -Path \$dest -Force | Out-Null }; \
+                        \$reports = Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue; \
+                        if (\$reports) { \
+                            \$reports | ForEach-Object { \
+                                \$curr = \$_.Directory; \
+                                \$modName = ''; \
+                                while (\$curr -and \$curr.Name -ne 'Reports' -and \$curr.FullName -ne \$env:WORKSPACE) { \
+                                    if (\$curr.Name -notmatch '^\\d{8}_\\d{6}\$' -and \$curr.Name -ne 'Test Suites') { \$modName = \$curr.Name; break }; \
+                                    \$curr = \$curr.Parent \
+                                }; \
+                                if (-not \$modName) { \$modName = if ('${params.SUITE}') { (Split-Path '${params.SUITE}' -Leaf) } else { 'Test_Report' } }; \
+                                \$safeName = (\$modName -replace '[^a-zA-Z0-9_\\- ]', '_').Trim(); \
+                                \$destFile = Join-Path \$dest (\$safeName + '.html'); \
+                                Copy-Item -Path \$_.FullName -Destination \$destFile -Force; \
+                                Write-Host ('Copied HTML: ' + \$safeName + '.html') \
+                            } \
+                        } \
+                    } catch { Write-Host ('Error copy OneDrive: ' + \$_.Exception.Message) }; \
+                    \$p=0; \$f=0; \$s=0; \
+                    Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
+                        [xml]\$x = Get-Content \$_.FullName; \
+                        foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
+                            \$t=[int]\$ts.tests; \
+                            \$fail=[int]\$ts.failures + [int]\$ts.errors; \
+                            \$skip=[int]\$ts.skipped; \
+                            \$pass=\$t - (\$fail + \$skip); \
+                            if(\$pass -gt 0){\$p+=\$pass}; \
+                            \$f+=\$fail; \
+                            \$s+=\$skip \
+                        } \
+                    }; \
+                    \$json = '{\\"job\\":\\"${env.JOB_NAME}\\",\\"projectName\\":\\"${env.PROJECT_NAME}\\",\\"buildNumber\\":${env.BUILD_NUMBER},\\"status\\":\\"${currentStatus}\\",\\"phase\\":\\"COMPLETED\\",\\"passed\\":' + \$p + ',\\"failed\\":' + \$f + ',\\"skipped\\":' + \$s + '}'; \
+                    Set-Content -Path 'summary.json' -Value \$json; \
+                    curl.exe -X POST 'http://localhost:5678/webhook/jenkins' -H 'Content-Type: application/json' -d @summary.json \
+                "
                 """
             }
 
