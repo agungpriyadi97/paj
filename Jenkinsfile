@@ -60,6 +60,11 @@ Contoh override manual:
 
         PROJECT_FILE = 'pasti-ada-jalan.prj'
 
+        // 🌟 Folder tujuan di OneDrive / SharePoint
+        PROJECT_FOLDER = 'Pasti-ada-jalan'
+
+        ONEDRIVE_ATTACHMENTS = 'C:\\Users\\AgungPriyadi\\OneDrive - agung - (G)Tech Digital\\Attachments'
+
         USERPROFILE = 'C:\\Users\\AgungPriyadi'
 
         DEFAULT_TEST = 'Test Suites/WEB/Checkout/Post Payment Validation'
@@ -235,6 +240,14 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
+            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE / SHAREPOINT
+            script {
+                bat """
+                powershell -Command "\$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \$browserName = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \$destDir = '${env.ONEDRIVE_ATTACHMENTS}\\${env.PROJECT_FOLDER}\\\$dateStr\\\$browserName'; if (-not (Test-Path \$destDir)) { New-Item -ItemType Directory -Path \$destDir -Force | Out-Null }; Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item -Path \$_.FullName -Destination \$destDir -Force }"
+                """
+            }
+
+            // --- NOTIFIKASI SELESAI + RINGKASAN TEST CASE ---
             script {
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
                 
