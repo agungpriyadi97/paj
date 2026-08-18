@@ -240,10 +240,10 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 testResults: 'Reports/**/*.xml'
             )
 
-            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE / SHAREPOINT
+            // 🌟 OTOMATIS COPY FILE REPORT HTML KE ONEDRIVE / SHAREPOINT (Dengan Auto-Detect Path & Join-Path)
             script {
                 bat """
-                powershell -Command "\$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \$browserName = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \$destDir = '${env.ONEDRIVE_ATTACHMENTS}\\${env.PROJECT_FOLDER}\\\$dateStr\\\$browserName'; if (-not (Test-Path \$destDir)) { New-Item -ItemType Directory -Path \$destDir -Force | Out-Null }; Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item -Path \$_.FullName -Destination \$destDir -Force }"
+                powershell -Command "\$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \$browserName = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \$attachmentsPath = '${env.ONEDRIVE_ATTACHMENTS}'; if (-not (Test-Path \$attachmentsPath)) { \$found = Get-ChildItem -Path \$env:USERPROFILE -Filter 'Attachments' -Recurse -Directory -ErrorAction SilentlyContinue | Select-Object -First 1; if (\$found) { \$attachmentsPath = \$found.FullName } }; \$destDir = Join-Path (Join-Path (Join-Path \$attachmentsPath '${env.PROJECT_FOLDER}') \$dateStr) \$browserName; Write-Host ('Target Folder: ' + \$destDir); if (-not (Test-Path \$destDir)) { New-Item -ItemType Directory -Path \$destDir -Force | Out-Null }; \$files = Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue; if (\$files.Count -gt 0) { \$files | ForEach-Object { Copy-Item -Path \$_.FullName -Destination \$destDir -Force; Write-Host ('Copied HTML: ' + \$_.Name) } } else { Write-Host 'No HTML reports found in Reports/' }"
                 """
             }
 
