@@ -11,18 +11,21 @@ pipeline {
         choice(
             name: 'BROWSER',
             choices: [
+                'Both',
                 'Chrome (headless)',
-                'Firefox (headless)',
-                'Both'
+                'Firefox (headless)'
             ],
-            description: 'Pilih Browser (Abaikan jika memanggil Test Suite Collection)'
+            description: 'Pilih Browser (Both = Menjalankan Chrome lalu Firefox)'
         )
 
         choice(
             name: 'PROFILE',
             choices: [
-                'default',
-                'development'
+                'Development',
+                'QA',
+                'UAT',
+                'Production',
+                'default'
             ],
             description: 'Execution Profile'
         )
@@ -30,20 +33,20 @@ pipeline {
         string(
             name: 'ENV',
             defaultValue: 'staging',
-            description: 'Target Environment dari Telegram (staging, uat, prod)'
+            description: 'Target Environment dari Telegram (dev, qa, uat, prod, staging)'
         )
 
         string(
             name: 'SUITE',
             defaultValue: 'Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web',
-            description: 'Nama Test Suite dari Telegram'
+            description: 'Nama Test Suite / Collection dari Telegram'
         )
 
         string(
             name: 'TEST_PATH',
             defaultValue: '',
             description: '''
-Kosong = Gunakan parameter SUITE / Default Test Suite
+Kosong = Gunakan parameter SUITE / Default Test Suite Collection
 
 Contoh override manual:
 -testSuiteCollectionPath=Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web
@@ -83,22 +86,33 @@ Contoh override manual:
         stage('Prepare') {
             steps {
                 script {
+                    // Bersihkan semua proses Katalon, Java, dan Web Driver di background
                     bat '''
+                    taskkill /F /IM katalon.exe /T 2>nul || exit 0
                     taskkill /F /IM katalonc.exe /T 2>nul || exit 0
                     taskkill /F /IM java.exe /T 2>nul || exit 0
+                    taskkill /F /IM javaw.exe /T 2>nul || exit 0
                     taskkill /F /IM chromedriver.exe /T 2>nul || exit 0
+                    taskkill /F /IM geckodriver.exe /T 2>nul || exit 0
+                    taskkill /F /IM chrome.exe /T 2>nul || exit 0
+                    taskkill /F /IM firefox.exe /T 2>nul || exit 0
                     if exist "C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\config\\.metadata\\.lock" del /f /q "C:\\Users\\AgungPriyadi\\.katalon\\packages\\KS-11.1.3\\config\\.metadata\\.lock" 2>nul || exit 0
-                    
-                    :: Bersihkan folder eksekusi lama agar hasil test case tidak terakumulasi
-                    if exist Reports rmdir /s /q Reports
-                    if exist Screenshot rmdir /s /q Screenshot
-                    if exist summary.json del /f /q summary.json
-                    if exist test_results.json del /f /q test_results.json
-                    if exist error_log.txt del /f /q error_log.txt
-                    if exist failed_tests.json del /f /q failed_tests.json
-                    if exist Failure_Report.zip del /f /q Failure_Report.zip
                     '''
 
+                    bat '''
+                    powershell -NoProfile -ExecutionPolicy Bypass -Command "\
+                        if (Test-Path 'Reports') { Remove-Item -Path 'Reports' -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'Reports_Archive') { Remove-Item -Path 'Reports_Archive' -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'Screenshot') { Remove-Item -Path 'Screenshot' -Recurse -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'summary.json') { Remove-Item 'summary.json' -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'test_results.json') { Remove-Item 'test_results.json' -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'failed_tests.json') { Remove-Item 'failed_tests.json' -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'error_log.txt') { Remove-Item 'error_log.txt' -Force -ErrorAction SilentlyContinue }; \
+                        if (Test-Path 'Failure_Report.zip') { Remove-Item 'Failure_Report.zip' -Force -ErrorAction SilentlyContinue }; \
+                    "
+                    '''
+
+                    // Mapping Execution Profile
                     if (params.ENV?.trim()) {
                         def envInput = params.ENV.toLowerCase()
                         if (envInput == 'prod' || envInput == 'production') {
@@ -114,6 +128,7 @@ Contoh override manual:
                         env.TARGET_PROFILE = params.PROFILE ?: 'Development'
                     }
 
+                    // Mapping Target Test Suite / Collection
                     if (params.TEST_PATH?.trim()) {
                         def value = params.TEST_PATH.split("=")
                         env.ARG_TYPE = value[0]
@@ -139,12 +154,6 @@ Contoh override manual:
                         }
                     }
 
-                    if (env.ARG_TYPE == "-testSuiteCollectionPath") {
-                        env.EXTRA_ARGS = ""
-                    } else {
-                        env.EXTRA_ARGS = "-executionProfile=\"${env.TARGET_PROFILE}\" -browserType=\"Chrome (headless)\""
-                    }
-
                     echo "====================================="
                     echo "PROJECT : ${env.PROJECT_FILE}"
                     echo "PROFILE : ${env.TARGET_PROFILE}"
@@ -161,57 +170,97 @@ Contoh override manual:
             when {
                 anyOf {
                     expression { params.BROWSER == 'Chrome (headless)' }
+                    expression { params.BROWSER == 'Chrome' }
                     expression { params.BROWSER == 'Both' }
-                    expression { env.ARG_TYPE == '-testSuiteCollectionPath' }
                 }
             }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    bat """
-"${env.KATALON_EXE}" ^
--noSplash ^
--runMode=console ^
--projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
--retry=0 ^
--apiKey="${env.KATALON_API_KEY}" ^
--orgID="${env.KATALON_ORG_ID}" ^
-${env.ARG_TYPE}="${env.FINAL_PATH}" ^
-${env.EXTRA_ARGS} ^
---config ^
--webui.autoUpdateDrivers=true ^
--webui.chrome.args="--disable-blink-features=AutomationControlled --disable-dev-shm-usage --disable-gpu --no-sandbox --window-size=1920,1080"
-"""
+                    script {
+                        def cmd = "\"${env.KATALON_EXE}\" -clean -noSplash -runMode=console -projectPath=\"%WORKSPACE%\\${env.PROJECT_FILE}\" -retry=0 -apiKey=\"${env.KATALON_API_KEY}\" -orgID=\"${env.KATALON_ORG_ID}\" ${env.ARG_TYPE}=\"${env.FINAL_PATH}\" -executionProfile=\"${env.TARGET_PROFILE}\" -browserType=\"Chrome (headless)\" --config -webui.autoUpdateDrivers=true -webui.chrome.args=\"--disable-blink-features=AutomationControlled --disable-dev-shm-usage --disable-gpu --no-sandbox --window-size=1920,1080\""
+                        bat cmd
+                    }
                 }
+
+                // Salin report HTML Chrome ke OneDrive & Pindahkan ke Archive
+                bat """
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "\
+                    try { \
+                        \$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \
+                        \$dest = Join-Path (Join-Path 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments\\${env.PROJECT_FOLDER}' \$dateStr) 'Chrome Headless'; \
+                        if (-not (Test-Path \$dest)) { New-Item -ItemType Directory -Path \$dest -Force | Out-Null }; \
+                        Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
+                            \$curr = \$_.Directory; \
+                            \$modName = ''; \
+                            while (\$curr -and \$curr.Name -ne 'Reports' -and \$curr.FullName -ne \$env:WORKSPACE) { \
+                                if (\$curr.Name -notmatch '^\\d{8}_\\d{6}\$' -and \$curr.Name -ne 'Test Suites') { \$modName = \$curr.Name; break }; \
+                                \$curr = \$curr.Parent \
+                            }; \
+                            if (-not \$modName) { \$modName = if ('${params.SUITE}') { (Split-Path '${params.SUITE}' -Leaf) } else { 'Test_Report' } }; \
+                            \$destFile = Join-Path \$dest (\$modName + '.html'); \
+                            Copy-Item -Path \$_.FullName -Destination \$destFile -Force; \
+                            Write-Host ('Copied Chrome HTML: ' + \$modName + '.html') \
+                        }; \
+                        New-Item -ItemType Directory -Path 'Reports_Archive\\Chrome' -Force | Out-Null; \
+                        Copy-Item -Path 'Reports\\*' -Destination 'Reports_Archive\\Chrome' -Recurse -Force; \
+                        Remove-Item -Path 'Reports' -Recurse -Force -ErrorAction SilentlyContinue; \
+                    } catch { Write-Host ('Error Chrome Copy: ' + \$_.Exception.Message) } \
+                "
+                """
+
+                bat '''
+                taskkill /F /IM chromedriver.exe /T 2>nul || exit 0
+                taskkill /F /IM chrome.exe /T 2>nul || exit 0
+                '''
             }
         }
 
         stage('Run Firefox') {
             when {
-                allOf {
-                    expression { env.ARG_TYPE == '-testSuitePath' }
-                    anyOf {
-                        expression { params.BROWSER == 'Firefox (headless)' }
-                        expression { params.BROWSER == 'Both' }
-                    }
+                anyOf {
+                    expression { params.BROWSER == 'Firefox (headless)' }
+                    expression { params.BROWSER == 'Firefox' }
+                    expression { params.BROWSER == 'Both' }
                 }
             }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    bat """
-"${env.KATALON_EXE}" ^
--noSplash ^
--runMode=console ^
--projectPath="%WORKSPACE%\\${env.PROJECT_FILE}" ^
--retry=0 ^
--apiKey="${env.KATALON_API_KEY}" ^
--orgID="${env.KATALON_ORG_ID}" ^
-${env.ARG_TYPE}="${env.FINAL_PATH}" ^
--executionProfile="${env.TARGET_PROFILE}" ^
--browserType="Firefox (headless)" ^
---config ^
--webui.autoUpdateDrivers=true
-"""
+                    script {
+                        def cmd = "\"${env.KATALON_EXE}\" -clean -noSplash -runMode=console -projectPath=\"%WORKSPACE%\\${env.PROJECT_FILE}\" -retry=0 -apiKey=\"${env.KATALON_API_KEY}\" -orgID=\"${env.KATALON_ORG_ID}\" ${env.ARG_TYPE}=\"${env.FINAL_PATH}\" -executionProfile=\"${env.TARGET_PROFILE}\" -browserType=\"Firefox (headless)\" --config -webui.autoUpdateDrivers=true"
+                        bat cmd
+                    }
                 }
+
+                // Salin report HTML Firefox ke OneDrive & Pindahkan ke Archive
+                bat """
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "\
+                    try { \
+                        \$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \
+                        \$dest = Join-Path (Join-Path 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments\\${env.PROJECT_FOLDER}' \$dateStr) 'Firefox Headless'; \
+                        if (-not (Test-Path \$dest)) { New-Item -ItemType Directory -Path \$dest -Force | Out-Null }; \
+                        Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
+                            \$curr = \$_.Directory; \
+                            \$modName = ''; \
+                            while (\$curr -and \$curr.Name -ne 'Reports' -and \$curr.FullName -ne \$env:WORKSPACE) { \
+                                if (\$curr.Name -notmatch '^\\d{8}_\\d{6}\$' -and \$curr.Name -ne 'Test Suites') { \$modName = \$curr.Name; break }; \
+                                \$curr = \$curr.Parent \
+                            }; \
+                            if (-not \$modName) { \$modName = if ('${params.SUITE}') { (Split-Path '${params.SUITE}' -Leaf) } else { 'Test_Report' } }; \
+                            \$destFile = Join-Path \$dest (\$modName + '.html'); \
+                            Copy-Item -Path \$_.FullName -Destination \$destFile -Force; \
+                            Write-Host ('Copied Firefox HTML: ' + \$modName + '.html') \
+                        }; \
+                        New-Item -ItemType Directory -Path 'Reports_Archive\\Firefox' -Force | Out-Null; \
+                        Copy-Item -Path 'Reports\\*' -Destination 'Reports_Archive\\Firefox' -Recurse -Force; \
+                        Remove-Item -Path 'Reports' -Recurse -Force -ErrorAction SilentlyContinue; \
+                    } catch { Write-Host ('Error Firefox Copy: ' + \$_.Exception.Message) } \
+                "
+                """
+
+                bat '''
+                taskkill /F /IM geckodriver.exe /T 2>nul || exit 0
+                taskkill /F /IM firefox.exe /T 2>nul || exit 0
+                '''
             }
         }
     }
@@ -219,61 +268,46 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
     post {
 
         always {
-            archiveArtifacts(
-                artifacts: 'Reports/**, Screenshot/**, failure_*.html',
-                allowEmptyArchive: true
-            )
-
-            junit(
-                allowEmptyResults: true,
-                testResults: 'Reports/**/*.xml'
-            )
-
             script {
+                // Kembalikan semua file Reports dari Archive agar Post Actions (JUnit, Webhook, Summary) membaca total hasil kedua browser
+                bat '''
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "\
+                    if (Test-Path 'Reports_Archive') { \
+                        New-Item -ItemType Directory -Path 'Reports' -Force | Out-Null; \
+                        Copy-Item -Path 'Reports_Archive\\*' -Destination 'Reports' -Recurse -Force -ErrorAction SilentlyContinue \
+                    } \
+                "
+                '''
+
+                archiveArtifacts(
+                    artifacts: 'Reports/**, Screenshot/**, failure_*.html',
+                    allowEmptyArchive: true
+                )
+
+                junit(
+                    allowEmptyResults: true,
+                    testResults: 'Reports/**/JUnit_Report.xml, Reports/**/*.xml'
+                )
+
                 def currentStatus = currentBuild.currentResult ?: 'UNKNOWN'
                 
                 bat """
                 powershell -NoProfile -ExecutionPolicy Bypass -Command "\
-                    try { \
-                        \$dateStr = (Get-Date).ToString('dd-MM-yyyy'); \
-                        \$browser = if ('${params.BROWSER}' -like '*Firefox*') { 'Firefox Headless' } else { 'Chrome Headless' }; \
-                        \$targetBase = 'C:\\Users\\AgungPriyadi\\OneDrive - (G)Tech Digital\\Attachments\\Pasti-ada-jalan'; \
-                        if (-not (Test-Path \$targetBase)) { \
-                            \$found = Get-ChildItem -Path 'C:\\Users\\AgungPriyadi' -Filter 'Pasti-ada-jalan' -Recurse -Directory -ErrorAction SilentlyContinue | Select-Object -First 1; \
-                            if (\$found) { \$targetBase = \$found.FullName } \
-                        }; \
-                        \$dest = Join-Path (Join-Path \$targetBase \$dateStr) \$browser; \
-                        if (-not (Test-Path \$dest)) { New-Item -ItemType Directory -Path \$dest -Force | Out-Null }; \
-                        \$reports = Get-ChildItem -Path 'Reports' -Filter '*.html' -Recurse -ErrorAction SilentlyContinue; \
-                        if (\$reports) { \
-                            \$reports | ForEach-Object { \
-                                \$curr = \$_.Directory; \
-                                \$modName = ''; \
-                                while (\$curr -and \$curr.Name -ne 'Reports' -and \$curr.FullName -ne \$env:WORKSPACE) { \
-                                    if (\$curr.Name -notmatch '^\\d{8}_\\d{6}\$' -and \$curr.Name -ne 'Test Suites') { \$modName = \$curr.Name; break }; \
-                                    \$curr = \$curr.Parent \
-                                }; \
-                                if (-not \$modName) { \$modName = if ('${params.SUITE}') { (Split-Path '${params.SUITE}' -Leaf) } else { 'Test_Report' } }; \
-                                \$safeName = (\$modName -replace '[^a-zA-Z0-9_\\- ]', '_').Trim(); \
-                                \$destFile = Join-Path \$dest (\$safeName + '.html'); \
-                                Copy-Item -Path \$_.FullName -Destination \$destFile -Force; \
-                                Write-Host ('Copied HTML: ' + \$safeName + '.html') \
-                            } \
-                        } \
-                    } catch { Write-Host ('Error copy OneDrive: ' + \$_.Exception.Message) }; \
                     \$p=0; \$f=0; \$s=0; \
-                    \$latestFolder = Get-ChildItem -Path 'Reports' -Directory -Recurse | Where-Object { \$_.Name -match '^\\d{8}_\\d{6}\$' } | Sort-Object LastWriteTime -Descending | Select-Object -First 1; \
-                    \$searchRoot = if (\$latestFolder) { \$latestFolder.FullName } else { 'Reports' }; \
-                    Get-ChildItem -Path \$searchRoot -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
-                        [xml]\$x = Get-Content \$_.FullName; \
-                        foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
-                            \$t=[int]\$ts.tests; \
-                            \$fail=[int]\$ts.failures + [int]\$ts.errors; \
-                            \$skip=[int]\$ts.skipped; \
-                            \$pass=\$t - (\$fail + \$skip); \
-                            if(\$pass -gt 0){\$p+=\$pass}; \
-                            \$f+=\$fail; \
-                            \$s+=\$skip \
+                    \$xmlFiles = Get-ChildItem -Path 'Reports' -Filter 'JUnit_Report.xml' -Recurse -ErrorAction SilentlyContinue; \
+                    if (-not \$xmlFiles) { \$xmlFiles = Get-ChildItem -Path 'Reports' -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | Where-Object { \$_.Name -ne 'TESTS-TestSuites.xml' } }; \
+                    if (\$xmlFiles) { \
+                        \$xmlFiles | ForEach-Object { \
+                            [xml]\$x = Get-Content \$_.FullName; \
+                            foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
+                                \$t=[int]\$ts.tests; \
+                                \$fail=[int]\$ts.failures + [int]\$ts.errors; \
+                                \$skip=[int]\$ts.skipped; \
+                                \$pass=\$t - (\$fail + \$skip); \
+                                if(\$pass -gt 0){\$p+=\$pass}; \
+                                \$f+=\$fail; \
+                                \$s+=\$skip \
+                            } \
                         } \
                     }; \
                     \$body = @{ \
@@ -297,10 +331,6 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
             echo "======================================"
             echo "Automation Finished"
             echo "======================================"
-        }
-
-        success {
-            echo "Automation SUCCESS"
         }
 
         unstable {
@@ -334,19 +364,22 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                     \$i = 1; \
                     \$latestFolder = Get-ChildItem -Path 'Reports' -Directory -Recurse | Where-Object { \$_.Name -match '^\\d{8}_\\d{6}\$' } | Sort-Object LastWriteTime -Descending | Select-Object -First 1; \
                     \$searchRoot = if (\$latestFolder) { \$latestFolder.FullName } else { 'Reports' }; \
-                    Get-ChildItem -Path \$searchRoot -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
-                        [xml]\$x = Get-Content \$_.FullName; \
-                        foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
-                            \$tsName = \$ts.name; \
-                            foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \
-                                \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \
-                                \$msg = \$node.message; \
-                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; \
-                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; \
-                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \
-                                \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \
-                                \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \
-                                \$i++ \
+                    \$xmlFiles = Get-ChildItem -Path \$searchRoot -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | Where-Object { \$_.Name -ne 'TESTS-TestSuites.xml' }; \
+                    if (\$xmlFiles) { \
+                        \$xmlFiles | ForEach-Object { \
+                            [xml]\$x = Get-Content \$_.FullName; \
+                            foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
+                                \$tsName = \$ts.name; \
+                                foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \
+                                    \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \
+                                    \$msg = \$node.message; \
+                                    if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; \
+                                    if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; \
+                                    if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \
+                                    \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \
+                                    \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \
+                                    \$i++ \
+                                } \
                             } \
                         } \
                     }; \
@@ -394,19 +427,22 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                     \$i = 1; \
                     \$latestFolder = Get-ChildItem -Path 'Reports' -Directory -Recurse | Where-Object { \$_.Name -match '^\\d{8}_\\d{6}\$' } | Sort-Object LastWriteTime -Descending | Select-Object -First 1; \
                     \$searchRoot = if (\$latestFolder) { \$latestFolder.FullName } else { 'Reports' }; \
-                    Get-ChildItem -Path \$searchRoot -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | ForEach-Object { \
-                        [xml]\$x = Get-Content \$_.FullName; \
-                        foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
-                            \$tsName = \$ts.name; \
-                            foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \
-                                \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \
-                                \$msg = \$node.message; \
-                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; \
-                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; \
-                                if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \
-                                \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \
-                                \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \
-                                \$i++ \
+                    \$xmlFiles = Get-ChildItem -Path \$searchRoot -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue | Where-Object { \$_.Name -ne 'TESTS-TestSuites.xml' }; \
+                    if (\$xmlFiles) { \
+                        \$xmlFiles | ForEach-Object { \
+                            [xml]\$x = Get-Content \$_.FullName; \
+                            foreach(\$ts in \$x.SelectNodes('//testsuite')){ \
+                                \$tsName = \$ts.name; \
+                                foreach(\$tc in \$ts.SelectNodes('.//testcase[failure or error]')){ \
+                                    \$node = if(\$tc.failure){\$tc.failure}else{\$tc.error}; \
+                                    \$msg = \$node.message; \
+                                    if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$node.innerText }; \
+                                    if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = \$tc.'system-err' }; \
+                                    if([string]::IsNullOrWhiteSpace(\$msg)){ \$msg = 'No detailed error message found in XML.' }; \
+                                    \$errs += ('[Test Case]: ' + \$tc.name + [Environment]::NewLine + '[Error]: ' + \$msg); \
+                                    \$tcList += @{ number = [string]\$i; testSuiteName = \$tsName; testCaseName = [string]\$tc.name; status = 'failed'; errorMessage = [string]\$msg; reportUrl = '${env.BUILD_URL}' }; \
+                                    \$i++ \
+                                } \
                             } \
                         } \
                     }; \
@@ -422,7 +458,6 @@ ${env.ARG_TYPE}="${env.FINAL_PATH}" ^
                 """
             }
         }
-
     }
 
 }
