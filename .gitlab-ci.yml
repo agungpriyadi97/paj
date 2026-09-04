@@ -6,155 +6,243 @@ stages:
   - test
 
 variables:
-  GS_OPTIONS: "-Xmx4096m -Xms1024m -Djava.shm.size=4g"
+  GS_OPTIONS: "-Xmx3072m -Xms1024m -Djava.shm.size=4g"
+  PROJECT_NAME: "pasti-ada-jalan"
+  PROJECT_FILE: "pasti-ada-jalan.prj"
+  DEFAULT_TEST: "Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
+  DEFAULT_PROFILE: "Development"
+  CHAT_ID: "8122375919"
+  TELEGRAM_BOT_TOKEN: "8983072121:AAHXmJa5OQWa4ah-WJx5YPDpfHQZWHvdW78"
 
 katalon_regression:
-
   stage: test
-
   tags:
-    - infra
-
+    - infra-qa
   timeout: 12h
 
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: '$CI_PIPELINE_SOURCE == "web"'
     - if: '$CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
 
   before_script:
-
     - echo "Cleaning previous reports..."
-    - rm -rf Reports || true
-    - rm -rf Screenshot || true
-
-    - mkdir -p Reports
-    - mkdir -p Screenshot
-
+    - rm -rf Reports Reports_Archive Screenshot failed_tests.json error_log.txt || true
+    - mkdir -p Reports Screenshot Reports_Archive/Chrome Reports_Archive/Firefox
     - apt-get update -y || true
-    - apt-get install -y ffmpeg xvfb || true
-
-    - ffmpeg -version
-    - google-chrome --version || true
-    - firefox --version || true
+    - apt-get install -y ffmpeg xvfb procps curl libxml2-utils python3 || true
 
   script:
-
     - |
-
-      #############################################################
-      # Resolve Test Path
-      #############################################################
-
-      if [ -z "$TEST_PATH" ]; then
-
-          ARG_TYPE="-testSuiteCollectionPath"
-
-          FINAL_PATH="Test Suites/WEB/Web_Test_Suite_Collection/Regression_pasti_ada_jalan_Web"
-
-      else
-
-          ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
-
-          FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
-
-      fi
-
-      #############################################################
-      # Browser
-      #############################################################
-
+      #########################################################
+      # 1. Resolve Parameters & Safe Profile Mapping
+      #########################################################
       if [ -z "$BROWSER" ]; then
           BROWSER="Both"
       fi
 
-      echo "=================================="
-      echo "Project  : pasti-ada-jalan"
+      if [ -z "$EXECUTION_PROFILE" ]; then
+          EXECUTION_PROFILE="$DEFAULT_PROFILE"
+      fi
+
+      if [ -z "$TEST_PATH" ]; then
+          ARG_TYPE="-testSuiteCollectionPath"
+          FINAL_PATH="$DEFAULT_TEST"
+      else
+          ARG_TYPE=$(echo "$TEST_PATH" | cut -d'=' -f1)
+          FINAL_PATH=$(echo "$TEST_PATH" | cut -d'=' -f2)
+      fi
+
+      echo "====================================="
+      echo "Project  : $PROJECT_NAME"
       echo "Browser  : $BROWSER"
-      echo "Profile  : ${EXECUTION_PROFILE:-Development}"
+      echo "Profile  : $EXECUTION_PROFILE"
       echo "Arg Type : $ARG_TYPE"
       echo "Path     : $FINAL_PATH"
-      echo "=================================="
+      echo "====================================="
 
-      #############################################################
-      # Chrome
-      #############################################################
-
+      #########################################################
+      # 2. CHROME EXECUTION
+      #########################################################
       if [ "$BROWSER" = "Chrome" ] || [ "$BROWSER" = "Both" ]; then
-
         echo ""
-        echo "========== Chrome =========="
-
+        echo "========== Chrome Execution =========="
         katalonc.sh \
           -noSplash \
           -runMode=console \
-          -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
+          -projectPath="$CI_PROJECT_DIR/$PROJECT_FILE" \
           -retry=0 \
+          -maxExecutionTime=3600 \
           -orgID="$KATALON_ORG_ID" \
           -apiKey="$KATALON_API_KEY" \
-          "$ARG_TYPE=$FINAL_PATH" \
-          -executionProfile="${EXECUTION_PROFILE:-Development}" \
+          "$ARG_TYPE"="$FINAL_PATH" \
+          -executionProfile="$EXECUTION_PROFILE" \
           -browserType="Chrome (headless)" \
           -reportFolder="Reports/Chrome_Reports" \
           -reportFileName="Chrome_Report" \
           --config \
           -webui.autoUpdateDrivers=true \
           -webui.chrome.args="--disable-dev-shm-usage --disable-gpu --disable-blink-features=AutomationControlled --window-size=1920,1080 --no-sandbox" \
-          || echo "Chrome execution finished."
+          || echo "Chrome execution completed with warnings/errors."
 
+        sleep 5
+        if [ -d "Reports" ]; then
+            mkdir -p Reports_Archive/Chrome
+            cp -r Reports/* Reports_Archive/Chrome/ 2>/dev/null || true
+        fi
+        pkill -f chrome || true
+        pkill -f chromedriver || true
+        pkill -f Xvfb || true
+        rm -rf /tmp/.X11-unix || true
       fi
 
-      #############################################################
-      # Firefox
-      #############################################################
-
+      #########################################################
+      # 3. FIREFOX EXECUTION
+      #########################################################
       if [ "$BROWSER" = "Firefox" ] || [ "$BROWSER" = "Both" ]; then
-
         echo ""
-        echo "========== Firefox =========="
+        echo "========== Firefox Execution =========="
+        sleep 10
+        pkill -f Xvfb || true
+        rm -rf /tmp/.X11-unix || true
+        sleep 2
 
         katalonc.sh \
           -noSplash \
           -runMode=console \
-          -projectPath="$CI_PROJECT_DIR/pasti-ada-jalan.prj" \
+          -projectPath="$CI_PROJECT_DIR/$PROJECT_FILE" \
           -retry=0 \
+          -maxExecutionTime=3600 \
           -orgID="$KATALON_ORG_ID" \
           -apiKey="$KATALON_API_KEY" \
-          "$ARG_TYPE=$FINAL_PATH" \
-          -executionProfile="${EXECUTION_PROFILE:-Development}" \
+          "$ARG_TYPE"="$FINAL_PATH" \
+          -executionProfile="$EXECUTION_PROFILE" \
           -browserType="Firefox (headless)" \
           -reportFolder="Reports/Firefox_Reports" \
           -reportFileName="Firefox_Report" \
           --config \
           -webui.autoUpdateDrivers=true \
-          || echo "Firefox execution finished."
+          || echo "Firefox execution completed with warnings/errors."
 
+        sleep 5
+        if [ -d "Reports" ]; then
+            mkdir -p Reports_Archive/Firefox
+            cp -r Reports/* Reports_Archive/Firefox/ 2>/dev/null || true
+        fi
+        pkill -f firefox || true
+        pkill -f geckodriver || true
+        pkill -f Xvfb || true
+        rm -rf /tmp/.X11-unix || true
       fi
 
-      #############################################################
-      # Cleanup Old Videos
-      #############################################################
-
-      find Reports -type f -name "*.mp4" -mtime +30 -delete || true
-
   artifacts:
-
     when: always
-    expire_in: 2 months
+    expire_in: 2 weeks
     paths:
       - Reports/
-      - Screenshot/
+      - error_log.txt
+      - failed_tests.json
 
-cache:
+  cache:
+    key: katalon-cache
+    paths:
+      - Drivers/
 
-  key: katalon-cache
+  after_script:
+    - |
+      echo "======================================"
+      echo "Processing Reports & Parsing Logs..."
+      echo "======================================"
+      
+      cp -r Reports_Archive/* Reports/ 2>/dev/null || true
 
-  paths:
-    - Drivers/
+      python3 - << 'EOF'
+      import os, glob, json
+      import xml.etree.ElementTree as ET
 
-after_script:
+      project_name = os.environ.get('PROJECT_NAME', 'pasti-ada-jalan')
+      job_name = os.environ.get('CI_JOB_NAME', 'katalon_regression')
+      build_url = os.environ.get('CI_PIPELINE_URL', '')
+      build_number = int(os.environ.get('CI_PIPELINE_IID', '0'))
 
-  - echo ""
-  - echo "======================================="
-  - echo "Automation Finished"
-  - echo "======================================="
+      xml_files = glob.glob('Reports/**/*.xml', recursive=True)
+      xml_files = [f for f in xml_files if not f.endswith('TESTS-TestSuites.xml')]
+
+      errors = []
+      tc_list = []
+      counter = 1
+
+      for f in xml_files:
+          try:
+              tree = ET.parse(f)
+              root = tree.getroot()
+              suites = root.findall('.//testsuite') if root.tag != 'testsuite' else [root]
+              for ts in suites:
+                  ts_name = ts.get('name', 'TestSuite')
+                  for tc in ts.findall('.//testcase'):
+                      fail_node = tc.find('failure')
+                      err_node = tc.find('error')
+                      target = fail_node if fail_node is not None else err_node
+                      
+                      if target is not None:
+                          tc_name = tc.get('name', 'Unknown TestCase')
+                          msg = target.get('message', '') or target.text or 'No detailed error message found in XML.'
+                          errors.append(f"[Test Case]: {tc_name}\n[Error]: {msg}")
+                          tc_list.append({
+                              "number": str(counter),
+                              "testSuiteName": ts_name,
+                              "testCaseName": tc_name,
+                              "status": "failed",
+                              "errorMessage": msg,
+                              "reportUrl": build_url
+                          })
+                          counter += 1
+          except Exception as e:
+              print(f"Error parsing {f}: {e}")
+
+      if tc_list:
+          with open('error_log.txt', 'w', encoding='utf-8') as f:
+              f.write('\n---\n'.join(errors))
+
+          payload = {
+              "projectName": project_name,
+              "jobName": job_name,
+              "buildUrl": build_url,
+              "buildNumber": build_number,
+              "testCases": tc_list
+          }
+          with open('failed_tests.json', 'w', encoding='utf-8') as f:
+              json.dump(payload, f, indent=2)
+          print("failed_tests.json and error_log.txt generated successfully.")
+      else:
+          print("All test cases passed.")
+      EOF
+
+      #########################################################
+      # 1. Kirim Notifikasi Ringkasan Status ke Telegram
+      #########################################################
+      if [ -f "failed_tests.json" ]; then
+          STATUS_LABEL="❌ FAILED"
+      else
+          STATUS_LABEL="✅ SUCCESS"
+      fi
+
+      SUMMARY_MSG="🚀 <b>GITLAB PIPELINE REPORT</b>%0A%0A📦 <b>Project:</b> $PROJECT_NAME%0A🌿 <b>Branch:</b> $CI_COMMIT_REF_NAME%0A🚦 <b>Status:</b> $STATUS_LABEL%0A👤 <b>Triggered By:</b> ${GITLAB_USER_NAME:-Agung Priyadi}%0A🔗 <a href='$CI_PIPELINE_URL'>Lihat Detail Pipeline</a>"
+
+      echo "Sending Status Notification to Telegram..."
+      curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d "chat_id=${CHAT_ID}" \
+        -d "parse_mode=HTML" \
+        -d "text=${SUMMARY_MSG}" || true
+
+      #########################################################
+      # 2. Kirim Error Log Text ke Telegram (Jika Ada Kegagalan)
+      #########################################################
+      if [ -f "error_log.txt" ]; then
+          echo "Sending Error Log Summary to Telegram..."
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+            -F "chat_id=${CHAT_ID}" \
+            -F "caption=📄 Error Log Summary - $PROJECT_NAME" \
+            -F "document=@error_log.txt" || true
+      fi
