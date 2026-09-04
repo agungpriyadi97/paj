@@ -26,6 +26,13 @@
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
    <testCaseLink>
+      <guid>c473b0b4-9157-4d33-99b4-7c453d31aa1b</guid>
+      <isReuseDriver>false</isReuseDriver>
+      <isRun>true</isRun>
+      <testCaseId>Test Cases/WEB/Cart/Positive/Positive - Ensure user can remove product from shopping cart</testCaseId>
+      <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
+   </testCaseLink>
+   <testCaseLink>
       <guid>2983ea8c-024c-4fe2-beba-5065ea0bb56f</guid>
       <isReuseDriver>false</isReuseDriver>
       <isRun>true</isRun>
@@ -33,7 +40,7 @@
       <usingDataBindingAtTestSuiteLevel>false</usingDataBindingAtTestSuiteLevel>
    </testCaseLink>
    <testCaseLink>
-      <guid>c473b0b4-9157-4d33-99b4-7c453d31aa1b</guid>
+      <guid>8d48a06c-c22d-4b97-aae1-15442aedde37</guid>
       <isReuseDriver>false</isReuseDriver>
       <isRun>true</isRun>
       <testCaseId>Test Cases/WEB/Cart/Positive/Positive - Ensure user can remove product from shopping cart</testCaseId>
